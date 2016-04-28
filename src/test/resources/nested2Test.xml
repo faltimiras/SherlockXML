@@ -1,0 +1,13 @@
+<Nested2TestObj>
+    <simpleTestObj1>
+        <element1>
+            111
+        </element1>
+    </simpleTestObj1>
+    <title>title</title>
+    <simpleTestObj2>
+        <element2>
+            222
+        </element2>
+    </simpleTestObj2>
+</Nested2TestObj>

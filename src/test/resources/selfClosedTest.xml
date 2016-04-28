@@ -1,0 +1,5 @@
+<Nested2TestObj>
+    <simpleTestObj1 element1="111"/>
+    <title>title</title>
+    <simpleTestObj2 element2="222"/>
+</Nested2TestObj>

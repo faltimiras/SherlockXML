@@ -1,0 +1,9 @@
+<ListTestObj>
+    <list>
+        <SimpleTestObj>
+            <element1>
+                111
+            </element1>
+        </SimpleTestObj>
+    </list>
+</ListTestObj>
