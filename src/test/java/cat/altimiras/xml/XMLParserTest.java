@@ -32,10 +32,10 @@ public class XMLParserTest {
         assertEquals("222", o.getElement2());
     }
 
-    @Test(expected = InvalidXMLFormatException.class)
     public void invalidInputTest() throws  Exception{
         XMLParser<SimpleTestObj> parser = new XMLParserImpl<>(SimpleTestObj.class);
-        parser.parse("asdfasdfasdfasdf");
+        SimpleTestObj o = parser.parse("asdfasdfasdfasdf");
+        assertNull(o);
     }
 
     @Test

@@ -45,7 +45,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 
         while (cursor < xml.length) {
             Tag tag = getTag(xml, cursor);
-            if (tag == null) throw new InvalidXMLFormatException("Imposible to parse");
+            if (tag == null) break; //throw new InvalidXMLFormatException("Impossible to parse");
             cursor = tag.getEndPosition() + 1;
 
             //first tag object is create on constructor, just skip it
@@ -85,15 +85,32 @@ public class XMLParserImpl<T> implements XMLParser<T> {
             if (obj instanceof List) {
                 ((List) obj).add(value);
             } else {
+
                 Field field = obj.getClass().getDeclaredField(fieldName);
                 field.setAccessible(true);
-                field.set(obj, value);
+                field.set(obj, convertTo(field, value));
             }
         } catch (IllegalAccessException e) {
             throw new InvalidXMLFormatException(String.format("Error parsing xml %s", e.getMessage()));
         } catch (NoSuchFieldException e) {
             throw new InvalidXMLFormatException(String.format("%s do not exist on %s", fieldName, obj.getClass().getSimpleName()));
         }
+    }
+
+    private Object convertTo( Field field, Object value) {
+
+        if (field.getType().isAssignableFrom(String.class)){
+            return value;
+        } else if (field.getType().isAssignableFrom(Integer.class)) {
+            return Integer.valueOf(value.toString());
+        } else if (field.getType().isAssignableFrom(Long.class)) {
+            return Long.valueOf(value.toString());
+        } else if (field.getType().isAssignableFrom(Double.class)) {
+            return Double.valueOf(value.toString());
+        } else if (field.getType().isAssignableFrom(Float.class)) {
+            return Float.valueOf(value.toString());
+        }
+        return value;
     }
 
     private void setAttributes(Object obj, Tag tag) throws InvalidXMLFormatException {
@@ -153,7 +170,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
                 currentContext = parent;
 
                 stop = notify(tag.name, context.object);
-            } else { //is string
+            } else { //is String | Integer | Double | Long
                 String content = new String(xml, open.getEndPosition(), tag.getStartPosition() - open.getEndPosition()).trim();
                 setToObj(context.object, context.tag.name, content);
                 currentContext = context;
@@ -198,8 +215,10 @@ public class XMLParserImpl<T> implements XMLParser<T> {
                     field.set(currentContext.object, currentList);
 
                     context.object = currentList;
-//TODO suport per integer
-                } else if (field.getType().isAssignableFrom(String.class)) {
+                } else if (field.getType().isAssignableFrom(String.class)
+                        || field.getType().isAssignableFrom(Integer.class)
+                        || field.getType().isAssignableFrom(Long.class)
+                        || field.getType().isAssignableFrom(Double.class)) {
                     context = new Context();
                     context.object = currentContext.object;
                 } else { //object
