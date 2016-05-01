@@ -116,6 +116,8 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 
         try {
             Field field = getField(currentContext.object, tag.name);
+            if (field == null) throw new InvalidXMLFormatException(tag.name + " do not exist");
+
             Object object = Class.forName(field.getAnnotatedType().getType().getTypeName()).newInstance();
 
             //set attributes to object just created
@@ -124,8 +126,8 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 
             stop = notify(tag.name, object);
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+            throw new InvalidXMLFormatException(tag.name + " do not exist");
         }
 
         return stop;
