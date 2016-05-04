@@ -20,6 +20,8 @@ For instance, you have data you need, Stop parsing process and don't waste time 
 Don't waste time parsing huge XML if you only need a little part of it.
 
 #Example
+
+extremely simple, just this...
 ```
 XMLParser<ComplexObj> parser = XMLFactory.getParser(ComplexObj.class);
 ComplexObj o = parser.parse(xml);
