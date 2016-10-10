@@ -51,7 +51,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 		}
 
 		int cursor = 0;
-		String ignoringTag = null;
+		Tag ignoringTag = null;
 
 		while (cursor < xml.length) {
 			Tag tag = getTag(xml, cursor);
@@ -61,9 +61,12 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 			cursor = tag.getEndPosition() + 1;
 
 			//check is we are ignoring
-			if (ignoringTag != null && ignoringTag.equals(tag.name) && tag.type == TagType.CLOSE) {
+			if (ignoringTag != null && ignoringTag.name.equals(tag.name) && tag.type == TagType.CLOSE) {
 				ignoringTag = null;
 				continue;
+			}
+			if (ignoringTag != null && ignoringTag.type == TagType.SELF_CLOSED) {
+				ignoringTag = null;
 			}
 			if (ignoringTag != null) {
 				continue;
@@ -95,7 +98,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 				}
 			}
 			catch (IgnoreException ie) {
-				ignoringTag = tag.name;
+				ignoringTag = tag;
 			}
 		}
 		return obj;
