@@ -32,7 +32,6 @@ public class XMLListParserTest {
         assertEquals("222", o.getList().get(2).getElement2());
     }
 
-
     @Test
     public void xmlListNestedTest() throws Exception {
         String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listNestedTest.xml"), "UTF-8");
@@ -74,7 +73,4 @@ public class XMLListParserTest {
         assertEquals("333", o.getList().get(2).getElement1());
         assertEquals("444", o.getList().get(2).getElement2());
     }
-
-
-
 }

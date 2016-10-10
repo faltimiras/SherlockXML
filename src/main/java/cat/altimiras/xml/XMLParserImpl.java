@@ -11,12 +11,30 @@ import java.util.Stack;
 
 public class XMLParserImpl<T> implements XMLParser<T> {
 
+	/**
+	 * Stack with tags opened and still not closed
+	 */
 	private Stack<Context> contexts = new Stack<>();
+
+	/**
+	 * Listeners for tags. Notified every time a tag is totally processed (on close </..> tag)
+	 */
 	private Map<String, TagListener> listeners = new HashMap<>();
 
+	/**
+	 * Java object that is building from xml data.
+	 */
 	private T obj = null;
 
+	/**
+	 * Current tag that is being processed information
+	 */
 	private Context currentContext;
+
+	/**
+	 * Tag that is currently ignored as it is not mapped in the Java class
+	 */
+	private Tag ignoringTag = null;
 
 	public XMLParserImpl(Class<T> typeArgumentClass) throws Exception {
 		obj = (T) typeArgumentClass.newInstance();
@@ -51,7 +69,6 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 		}
 
 		int cursor = 0;
-		Tag ignoringTag = null;
 
 		while (cursor < xml.length) {
 			Tag tag = getTag(xml, cursor);
@@ -61,25 +78,17 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 			cursor = tag.getEndPosition() + 1;
 
 			//check is we are ignoring
-			if (ignoringTag != null && ignoringTag.name.equals(tag.name) && tag.type == TagType.CLOSE) {
-				ignoringTag = null;
-				continue;
-			}
-			if (ignoringTag != null && ignoringTag.type == TagType.SELF_CLOSED) {
-				ignoringTag = null;
-			}
-			if (ignoringTag != null) {
+			if (checkIgnoreTag(tag)) {
 				continue;
 			}
 
 			//first tag object is create on constructor, just skip it
 			if (tag.name.equals(obj.getClass().getSimpleName())) {
-				if (tag.attributes != null) {
-					setAttributes(obj, tag); //if parent obj has attributes
-				}
+				setAttributes(obj, tag); //if parent obj has attributes
 				continue;
 			}
 
+			//Start to process tag
 			try {
 				if (tag.type == TagType.CLOSE) {
 					if (onCloseTag(contexts.pop(), tag, xml)) {
@@ -90,7 +99,6 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 					if (onSelfClosedTag(contexts.peek(), tag)) {
 						break;
 					}
-
 				}
 				else { //is open tag
 					currentContext = onOpenTag(currentContext, tag);
@@ -102,6 +110,32 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 			}
 		}
 		return obj;
+	}
+
+	/**
+	 * Check if tags should be ignored  or not.
+	 *
+	 * @param tag
+	 *
+	 * @return true if should continue ignoring, false otherwise
+	 */
+	private boolean checkIgnoreTag(Tag tag) {
+
+		//if current tag is a closing and it is the same we are ignoring, stop ignoring and start to process next tag
+		if (ignoringTag != null && ignoringTag.name.equals(tag.name) && tag.type == TagType.CLOSE) {
+			ignoringTag = null;
+			return true;
+		}
+		// if current ignoring tag is self-closed, just stop to ignore it. As it is self closed
+		if (ignoringTag != null && ignoringTag.type == TagType.SELF_CLOSED) {
+			ignoringTag = null;
+		}
+		//Otherwise continue ignoring tags
+		if (ignoringTag != null) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -117,7 +151,6 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 				((List) obj).add(value);
 			}
 			else {
-
 				Field field = obj.getClass().getDeclaredField(fieldName);
 				field.setAccessible(true);
 				field.set(obj, convertTo(field, value));
@@ -185,9 +218,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 			}
 
 			//set attributes to object just created
-			if (tag.attributes != null) {
-				setAttributes(object, tag);
-			}
+			setAttributes(object, tag);
 			setToObj(context.object, tag.name, object);
 
 			stop = notify(tag.name, object);
@@ -257,6 +288,9 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 				if (currentContext instanceof XMLParserImpl.ListContext) {
 					context = new ObjectContext();
 					((ObjectContext) context).object = Class.forName(((ListContext) currentContext).className).newInstance();
+
+					//set attributes to object just created
+					setAttributes(context.object, tag);
 				}
 				else {
 					throw new IgnoreException(tag.name);
@@ -287,9 +321,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 					context.object = Class.forName(field.getAnnotatedType().getType().getTypeName()).newInstance();
 
 					//set attributes to object just created
-					if (tag.attributes != null) {
-						setAttributes(context.object, tag);
-					}
+					setAttributes(context.object, tag);
 
 					setToObj(currentContext.object, tag.name, context.object);
 				}
