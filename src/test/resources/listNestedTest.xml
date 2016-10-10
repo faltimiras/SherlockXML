@@ -1,4 +1,4 @@
-<NestedTestObj>
+<Nested4TestObj>
     <simpleElements>
         <SimpleTestObj>
             <element1>
@@ -10,4 +10,4 @@
         </SimpleTestObj>
     </simpleElements>
     <title>title</title>
-</NestedTestObj>
+</Nested4TestObj>

@@ -1,5 +1,7 @@
 package cat.altimiras.xml;
 
+import sun.java2d.pipe.hw.ContextCapabilities;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.*;
@@ -42,11 +44,21 @@ public class XMLParserImpl<T> implements XMLParser<T> {
         if (xml == null) throw new NullPointerException();
 
         int cursor = 0;
+        String ignoringTag = null;
 
         while (cursor < xml.length) {
             Tag tag = getTag(xml, cursor);
-            if (tag == null) break; //throw new InvalidXMLFormatException("Impossible to parse");
+            if (tag == null) break;
             cursor = tag.getEndPosition() + 1;
+
+            //check is we are ignoring
+            if (ignoringTag != null && ignoringTag.equals(tag.name) && tag.type==TagType.CLOSE) {
+                ignoringTag = null;
+                continue;
+            }
+            if ( ignoringTag != null){
+                continue;
+            }
 
             //first tag object is create on constructor, just skip it
             if (tag.name.equals(obj.getClass().getSimpleName())) {
@@ -55,18 +67,24 @@ public class XMLParserImpl<T> implements XMLParser<T> {
                 continue;
             }
 
-            if (tag.type == TagType.CLOSE) {
-                if (onCloseTag(contexts.pop(), tag, xml)) {
-                    break;
+            try {
+                if (tag.type == TagType.CLOSE) {
+                    if (onCloseTag(contexts.pop(), tag, xml)) {
+                        break;
+                    }
                 }
-            } else if (tag.type == TagType.SELF_CLOSED) {
-                if (onSelfClosedTag(contexts.peek(), tag)) {
-                    break;
-                }
+                else if (tag.type == TagType.SELF_CLOSED) {
+                    if (onSelfClosedTag(contexts.peek(), tag)) {
+                        break;
+                    }
 
-            } else { //is open tag
-                currentContext = onOpenTag(currentContext, tag);
-                contexts.push(currentContext);
+                }
+                else { //is open tag
+                    currentContext = onOpenTag(currentContext, tag);
+                    contexts.push(currentContext);
+                }
+            } catch (IgnoreException ie) {
+                ignoringTag = tag.name;
             }
         }
         return obj;
@@ -78,9 +96,8 @@ public class XMLParserImpl<T> implements XMLParser<T> {
      * @param obj
      * @param fieldName
      * @param value
-     * @throws Exception
      */
-    private void setToObj(Object obj, String fieldName, Object value) throws InvalidXMLFormatException {
+    private void setToObj(Object obj, String fieldName, Object value) {
         try {
             if (obj instanceof List) {
                 ((List) obj).add(value);
@@ -90,10 +107,8 @@ public class XMLParserImpl<T> implements XMLParser<T> {
                 field.setAccessible(true);
                 field.set(obj, convertTo(field, value));
             }
-        } catch (IllegalAccessException e) {
-            throw new InvalidXMLFormatException(String.format("Error parsing xml %s", e.getMessage()));
-        } catch (NoSuchFieldException e) {
-            throw new InvalidXMLFormatException(String.format("%s do not exist on %s", fieldName, obj.getClass().getSimpleName()));
+        } catch (Exception e) {
+            //ignore. If not exist, we just ignore it.
         }
     }
 
@@ -128,14 +143,23 @@ public class XMLParserImpl<T> implements XMLParser<T> {
      * @return
      * @throws InvalidXMLFormatException
      */
-    private boolean onSelfClosedTag(Context context, Tag tag) throws InvalidXMLFormatException {
+    private boolean onSelfClosedTag(Context context, Tag tag) throws InvalidXMLFormatException, IgnoreException {
         boolean stop = false;
 
         try {
             Field field = getField(currentContext.object, tag.name);
-            if (field == null) throw new InvalidXMLFormatException(tag.name + " do not exist");
 
-            Object object = Class.forName(field.getAnnotatedType().getType().getTypeName()).newInstance();
+            Object object;
+            if (field == null) {
+                //si el tag nou no esta dins obj actual, es un nou obj
+                if (currentContext instanceof XMLParserImpl.ListContext) {
+                    object = Class.forName(((ListContext) currentContext).className).newInstance();
+                } else {
+                    throw new IgnoreException(tag.name);
+                }
+            } else {
+                object = Class.forName(field.getAnnotatedType().getType().getTypeName()).newInstance();
+            }
 
             //set attributes to object just created
             if (tag.attributes != null) setAttributes(object, tag);
@@ -191,9 +215,10 @@ public class XMLParserImpl<T> implements XMLParser<T> {
      * @return new context
      * @throws InvalidXMLFormatException
      */
-    private Context onOpenTag(Context currentContext, Tag tag) throws InvalidXMLFormatException {
+    private Context onOpenTag(Context currentContext, Tag tag) throws InvalidXMLFormatException, IgnoreException {
         Context context;
         Field field = getField(currentContext.object, tag.name);
+
         try {
             if (field == null) {
                 //si el tag nou no esta dins obj actual, es un nou obj
@@ -201,7 +226,9 @@ public class XMLParserImpl<T> implements XMLParser<T> {
                     context = new ObjectContext();
                     ((ObjectContext) context).object = Class.forName(((ListContext) currentContext).className).newInstance();
                 } else {
-                    throw new InvalidXMLFormatException(String.format("%s do not exist", tag.name));
+                   //throw new InvalidXMLFormatException(String.format("%s do not exist", tag.name));
+                    throw new IgnoreException(tag.name);
+                    //return null;
                 }
             } else {
 
@@ -250,6 +277,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
                 return fields[i];
             }
         }
+
         return null;
     }
 
@@ -267,7 +295,6 @@ public class XMLParserImpl<T> implements XMLParser<T> {
         }
         return false; //to continue
     }
-
 
     /**
      * Looks for next tag on xml

@@ -1,0 +1,9 @@
+<Nested5TestObj>
+    <list>
+            <simpleTestObj1 element1="111"/>
+            <simpleTestObj1 element2="222"/>
+            <simpleTestObj1 element2="333"/>
+            <simpleTestObj1 element1="444" element2="555"/>
+    </list>
+    <title>title</title>
+</Nested5TestObj>
