@@ -1,10 +1,13 @@
 package cat.altimiras.xml;
 
-import sun.java2d.pipe.hw.ContextCapabilities;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 
 public class XMLParserImpl<T> implements XMLParser<T> {
 
