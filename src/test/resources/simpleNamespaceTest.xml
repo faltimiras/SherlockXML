@@ -1,0 +1,8 @@
+<ns:SimpleTestObj>
+    <ns1:element1>
+        111
+    </ns1:element1>
+    <element2>
+        222
+    </element2>
+</ns:SimpleTestObj>

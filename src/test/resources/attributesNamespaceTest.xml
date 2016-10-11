@@ -1,0 +1,12 @@
+<ms:Nested3TestObj>
+    <uu:simpleTestObj1>
+        <pp:element1>
+            111
+        </pp:element1>
+    </uu:simpleTestObj1>
+    <title>title</title>
+    <nestedTestObj>
+        <simpleTestObj element1="222">
+        </simpleTestObj>
+    </nestedTestObj>
+</ms:Nested3TestObj>

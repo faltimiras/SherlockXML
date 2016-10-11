@@ -280,7 +280,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 				stop = notify(tag.name, context.object);
 			}
 			else { //is String | Integer | Double | Long
-				String content = new String(xml, open.getEndPosition(), tag.getStartPosition() - open.getEndPosition()).trim();
+				String content = new String(xml, open.getEndPosition(), tag.getStartPosition()  - open.getEndPosition()).trim();
 				setToObj(context.object, context.tag.name, content);
 				currentContext = context;
 
@@ -413,6 +413,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 		TagType tagType = null;
 
 		int startTag = cursor;
+		int namespacePosition = 0;
 		boolean in = false; //inside tag
 		boolean inAtt = false; //there are attributes
 
@@ -431,24 +432,30 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 
 			if (in && xml[cursor] == '>') {
 				if (inAtt) {
-					return getTagWithAttributes(Arrays.copyOfRange(xml, startTag + 1, cursor), cursor + 1, TagType.OPEN);
+					//return getTagWithAttributes(Arrays.copyOfRange(xml, startTag + 1, cursor), cursor + 1, TagType.OPEN);
+					return getTagWithAttributes(Arrays.copyOfRange(xml, startTag + 1, cursor), cursor + 1, namespacePosition, TagType.OPEN);
 				}
 				else {
-					return new Tag(new String(xml, startTag + 1, cursor - startTag - 1), cursor + 1, tagType);
+					//return new Tag(new String(xml, startTag + 1, cursor - startTag - 1), cursor + 1, tagType);
+
+					return new Tag(xml, startTag + 1, cursor - startTag - 1, namespacePosition, cursor + 1, tagType);
 				}
 			}
 			else if (in && xml[cursor] == '/' && xml[cursor + 1] == '>') {
-
 				if (tagType == TagType.OPEN) {
-					return getTagWithAttributes(Arrays.copyOfRange(xml, startTag + 1, cursor), cursor + 1, TagType.SELF_CLOSED);
+					//return getTagWithAttributes(Arrays.copyOfRange(xml, startTag + 1, cursor), cursor + 1, TagType.SELF_CLOSED);
+
+					return getTagWithAttributes(Arrays.copyOfRange(xml, startTag + 1, cursor), cursor + 1, namespacePosition - startTag, TagType.SELF_CLOSED);
 				}
 				else {
-					return new Tag(new String(xml, startTag + 2, cursor - startTag - 1), cursor + 1, tagType);
+					//return new Tag(new String(xml, startTag + 2, cursor - startTag - 1), cursor + 1, tagType);
+					return new Tag(xml, startTag + 1, cursor - startTag - 1, namespacePosition, cursor + 1, tagType);
 				}
-
 			}
 			else if (in && xml[cursor] == '=') { //if there is an equal is -> there is/are attributes
 				inAtt = true;
+			} else if (xml[cursor] == ':') { // there is a namespace
+				namespacePosition = cursor;
 			}
 
 			cursor++;
@@ -456,7 +463,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 		return null;
 	}
 
-	private Tag getTagWithAttributes(byte[] tagDeclaration, int generalCursor, TagType tagType) {
+	private Tag getTagWithAttributes(byte[] tagDeclaration, int generalCursor, int namespacePos, TagType tagType) {
 
 		int cursor = 0; //skip first <
 		int startAttName = 0;
@@ -474,7 +481,15 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 		while (cursor < tagDeclaration.length) {
 
 			if (!endName && tagDeclaration[cursor] == ' ') { //end of tag name
-				tag.name = new String(tagDeclaration, 0, cursor);
+
+				if (namespacePos <= 0) { //if selfClosed with no namespace => namespace < 0
+					tag.name = new String(tagDeclaration, 0, cursor);
+				} else {
+					tag.name = new String(tagDeclaration, 0 + namespacePos, cursor);
+					tag.namespace = new String(tagDeclaration, 0, namespacePos);
+				}
+
+				//tag.name = new String(tagDeclaration, 0, cursor);
 				endName = true;
 				startAttName = cursor;
 			}
@@ -527,6 +542,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 		private int position;
 		private TagType type;
 		private List<Attribute> attributes;
+		private String namespace;
 
 		public Tag() {
 		}
@@ -537,12 +553,35 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 			this.type = type;
 		}
 
+		//return new Tag(new String(xml, startTag + 1, cursor - startTag - 1), cursor + 1, tagType);
+		public Tag(byte[] xml, int startPos, int endPos, int namespacePos, int position, TagType type) {
+			this.position = position;
+			this.type = type;
+			if (namespacePos == 0) {
+				this.name = new String(xml, startPos, endPos);
+			} else {
+				int namespaceLengh = namespacePos - startPos +1;
+				this.name = new String(xml, startPos + namespaceLengh, endPos - namespaceLengh);
+				this.namespace = new String(xml, startPos, namespacePos - startPos);
+			}
+		}
+
 		public int getStartPosition() {
-			return position - name.length() - 3; // 3 = <(1= /(2)>(3)
+			if (namespace == null){
+				return position - name.length() - 3; // 3 = <(1= /(2)>(3)
+			} else {
+				return position - name.length() - 3 - namespace.length() -1; // 3 = <(1= /(2)>(3)
+			}
+
 		}
 
 		public int getEndPosition() {
-			return position;
+			if (namespace == null) {
+				return position;
+			} else {
+				return position + namespace.length() + 1; // 1 = :(1)
+			}
+
 		}
 
 		public boolean isOpening() {
@@ -551,6 +590,10 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 
 		public boolean isClosing() {
 			return type == TagType.CLOSE || type == TagType.SELF_CLOSED;
+		}
+
+		public boolean hasNamespace() {
+			return namespace!=null;
 		}
 	}
 }
