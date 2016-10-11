@@ -36,6 +36,8 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 	 */
 	private Tag ignoringTag = null;
 
+	private boolean found = false;
+
 	public XMLParserImpl(Class<T> typeArgumentClass) throws Exception {
 		obj = (T) typeArgumentClass.newInstance();
 
@@ -59,7 +61,6 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 	}
 
 //TODO support comments <!-- -->
-//TODO afegir clases per ignorar, soapenvelope, body ...
 
 	@Override
 	public T parse(byte[] xml) throws InvalidXMLFormatException, NullPointerException {
@@ -71,21 +72,25 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 		int cursor = 0;
 
 		while (cursor < xml.length) {
+			//extract tag to process
 			Tag tag = getTag(xml, cursor);
 			if (tag == null) {
 				break;
 			}
 			cursor = tag.getEndPosition() + 1;
 
-			//check is we are ignoring
+			//check is tag must be ignored
 			if (checkIgnoreTag(tag)) {
 				continue;
 			}
 
-			//first tag object is create on constructor, just skip it
 			if (tag.name.equals(obj.getClass().getSimpleName())) {
-				setAttributes(obj, tag); //if parent obj has attributes
-				continue;
+				if (tag.isOpening()) {
+					setAttributes(obj, tag); //if parent obj has attributes
+					continue;
+				} else {
+					break; //object has completely processed. Finish
+				}
 			}
 
 			//Start to process tag
@@ -121,6 +126,17 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 	 */
 	private boolean checkIgnoreTag(Tag tag) {
 
+		//found obj we want
+		if(!found && tag.name.equals(obj.getClass().getSimpleName())){
+			found = true;
+			return false;
+		}
+
+		//skip tags at the beginning that don't care
+		if(!found && !tag.name.equals(obj.getClass().getSimpleName())){
+			return true;
+		}
+
 		//if current tag is a closing and it is the same we are ignoring, stop ignoring and start to process next tag
 		if (ignoringTag != null && ignoringTag.name.equals(tag.name) && tag.type == TagType.CLOSE) {
 			ignoringTag = null;
@@ -129,6 +145,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 		// if current ignoring tag is self-closed, just stop to ignore it. As it is self closed
 		if (ignoringTag != null && ignoringTag.type == TagType.SELF_CLOSED) {
 			ignoringTag = null;
+			return false;
 		}
 		//Otherwise continue ignoring tags
 		if (ignoringTag != null) {
@@ -181,6 +198,12 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 		return value;
 	}
 
+	/**
+	 * Set Tag attributes to object if names match
+	 * @param obj
+	 * @param tag
+	 * @throws InvalidXMLFormatException
+	 */
 	private void setAttributes(Object obj, Tag tag) throws InvalidXMLFormatException {
 		if (tag.attributes != null) {
 			for (Attribute attribute : tag.attributes) {
@@ -190,6 +213,8 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 	}
 
 	/**
+	 * Self closed tag <tag/> management
+	 *
 	 * @param context actual tag context
 	 * @param tag     new tag read
 	 *
@@ -341,6 +366,13 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 		return context;
 	}
 
+	/**
+	 * Return field with name <name> if exist on obj. Null otherwise.
+	 *
+	 * @param obj
+	 * @param name
+	 * @return
+	 */
 	private Field getField(Object obj, String name) {
 		Field[] fields = obj.getClass().getDeclaredFields();
 		for (int i = 0; i < fields.length; i++) {
@@ -383,7 +415,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 		int startTag = cursor;
 		boolean in = false; //inside tag
 		boolean inAtt = false; //there are attributes
-		//boolean close = false; //this is a closing tag
+
 		while (cursor < xml.length) {
 
 			if (xml[cursor] == '<' && xml[cursor + 1] == '/') {
@@ -511,6 +543,14 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 
 		public int getEndPosition() {
 			return position;
+		}
+
+		public boolean isOpening() {
+			return type == TagType.OPEN || type == TagType.SELF_CLOSED;
+		}
+
+		public boolean isClosing() {
+			return type == TagType.CLOSE || type == TagType.SELF_CLOSED;
 		}
 	}
 }

@@ -33,4 +33,15 @@ public class XMLIgnoreTagsParserTest {
         assertEquals("title", o.getTitle());
     }
 
+    @Test
+    public void xmlIgnoreTagsBeginningTest() throws Exception {
+        String xml = IOUtils.toString(this.getClass().getResourceAsStream("/ignoreBeginningTest.xml"), "UTF-8");
+        XMLParser<SimpleTestObj> parser = new XMLParserImpl<>(SimpleTestObj.class);
+
+        SimpleTestObj o = parser.parse(xml);
+
+        assertEquals("111", o.getElement1());
+        assertEquals("222", o.getElement2());
+    }
+
 }
