@@ -27,3 +27,6 @@ XMLParser<ComplexObj> parser = XMLFactory.getParser(ComplexObj.class);
 ComplexObj o = parser.parse(xml);
 ```
 
+#Known limitations
+Do not support tag names collisions. ns:tagA and ns1:tagA is the same for this parser and it expects for a class called tagA.
+Do not support comments. XML can not contain <!-- --> 
