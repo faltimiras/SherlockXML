@@ -32,6 +32,17 @@ public class XMLParserTest {
         assertEquals("222", o.getElement2());
     }
 
+    @Test
+    public void xmlSimpleInlineTest() throws Exception {
+        String xml = IOUtils.toString(this.getClass().getResourceAsStream("/simpleInlineTest.xml"), "UTF-8");
+        XMLParser<SimpleTestObj> parser = new XMLParserImpl<>(SimpleTestObj.class);
+
+        SimpleTestObj o = parser.parse(xml);
+
+        assertEquals("111", o.getElement1());
+        assertEquals("222", o.getElement2());
+    }
+
     public void invalidInputTest() throws  Exception{
         XMLParser<SimpleTestObj> parser = new XMLParserImpl<>(SimpleTestObj.class);
         SimpleTestObj o = parser.parse("asdfasdfasdfasdf");

@@ -77,7 +77,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 			if (tag == null) {
 				break;
 			}
-			cursor = tag.getEndPosition() + 1;
+			cursor = tag.getEndPosition();
 
 			//check is tag must be ignored
 			if (checkIgnoreTag(tag)) {
