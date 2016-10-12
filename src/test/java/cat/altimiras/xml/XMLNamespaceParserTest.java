@@ -49,4 +49,20 @@ public class XMLNamespaceParserTest {
         assertEquals("444", o.getList().get(3).getElement1());
         assertEquals("555", o.getList().get(3).getElement2());
     }
+
+    @Test
+    public void xmlNamespaComplexTest() throws Exception {
+        String xml = IOUtils.toString(this.getClass().getResourceAsStream("/namespacesComplexTest.xml"), "UTF-8");
+        XMLParser<Nested5TestObj> parser = new XMLParserImpl<>(Nested5TestObj.class);
+
+        Nested5TestObj o = parser.parse(xml);
+
+        assertEquals("title", o.getTitle());
+        assertEquals("111", o.getList().get(0).getElement1());
+        assertEquals("222", o.getList().get(1).getElement2());
+        assertEquals("333", o.getList().get(2).getElement2());
+        assertEquals("444", o.getList().get(3).getElement1());
+        assertEquals("555", o.getList().get(3).getElement2());
+    }
+
 }

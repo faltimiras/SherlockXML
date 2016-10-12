@@ -8,7 +8,7 @@ import static org.junit.Assert.assertEquals;
 
 public class XMAttributesParserTest {
 
-    //@Test
+    @Test
     public void xmlSimpleAttributeTest() throws Exception {
         String xml = IOUtils.toString(this.getClass().getResourceAsStream("/simpleAttributeTest.xml"), "UTF-8");
         XMLParser<SimpleTestObj> parser = new XMLParserImpl<>(SimpleTestObj.class);
@@ -18,14 +18,14 @@ public class XMAttributesParserTest {
         assertEquals("111", o.getElement1());
     }
 
-    //@Test
+    @Test
     public void xmlAttributesTest() throws Exception {
         String xml = IOUtils.toString(this.getClass().getResourceAsStream("/attributesTest.xml"), "UTF-8");
         XMLParser<SimpleTestObj> parser = new XMLParserImpl<>(SimpleTestObj.class);
 
         SimpleTestObj o = parser.parse(xml);
 
-        assertEquals("111", o.getElement1());
+        assertEquals("11=1", o.getElement1());
         assertEquals("222", o.getElement2());
     }
 

@@ -1,0 +1,11 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+    <soapenv:Body>
+        <pp:Nested5TestObj xmlns:pp="http://ns.test.com/pp" xmlns:pop="http://ns.test.com/po">
+            <pp:list>
+                <po:simpleTestObj1 element1="111" xmlns:po="http://ns.test.com/po"/>
+                <pop:simpleTestObj1 element2="222"/>
+                <po:simpleTestObj1 element2="333" xmlns:po="http://ns.test.com/po"/>
+                <simpleTestObj1 element1="444" element2="555"/>
+            </pp:list>
+            <title>title</title>
+        </pp:Nested5TestObj>

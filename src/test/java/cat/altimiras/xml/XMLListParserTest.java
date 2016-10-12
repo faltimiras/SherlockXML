@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class XMLListParserTest {
 
@@ -72,5 +73,15 @@ public class XMLListParserTest {
         assertNull(o.getList().get(1).getElement1());
         assertEquals("333", o.getList().get(2).getElement1());
         assertEquals("444", o.getList().get(2).getElement2());
+    }
+
+    @Test
+    public void xmlEmptyListTest() throws  Exception {
+        String xml = IOUtils.toString(this.getClass().getResourceAsStream("/emptyListTest.xml"), "UTF-8");
+        XMLParser<ListTestObj> parser = new XMLParserImpl<>(ListTestObj.class);
+
+        ListTestObj o = parser.parse(xml);
+
+        assertTrue(o.getList().isEmpty());
     }
 }
