@@ -1,0 +1,8 @@
+<SimpleTestObj>
+    <element1>
+        <![CDATA[lolo <br> lolo]]>
+    </element1>
+    <element2>
+        222
+    </element2>
+</SimpleTestObj>
