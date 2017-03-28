@@ -1,1 +1,1 @@
-<TypeTestObj text="text" integerNum="1" longNum="2" doubleNum="1.1" floatNum="1.2" />
+<TypeTestObj text="text" integerNum="1" longNum="2" doubleNum="1.1" floatNum="1.2" booleanValue="true"  intPrimitiveNum="1" longPrimitiveNum="2" doublePrimitiveNum="1.1" floatPrimitiveNum="1.2" booleanPrimitiveValue="true"  />

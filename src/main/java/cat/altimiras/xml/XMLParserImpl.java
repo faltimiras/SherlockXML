@@ -204,17 +204,20 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 		if (field.getType().isAssignableFrom(String.class)) {
 			return value;
 		}
-		else if (field.getType().isAssignableFrom(Integer.class)) {
+		else if (field.getType().isAssignableFrom(Integer.class) || field.getType().isAssignableFrom(Integer.TYPE)) {
 			return Integer.valueOf(value.toString());
 		}
-		else if (field.getType().isAssignableFrom(Long.class)) {
+		else if (field.getType().isAssignableFrom(Long.class) || field.getType().isAssignableFrom(Long.TYPE)) {
 			return Long.valueOf(value.toString());
 		}
-		else if (field.getType().isAssignableFrom(Double.class)) {
+		else if (field.getType().isAssignableFrom(Double.class) || field.getType().isAssignableFrom(Double.TYPE)) {
 			return Double.valueOf(value.toString());
 		}
-		else if (field.getType().isAssignableFrom(Float.class)) {
+		else if (field.getType().isAssignableFrom(Float.class) || field.getType().isAssignableFrom(Float.TYPE)) {
 			return Float.valueOf(value.toString());
+		}
+		else if (field.getType().isAssignableFrom(Boolean.class) || field.getType().isAssignableFrom(Boolean.TYPE)) {
+			return Boolean.valueOf(value.toString());
 		}
 		return value;
 	}

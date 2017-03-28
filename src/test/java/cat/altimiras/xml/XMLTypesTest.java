@@ -23,7 +23,13 @@ public class XMLTypesTest {
         assertEquals(new Double(1.1), o.getDoubleNum());
         assertEquals(new Float(1.2), o.getFloatNum());
         assertEquals(new Long(2), o.getLongNum());
+        assertEquals(true, o.getBooleanValue());
 
+        assertEquals(1, o.getIntPrimitiveNum());
+        assertEquals(1.1d, o.getDoublePrimitiveNum(),0.0d);
+        assertEquals(1.2f, o.getFloatPrimitiveNum(), 0.0f);
+        assertEquals(2l, o.getLongPrimitiveNum());
+        assertEquals(true, o.isBooleanPrimitiveValue());
     }
 
 
