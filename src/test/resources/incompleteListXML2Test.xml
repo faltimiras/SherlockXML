@@ -1,0 +1,16 @@
+<pp:Nested6TestObj>
+    <title>lolo</title>
+    <list>
+        <pp:Nested5TestObj>
+            <po:list>
+                <po:simpleTestObj1 element1="111"/>
+                <simpleTestObj1 element2="222"/>
+                <po:simpleTestObj1 element2="333"/>
+                <simpleTestObj1 element1="444" element2="555"/>
+            </po:list>
+            <title>title</title>
+        </pp:Nested5TestObj>
+        <pp:Nested5TestObj>
+            <po:list>
+                <po:simpleTestObj1 element1="666"/>
+                <simpleTestObj1 element2="777"/>

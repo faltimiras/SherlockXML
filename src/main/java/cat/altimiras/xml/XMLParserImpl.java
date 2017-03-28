@@ -39,7 +39,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 	private boolean found = false;
 
 	public XMLParserImpl(Class<T> typeArgumentClass) throws Exception {
-		obj = (T) typeArgumentClass.newInstance();
+		obj = typeArgumentClass.newInstance();
 
 		currentContext = new Context();
 		currentContext.object = obj;
@@ -48,8 +48,8 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 	}
 
 	@Override
-	public void register(String tag, TagListener listner) {
-		listeners.put(tag, listner);
+	public void register(String tag, TagListener listener) {
+		listeners.put(tag, listener);
 	}
 
 	@Override
@@ -79,7 +79,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 			}
 			cursor = tag.getEndPosition();
 
-			//check is tag must be ignored
+			//check if tag must be ignored
 			if (checkIgnoreTag(tag)) {
 				continue;
 			}
@@ -115,7 +115,27 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 				ignoringTag = tag;
 			}
 		}
+
+		//Base object is always on the context. If there are more, perhaps there are values pending ot set to base object
+		if (contexts.size() > 1) {
+			flushIncomplete();
+		}
+
 		return obj;
+	}
+
+	/**
+	 * Flush to base object data is on the context but it can not be flushed due to XML is not correct and some tags hasn't been closed
+	 */
+	private void flushIncomplete() {
+
+		Context nested = contexts.pop();
+
+		while (!contexts.isEmpty()) {
+			Context current = contexts.pop();
+			setToObj(current.object, current.tag.name, nested.object);
+			nested = current;
+		}
 	}
 
 	/**
@@ -279,7 +299,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 	 */
 	private boolean onCloseTag(Context context, Tag tag, byte[] xml) throws InvalidXMLFormatException {
 		Tag open = context.tag;
-		boolean stop = false;
+		boolean stop;
 
 		try {
 			if (context instanceof XMLParserImpl.ObjectContext) { //object or list
