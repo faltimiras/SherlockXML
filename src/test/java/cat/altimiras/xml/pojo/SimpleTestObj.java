@@ -11,12 +11,4 @@ public class SimpleTestObj {
 	public String getElement2() {
 		return element2;
 	}
-
-	public void setElement1(String element1) {
-		this.element1 = element1;
-	}
-
-	public void setElement2(String element2) {
-		this.element2 = element2;
-	}
 }

@@ -13,12 +13,4 @@ public class Nested4TestObj {
 	public List<SimpleTestObj> getSimpleElements() {
 		return simpleElements;
 	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public void setSimpleElements(List<SimpleTestObj> simpleElements) {
-		this.simpleElements = simpleElements;
-	}
 }

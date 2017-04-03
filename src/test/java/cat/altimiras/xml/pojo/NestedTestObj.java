@@ -12,11 +12,4 @@ public class NestedTestObj {
 		return simpleTestObj;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public void setSimpleTestObj(SimpleTestObj simpleTestObj) {
-		this.simpleTestObj = simpleTestObj;
-	}
 }

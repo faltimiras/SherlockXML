@@ -14,11 +14,4 @@ public class Nested5TestObj {
 		return list;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public void setList(List<SimpleTestObj> list) {
-		this.list = list;
-	}
 }

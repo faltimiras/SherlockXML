@@ -18,16 +18,4 @@ public class Nested6TestObj {
 	public List<Nested5TestObj> getList() {
 		return list;
 	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public void setSimpleTestObj(SimpleTestObj simpleTestObj) {
-		this.simpleTestObj = simpleTestObj;
-	}
-
-	public void setList(List<Nested5TestObj> list) {
-		this.list = list;
-	}
 }

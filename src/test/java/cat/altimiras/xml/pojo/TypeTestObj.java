@@ -58,48 +58,4 @@ public class TypeTestObj {
 	public boolean isBooleanPrimitiveValue() {
 		return booleanPrimitiveValue;
 	}
-
-	public void setText(String text) {
-		this.text = text;
-	}
-
-	public void setIntegerNum(Integer integerNum) {
-		this.integerNum = integerNum;
-	}
-
-	public void setLongNum(Long longNum) {
-		this.longNum = longNum;
-	}
-
-	public void setDoubleNum(Double doubleNum) {
-		this.doubleNum = doubleNum;
-	}
-
-	public void setFloatNum(Float floatNum) {
-		this.floatNum = floatNum;
-	}
-
-	public void setBooleanValue(Boolean booleanValue) {
-		this.booleanValue = booleanValue;
-	}
-
-	public void setIntPrimitiveNum(int intPrimitiveNum) {
-		this.intPrimitiveNum = intPrimitiveNum;
-	}
-
-	public void setLongPrimitiveNum(long longPrimitiveNum) {
-		this.longPrimitiveNum = longPrimitiveNum;
-	}
-
-	public void setDoublePrimitiveNum(double doublePrimitiveNum) {
-		this.doublePrimitiveNum = doublePrimitiveNum;
-	}
-
-	public void setFloatPrimitiveNum(float floatPrimitiveNum) {
-		this.floatPrimitiveNum = floatPrimitiveNum;
-	}
-
-	public void setBooleanPrimitiveValue(boolean booleanPrimitiveValue) {
-		this.booleanPrimitiveValue = booleanPrimitiveValue;
-	}
 }

@@ -18,15 +18,4 @@ public class Nested3TestObj {
 		return simpleTestObj1;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public void setNestedTestObj(NestedTestObj nestedTestObj) {
-		this.nestedTestObj = nestedTestObj;
-	}
-
-	public void setSimpleTestObj1(SimpleTestObj simpleTestObj1) {
-		this.simpleTestObj1 = simpleTestObj1;
-	}
 }

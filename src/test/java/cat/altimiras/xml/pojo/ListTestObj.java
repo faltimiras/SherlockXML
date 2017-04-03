@@ -11,12 +11,4 @@ public class ListTestObj {
 		return list;
 	}
 
-	public void setList(ArrayList<SimpleTestObj> list) {
-		this.list = list;
-	}
-	/*
-    public void setList(List<SimpleTestObj> list) {
-        this.list = list;
-    }
-    */
 }
