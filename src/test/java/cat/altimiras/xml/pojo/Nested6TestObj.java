@@ -3,19 +3,31 @@ package cat.altimiras.xml.pojo;
 import java.util.List;
 
 public class Nested6TestObj {
-    private String title;
-    private SimpleTestObj simpleTestObj;
-    private List<Nested5TestObj> list;
+	private String title;
+	private SimpleTestObj simpleTestObj;
+	private List<Nested5TestObj> list;
 
-    public String getTitle() {
-        return title;
-    }
+	public String getTitle() {
+		return title;
+	}
 
-    public SimpleTestObj getSimpleTestObj() {
-        return simpleTestObj;
-    }
+	public SimpleTestObj getSimpleTestObj() {
+		return simpleTestObj;
+	}
 
-    public List<Nested5TestObj> getList() {
-        return list;
-    }
+	public List<Nested5TestObj> getList() {
+		return list;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public void setSimpleTestObj(SimpleTestObj simpleTestObj) {
+		this.simpleTestObj = simpleTestObj;
+	}
+
+	public void setList(List<Nested5TestObj> list) {
+		this.list = list;
+	}
 }

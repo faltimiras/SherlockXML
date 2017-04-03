@@ -9,15 +9,18 @@ import static org.junit.Assert.assertEquals;
 public class XMLSelfClosedParserTest {
 
 
-    @Test
-    public void xmlSelfClosedTest() throws Exception {
-        String xml = IOUtils.toString(this.getClass().getResourceAsStream("/selfClosedTest.xml"), "UTF-8");
-        XMLParser<Nested2TestObj> parser = new XMLParserImpl<>(Nested2TestObj.class);
+	@Test
+	public void xmlSelfClosedTest() throws Exception {
 
-        Nested2TestObj o = parser.parse(xml);
+		ClassIntrospector ci = new ClassIntrospector(Nested2TestObj.class);
 
-        assertEquals("title", o.getTitle());
-        assertEquals("111", o.getSimpleTestObj1().getElement1());
-        assertEquals("222", o.getSimpleTestObj2().getElement2());
-    }
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/selfClosedTest.xml"), "UTF-8");
+		XMLParser<Nested2TestObj> parser = new XMLParserImpl<>(Nested2TestObj.class, ci);
+
+		Nested2TestObj o = parser.parse(xml);
+
+		assertEquals("title", o.getTitle());
+		assertEquals("111", o.getSimpleTestObj1().getElement1());
+		assertEquals("222", o.getSimpleTestObj2().getElement2());
+	}
 }

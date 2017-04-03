@@ -5,79 +5,93 @@ import cat.altimiras.xml.pojo.Nested2TestObj;
 import cat.altimiras.xml.pojo.SimpleTestObj;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class TagListenerTest {
 
-    @Test
-    public void listenerStringTest() throws Exception{
 
-        String xml = IOUtils.toString(this.getClass().getResourceAsStream("/simpleTest.xml"), "UTF-8");
-        XMLParser<SimpleTestObj> parser = new XMLParserImpl<>(SimpleTestObj.class);
+	@Test
+	public void listenerStringTest() throws Exception {
 
-        TagListener stringListener = mock(TagListener.class);
-        when(stringListener.notify("element1", "111")).thenReturn(false);
+		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
 
-        //register listener
-        parser.register("element1", stringListener);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/simpleTest.xml"), "UTF-8");
+		XMLParser<SimpleTestObj> parser = new XMLParserImpl<>(SimpleTestObj.class, ci);
 
-        parser.parse(xml);
-        verify(stringListener, times(1)).notify("element1", "111");
-    }
+		TagListener stringListener = mock(TagListener.class);
+		when(stringListener.notify("element1", "111")).thenReturn(false);
 
-    @Test
-    public void listenerObjectTest() throws Exception{
+		//register listener
+		parser.register("element1", stringListener);
 
-        String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nested2Test.xml"), "UTF-8");
-        XMLParser<Nested2TestObj> parser = new XMLParserImpl<>(Nested2TestObj.class);
+		parser.parse(xml);
+		verify(stringListener, times(1)).notify("element1", "111");
+	}
 
-        TagListener objListener = mock(TagListener.class);
-        when(objListener.notify(eq("simpleTestObj1"), any())).thenReturn(false);
+	@Test
+	public void listenerObjectTest() throws Exception {
 
-        //register listener
-        parser.register("simpleTestObj1", objListener);
+		ClassIntrospector ci = new ClassIntrospector(Nested2TestObj.class);
 
-        parser.parse(xml);
-        verify(objListener, times(1)).notify(eq("simpleTestObj1"), any());
-    }
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nested2Test.xml"), "UTF-8");
+		XMLParser<Nested2TestObj> parser = new XMLParserImpl<>(Nested2TestObj.class, ci);
 
-    @Test
-    public void listenerNotPresentTest() throws Exception{
+		TagListener objListener = mock(TagListener.class);
+		when(objListener.notify(eq("simpleTestObj1"), any())).thenReturn(false);
 
-        String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nested2Test.xml"), "UTF-8");
-        XMLParser<Nested2TestObj> parser = new XMLParserImpl<>(Nested2TestObj.class);
+		//register listener
+		parser.register("simpleTestObj1", objListener);
 
-        TagListener objListener = mock(TagListener.class);
-        when(objListener.notify(eq("tagNotFound"), any())).thenReturn(false);
+		parser.parse(xml);
+		verify(objListener, times(1)).notify(eq("simpleTestObj1"), any());
+	}
 
-        //register listener
-        parser.register("tagNotFound", objListener);
+	@Test
+	public void listenerNotPresentTest() throws Exception {
 
-        parser.parse(xml);
-        verify(objListener, never()).notify(eq("tagNotFound"), any());
-    }
+		ClassIntrospector ci = new ClassIntrospector(Nested2TestObj.class);
 
-    @Test
-    public void listenerStopTest() throws Exception{
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nested2Test.xml"), "UTF-8");
+		XMLParser<Nested2TestObj> parser = new XMLParserImpl<>(Nested2TestObj.class, ci);
 
-        String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nested2Test.xml"), "UTF-8");
-        XMLParser<Nested2TestObj> parser = new XMLParserImpl<>(Nested2TestObj.class);
+		TagListener objListener = mock(TagListener.class);
+		when(objListener.notify(eq("tagNotFound"), any())).thenReturn(false);
 
-        TagListener objListener = mock(TagListener.class);
-        when(objListener.notify(eq("simpleTestObj1"), any())).thenReturn(true);
+		//register listener
+		parser.register("tagNotFound", objListener);
 
-        //register listener
-        parser.register("simpleTestObj1", objListener);
+		parser.parse(xml);
+		verify(objListener, never()).notify(eq("tagNotFound"), any());
+	}
 
-        Nested2TestObj o = parser.parse(xml);
+	@Test
+	public void listenerStopTest() throws Exception {
 
-        verify(objListener, times(1)).notify(eq("simpleTestObj1"), any());
-        assertNull("title should not be parsed", o.getTitle());
-        assertEquals("111", o.getSimpleTestObj1().getElement1());
-        assertNull("title should not be parsed", o.getSimpleTestObj2());
-    }
+		ClassIntrospector ci = new ClassIntrospector(Nested2TestObj.class);
+
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nested2Test.xml"), "UTF-8");
+		XMLParser<Nested2TestObj> parser = new XMLParserImpl<>(Nested2TestObj.class, ci);
+
+		TagListener objListener = mock(TagListener.class);
+		when(objListener.notify(eq("simpleTestObj1"), any())).thenReturn(true);
+
+		//register listener
+		parser.register("simpleTestObj1", objListener);
+
+		Nested2TestObj o = parser.parse(xml);
+
+		verify(objListener, times(1)).notify(eq("simpleTestObj1"), any());
+		assertNull("title should not be parsed", o.getTitle());
+		assertEquals("111", o.getSimpleTestObj1().getElement1());
+		assertNull("title should not be parsed", o.getSimpleTestObj2());
+	}
 }

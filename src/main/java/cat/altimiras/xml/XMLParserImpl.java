@@ -19,7 +19,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 	/**
 	 * Listeners for tags. Notified every time a tag is totally processed (on close </..> tag)
 	 */
-	private Map<String, TagListener> listeners = new HashMap<>();
+	private Map<String, TagListener> listeners = null;
 
 	/**
 	 * Java object that is building from xml data.
@@ -38,7 +38,12 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 
 	private boolean found = false;
 
-	public XMLParserImpl(Class<T> typeArgumentClass) throws Exception {
+	private ClassIntrospector<T> classIntrospector;
+
+	public XMLParserImpl(Class<T> typeArgumentClass, ClassIntrospector<T> classIntrospector) throws Exception {
+
+		this.classIntrospector = classIntrospector;
+
 		obj = typeArgumentClass.newInstance();
 
 		currentContext = new Context();
@@ -49,6 +54,9 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 
 	@Override
 	public void register(String tag, TagListener listener) {
+		if (this.listeners == null) {
+			this.listeners = new HashMap<>();
+		}
 		listeners.put(tag, listener);
 	}
 
@@ -60,7 +68,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 		return parse(xmlStr.getBytes());
 	}
 
-//TODO support comments <!-- -->
+	//TODO support comments <!-- -->
 
 	@Override
 	public T parse(byte[] xml) throws InvalidXMLFormatException, NullPointerException {
@@ -95,24 +103,30 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 			}
 
 			//Start to process tag
-			try {
-				if (tag.type == TagType.CLOSE) {
-					if (onCloseTag(contexts.pop(), tag, xml)) {
-						break;
-					}
-				}
-				else if (tag.type == TagType.SELF_CLOSED) {
-					if (onSelfClosedTag(contexts.peek(), tag)) {
-						break;
-					}
-				}
-				else { //is open tag
-					currentContext = onOpenTag(currentContext, tag);
-					contexts.push(currentContext);
+			if (tag.type == TagType.CLOSE) {
+				if (onCloseTag(contexts.pop(), tag, xml)) {
+					break;
 				}
 			}
-			catch (IgnoreException ie) {
-				ignoringTag = tag;
+			else if (tag.type == TagType.SELF_CLOSED) {
+
+				Boolean notify = onSelfClosedTag(contexts.peek(), tag);
+				if (notify == null) {
+					ignoringTag = tag;
+				}
+				else if (notify) {
+					break;
+				}
+			}
+			else { //is open tag
+				Context context = onOpenTag(currentContext, tag);
+				if (context == null) { //if context is null, tag must be ignored
+					ignoringTag = tag;
+				}
+				else {
+					currentContext = context;
+					contexts.push(context);
+				}
 			}
 		}
 
@@ -189,8 +203,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 				((List) obj).add(value);
 			}
 			else {
-				Field field = obj.getClass().getDeclaredField(fieldName);
-				field.setAccessible(true);
+				Field field = getField(obj, fieldName);
 				field.set(obj, convertTo(field, value));
 			}
 		}
@@ -201,23 +214,25 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 
 	private Object convertTo(Field field, Object value) {
 
-		if (field.getType().isAssignableFrom(String.class)) {
+		Class t = field.getType();
+
+		if (t.isAssignableFrom(String.class)) {
 			return value;
 		}
-		else if (field.getType().isAssignableFrom(Integer.class) || field.getType().isAssignableFrom(Integer.TYPE)) {
-			return Integer.valueOf(value.toString());
+		else if (t.isAssignableFrom(Integer.TYPE) || field.getType().isAssignableFrom(Integer.class)) {
+			return Integer.valueOf((String) value);
 		}
-		else if (field.getType().isAssignableFrom(Long.class) || field.getType().isAssignableFrom(Long.TYPE)) {
-			return Long.valueOf(value.toString());
+		else if (t.isAssignableFrom(Long.TYPE) || field.getType().isAssignableFrom(Long.class)) {
+			return Long.valueOf((String) value);
 		}
-		else if (field.getType().isAssignableFrom(Double.class) || field.getType().isAssignableFrom(Double.TYPE)) {
-			return Double.valueOf(value.toString());
+		else if (t.isAssignableFrom(Double.TYPE) || field.getType().isAssignableFrom(Double.class)) {
+			return Double.valueOf((String) value);
 		}
-		else if (field.getType().isAssignableFrom(Float.class) || field.getType().isAssignableFrom(Float.TYPE)) {
-			return Float.valueOf(value.toString());
+		else if (t.isAssignableFrom(Float.TYPE) || field.getType().isAssignableFrom(Float.class)) {
+			return Float.valueOf((String) value);
 		}
-		else if (field.getType().isAssignableFrom(Boolean.class) || field.getType().isAssignableFrom(Boolean.TYPE)) {
-			return Boolean.valueOf(value.toString());
+		else if (t.isAssignableFrom(Boolean.TYPE) || field.getType().isAssignableFrom(Boolean.class)) {
+			return Boolean.valueOf((String) value);
 		}
 		return value;
 	}
@@ -230,7 +245,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 	 *
 	 * @throws InvalidXMLFormatException
 	 */
-	private void setAttributes(Object obj, Tag tag) throws InvalidXMLFormatException {
+	private void setAttributes(Object obj, Tag tag) {
 		if (tag.attributes != null) {
 			for (Attribute attribute : tag.attributes) {
 				setToObj(obj, attribute.name, attribute.value);
@@ -248,8 +263,8 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 	 *
 	 * @throws InvalidXMLFormatException
 	 */
-	private boolean onSelfClosedTag(Context context, Tag tag) throws InvalidXMLFormatException, IgnoreException {
-		boolean stop = false;
+	private Boolean onSelfClosedTag(Context context, Tag tag) throws InvalidXMLFormatException {
+		boolean stop;
 
 		try {
 			Field field = getField(currentContext.object, tag.name);
@@ -261,7 +276,8 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 					object = Class.forName(((ListContext) currentContext).className).newInstance();
 				}
 				else {
-					throw new IgnoreException(tag.name);
+					//return null to ignore tag
+					return null;
 				}
 			}
 			else {
@@ -272,7 +288,6 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 				else {
 					object = Class.forName(field.getAnnotatedType().getType().getTypeName()).newInstance();
 				}
-
 			}
 
 			//set attributes to object just created
@@ -300,39 +315,37 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 	 *
 	 * @throws InvalidXMLFormatException
 	 */
-	private boolean onCloseTag(Context context, Tag tag, byte[] xml) throws InvalidXMLFormatException {
+	private Boolean onCloseTag(Context context, Tag tag, byte[] xml) {
 		Tag open = context.tag;
 		boolean stop;
 
-		try {
-			if (context instanceof XMLParserImpl.ObjectContext) { //object or list
-				Context parent = contexts.peek();
-				setToObj(parent.object, context.tag.name, context.object);
-				currentContext = parent;
 
-				stop = notify(tag.name, context.object);
-			}
-			else { //is String | Integer | Double | Long
-				String content;
-				if (tag.cdata) { //remove cdata beginning and end
-					//<![CDATA[".length= 9
-					// ]]>.length = 3
-					String dirty = new String(xml, open.getEndPosition(), tag.getStartPosition() - open.getEndPosition()).trim();
-					content = dirty.substring(9, dirty.length() - 3);
-				}
-				else {
-					content = new String(xml, open.getEndPosition(), tag.getStartPosition() - open.getEndPosition()).trim();
-				}
+		if (context instanceof XMLParserImpl.ObjectContext) { //object or list
+			Context parent = contexts.peek();
+			setToObj(parent.object, context.tag.name, context.object);
+			currentContext = parent;
 
-				setToObj(context.object, context.tag.name, content);
-				currentContext = context;
-
-				stop = notify(tag.name, content);
-			}
+			stop = notify(tag.name, context.object);
 		}
-		catch (Exception e) {
-			throw new InvalidXMLFormatException("");
+		else { //is String | Integer | Double | Long
+			String content;
+			if (tag.cdata) { //remove cdata beginning and end
+				//<![CDATA[".length= 9
+				// ]]>.length = 3
+				String dirty = new String(xml, open.getEndPosition(), tag.getStartPosition() - open.getEndPosition()).trim();
+				content = dirty.substring(9, dirty.length() - 3);
+			}
+			else {
+				content = new String(xml, open.getEndPosition(), tag.getStartPosition() - open.getEndPosition()).trim();
+			}
+
+			setToObj(context.object, context.tag.name, content);
+			currentContext = context;
+
+			stop = notify(tag.name, content);
 		}
+
+
 		return stop;
 	}
 
@@ -342,12 +355,13 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 	 * @param currentContext actual tag context
 	 * @param tag            new tag read
 	 *
-	 * @return new context
+	 * @return new context, or null if tag is unknown, so to ignore
 	 *
 	 * @throws InvalidXMLFormatException
 	 */
-	private Context onOpenTag(Context currentContext, Tag tag) throws InvalidXMLFormatException, IgnoreException {
+	private Context onOpenTag(Context currentContext, Tag tag) throws InvalidXMLFormatException {
 		Context context;
+
 		Field field = getField(currentContext.object, tag.name);
 
 		try {
@@ -361,12 +375,13 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 					setAttributes(context.object, tag);
 				}
 				else {
-					throw new IgnoreException(tag.name);
+					//return null to ignore the tag
+					return null;
 				}
 			}
 			else {
 
-				if (field.getType().isAssignableFrom(List.class)) {
+				if (field.getType().isAssignableFrom(ArrayList.class)) {
 					context = new ListContext();
 
 					((ListContext) context).className = (((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0]).getTypeName();
@@ -418,14 +433,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 	 * @return
 	 */
 	private Field getField(Object obj, String name) {
-		Field[] fields = obj.getClass().getDeclaredFields();
-		for (int i = 0; i < fields.length; i++) {
-			if (fields[i].getName().equals(name)) {
-				return fields[i];
-			}
-		}
-
-		return null;
+		return classIntrospector.getField(obj.getClass(), name);
 	}
 
 	/**
@@ -437,6 +445,11 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 	 * @return
 	 */
 	private boolean notify(String tag, Object value) {
+
+		if (listeners == null) {
+			return false;
+		}
+
 		TagListener listener = listeners.get(tag);
 		if (listener != null) {
 			return listener.notify(tag, value);
@@ -452,7 +465,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 	 *
 	 * @return Tag
 	 */
-	private Tag getTag(byte[] xml, int cursor) throws InvalidXMLFormatException {
+	private Tag getTag(byte[] xml, int cursor) {
 
 		TagType tagType = null;
 
@@ -466,7 +479,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 
 		while (cursor < xml.length) {
 
-			if (xml[cursor] == '<' && xml[cursor + 1] == '/' && !inCDATA) {
+			if (xml[cursor] == '<' && cursor + 1 < xml.length && xml[cursor + 1] == '/' && !inCDATA) {
 				startTag = cursor + 1;
 				in = true;
 				tagType = TagType.CLOSE;
@@ -485,7 +498,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 					return new Tag(xml, startTag + 1, cursor - startTag - 1, namespacePosition, cursor + 1, tagType, cdata);
 				}
 			}
-			else if (in && xml[cursor] == '/' && xml[cursor + 1] == '>' && !inCDATA) {
+			else if (in && xml[cursor] == '/' && cursor + 1 < xml.length && xml[cursor + 1] == '>' && !inCDATA) {
 				if (tagType == TagType.OPEN) {
 					if (inAtt) {
 						return getTagWithAttributes(Arrays.copyOfRange(xml, startTag + 1, cursor), cursor + 1, namespacePosition - startTag, TagType.SELF_CLOSED, false);
@@ -656,7 +669,6 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 			else {
 				return position - name.length() - 3 - namespace.length() - 1; // 3 = <(1= /(2)>(3)
 			}
-
 		}
 
 		public int getEndPosition() {
@@ -675,4 +687,5 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 			return namespace != null;
 		}
 	}
+
 }
