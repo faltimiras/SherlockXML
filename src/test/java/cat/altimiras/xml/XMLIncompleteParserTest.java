@@ -73,4 +73,6 @@ public class XMLIncompleteParserTest {
 		assertEquals("666", o.getList().get(1).getList().get(0).getElement1());
 		assertEquals("777", o.getList().get(1).getList().get(1).getElement2());
 	}
+
+	
 }
