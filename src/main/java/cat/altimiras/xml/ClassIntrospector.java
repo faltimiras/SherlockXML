@@ -27,7 +27,7 @@ public class ClassIntrospector<T> {
 
 	private void introspect(Class clazz) {
 
-		if (fields.containsKey(clazz.hashCode())) {
+		if (fields.containsKey((long)clazz.hashCode())) {
 			return;
 		}
 		else {

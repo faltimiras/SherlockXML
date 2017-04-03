@@ -1,0 +1,7 @@
+<NestedLoopTestObj num="1">
+    <nestedLoopTestObj>
+        <num>2</num>
+        <nestedLoopTestObj num="3">
+        </nestedLoopTestObj>
+    </nestedLoopTestObj>
+</NestedLoopTestObj>

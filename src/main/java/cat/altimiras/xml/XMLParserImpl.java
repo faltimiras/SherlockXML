@@ -104,18 +104,22 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 
 			//Start to process tag
 			if (tag.type == TagType.CLOSE) {
-				if (onCloseTag(contexts.pop(), tag, xml)) {
-					break;
+				if(!contexts.isEmpty()) {
+					if (onCloseTag(contexts.pop(), tag, xml)) {
+						break;
+					}
 				}
 			}
 			else if (tag.type == TagType.SELF_CLOSED) {
 
-				Boolean notify = onSelfClosedTag(contexts.peek(), tag);
-				if (notify == null) {
-					ignoringTag = tag;
-				}
-				else if (notify) {
-					break;
+				if(!contexts.isEmpty()) {
+					Boolean notify = onSelfClosedTag(contexts.peek(), tag);
+					if (notify == null) {
+						ignoringTag = tag;
+					}
+					else if (notify) {
+						break;
+					}
 				}
 			}
 			else { //is open tag

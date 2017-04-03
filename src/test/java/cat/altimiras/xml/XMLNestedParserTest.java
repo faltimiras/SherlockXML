@@ -2,11 +2,13 @@ package cat.altimiras.xml;
 
 import cat.altimiras.xml.pojo.Nested2TestObj;
 import cat.altimiras.xml.pojo.Nested3TestObj;
+import cat.altimiras.xml.pojo.NestedLoopTestObj;
 import cat.altimiras.xml.pojo.NestedTestObj;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class XMLNestedParserTest {
 
@@ -53,5 +55,22 @@ public class XMLNestedParserTest {
 		assertEquals("title", o.getTitle());
 		assertEquals("111", o.getSimpleTestObj1().getElement1());
 		assertEquals("222", o.getNestedTestObj().getSimpleTestObj().getElement1());
+	}
+
+	@Test
+	public void xmlNestedLoopTest() throws Exception {
+
+		ClassIntrospector ci = new ClassIntrospector(NestedLoopTestObj.class);
+
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nestedLoopTest.xml"), "UTF-8");
+		XMLParser<NestedLoopTestObj> parser = new XMLParserImpl<>(NestedLoopTestObj.class, ci);
+
+		NestedLoopTestObj o = parser.parse(xml);
+
+		assertEquals(1, o.getNum());
+		assertEquals(2, o.getNestedLoopTestObj().getNum());
+		assertEquals(3, o.getNestedLoopTestObj().getNestedLoopTestObj().getNum());
+		assertNull(o.getNestedLoopTestObj().getNestedLoopTestObj().getNestedLoopTestObj());
+
 	}
 }
