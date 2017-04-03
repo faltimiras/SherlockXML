@@ -3,6 +3,7 @@ package cat.altimiras.xml;
 
 import cat.altimiras.xml.pojo.ListTestObj;
 import cat.altimiras.xml.pojo.NestedTestObj;
+import cat.altimiras.xml.pojo.NotXMLElement;
 import cat.altimiras.xml.pojo.SimpleTestObj;
 import org.junit.Test;
 
@@ -52,4 +53,9 @@ public class ClassIntrospectorTest {
 		assertEquals("element2", classIntrospector.getField(SimpleTestObj.class, "element2").getName());
 		assertEquals(String.class.getName(), classIntrospector.getField(SimpleTestObj.class, "element2").getType().getName());
 	}
+
+    @Test(expected = Exception.class)
+    public void testNotXMLElement() throws Exception {
+        new ClassIntrospector<>(NotXMLElement.class);
+    }
 }

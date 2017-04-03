@@ -1,10 +1,11 @@
 package cat.altimiras.xml.pojo;
 
 
-import java.util.ArrayList;
+import cat.altimiras.xml.XMLElement;
+
 import java.util.List;
 
-public class ListTestObj {
+public class ListTestObj extends XMLElement{
 	private List<SimpleTestObj> list;
 
 	public List<SimpleTestObj> getList() {

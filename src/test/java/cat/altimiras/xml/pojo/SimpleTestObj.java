@@ -1,6 +1,8 @@
 package cat.altimiras.xml.pojo;
 
-public class SimpleTestObj {
+import cat.altimiras.xml.XMLElement;
+
+public class SimpleTestObj extends XMLElement {
 	private String element1;
 	private String element2;
 
@@ -11,4 +13,5 @@ public class SimpleTestObj {
 	public String getElement2() {
 		return element2;
 	}
+
 }

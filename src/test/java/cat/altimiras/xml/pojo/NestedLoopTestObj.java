@@ -1,7 +1,9 @@
 package cat.altimiras.xml.pojo;
 
 
-public class NestedLoopTestObj {
+import cat.altimiras.xml.XMLElement;
+
+public class NestedLoopTestObj extends XMLElement {
 
 	private Integer num;
 	private NestedLoopTestObj nestedLoopTestObj;

@@ -1,7 +1,9 @@
 package cat.altimiras.xml.pojo;
 
 
-public class TypeTestObj {
+import cat.altimiras.xml.XMLElement;
+
+public class TypeTestObj extends XMLElement {
 
 	private String text;
 	private Integer integerNum;

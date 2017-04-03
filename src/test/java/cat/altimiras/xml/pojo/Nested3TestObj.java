@@ -1,7 +1,9 @@
 package cat.altimiras.xml.pojo;
 
 
-public class Nested3TestObj {
+import cat.altimiras.xml.XMLElement;
+
+public class Nested3TestObj extends XMLElement {
 	private String title;
 	private NestedTestObj nestedTestObj;
 	private SimpleTestObj simpleTestObj1;
