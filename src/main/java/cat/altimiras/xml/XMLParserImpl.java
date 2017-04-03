@@ -594,8 +594,8 @@ public class XMLParserImpl<T> implements XMLParser<T> {
             if (namespacePos == 0) {
                 this.name = new String(xml, startPos, endPos).trim();
             } else {
-                int namespaceLengh = namespacePos - startPos + 1;
-                this.name = new String(xml, startPos + namespaceLengh, endPos - namespaceLengh).trim();
+                int namespaceLength = namespacePos - startPos + 1;
+                this.name = new String(xml, startPos + namespaceLength, endPos - namespaceLength).trim();
                 this.namespace = new String(xml, startPos, namespacePos - startPos).trim();
             }
         }
