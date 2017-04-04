@@ -211,15 +211,15 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 
         if (t.isAssignableFrom(String.class)) {
             return value;
-        } else if (t.isAssignableFrom(Integer.TYPE) || field.getType().isAssignableFrom(Integer.class)) {
+        } else if (t.isAssignableFrom(Integer.TYPE) || t.isAssignableFrom(Integer.class)) {
             return Integer.valueOf((String) value);
-        } else if (t.isAssignableFrom(Long.TYPE) || field.getType().isAssignableFrom(Long.class)) {
+        } else if (t.isAssignableFrom(Long.TYPE) || t.isAssignableFrom(Long.class)) {
             return Long.valueOf((String) value);
-        } else if (t.isAssignableFrom(Double.TYPE) || field.getType().isAssignableFrom(Double.class)) {
+        } else if (t.isAssignableFrom(Double.TYPE) || t.isAssignableFrom(Double.class)) {
             return Double.valueOf((String) value);
-        } else if (t.isAssignableFrom(Float.TYPE) || field.getType().isAssignableFrom(Float.class)) {
+        } else if (t.isAssignableFrom(Float.TYPE) || t.isAssignableFrom(Float.class)) {
             return Float.valueOf((String) value);
-        } else if (t.isAssignableFrom(Boolean.TYPE) || field.getType().isAssignableFrom(Boolean.class)) {
+        } else if (t.isAssignableFrom(Boolean.TYPE) || t.isAssignableFrom(Boolean.class)) {
             return Boolean.valueOf((String) value);
         }
         return value;
@@ -346,8 +346,8 @@ public class XMLParserImpl<T> implements XMLParser<T> {
                     return null;
                 }
             } else {
-
-                if (field.getType().isAssignableFrom(ArrayList.class)) {
+				Class t = field.getType();
+                if (t.isAssignableFrom(ArrayList.class)) {
                     context = new ListContext();
 
                     ((ListContext) context).className = (((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0]).getTypeName();
@@ -357,10 +357,10 @@ public class XMLParserImpl<T> implements XMLParser<T> {
                     field.set(currentContext.object, currentList);
 
                     context.object = currentList;
-                } else if (field.getType().isAssignableFrom(String.class)
-                        || field.getType().isAssignableFrom(Integer.class)
-                        || field.getType().isAssignableFrom(Long.class)
-                        || field.getType().isAssignableFrom(Double.class)) {
+                } else if (t.isAssignableFrom(String.class)
+                        || t.isAssignableFrom(Integer.class)
+                        || t.isAssignableFrom(Long.class)
+                        || t.isAssignableFrom(Double.class)) {
                     context = new Context();
                     context.object = currentContext.object;
                 } else { //object
