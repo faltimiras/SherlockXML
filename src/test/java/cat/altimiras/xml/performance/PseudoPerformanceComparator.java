@@ -6,6 +6,7 @@ import cat.altimiras.xml.XMLParser;
 import cat.altimiras.xml.XMLParserImpl;
 import cat.altimiras.xml.pojo.ListTestObj;
 import org.apache.commons.io.IOUtils;
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 

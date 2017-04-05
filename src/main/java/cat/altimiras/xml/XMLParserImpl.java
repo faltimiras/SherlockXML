@@ -492,74 +492,85 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 
 		while (cursor < xml.length) {
 
-			if (xml[cursor] == '<' && cursor + 1 < xml.length && xml[cursor + 1] == '/' && !inCDATA) {
-				startTag = cursor + 1;
-				in = true;
-				tagType = TagType.CLOSE;
-			}
-			else if (xml[cursor] == '<' && !inCDATA) {
-				startTag = cursor;
-				in = true;
-				tagType = TagType.OPEN;
+			if (!inCDATA) { //if not in CDATA find a start of OPEN or CLOSE tag
+				if (xml[cursor] == ' ' || xml[cursor] =='\n') {
+					cursor++;
+					continue;
+				} else if (xml[cursor] == '<' && cursor + 1 < xml.length && xml[cursor + 1] == '/') {
+					startTag = cursor + 1;
+					in = true;
+					tagType = TagType.CLOSE;
+					//cursor++;
+					//continue; //detect close tag, move forward
+				}
+				else if (xml[cursor] == '<') {
+					startTag = cursor;
+					in = true;
+					tagType = TagType.OPEN;
+				}
 			}
 
-			if (in && xml[cursor] == '>' && !inCDATA) {
-				if (inAtt) {
-					return getTagWithAttributes(Arrays.copyOfRange(xml, startTag + 1, cursor), cursor + 1, namespacePosition - startTag, TagType.OPEN, cdata);
+			if (in) { //are inside a tag definition
+				if (!inCDATA) { //not inside a CDATA element
+					if (xml[cursor] == '>') {
+						if (inAtt) {
+							return getTagWithAttributes(Arrays.copyOfRange(xml, startTag + 1, cursor), cursor + 1, namespacePosition - startTag, TagType.OPEN, cdata);
+						}
+						else {
+							return new Tag(xml, startTag + 1, cursor - startTag - 1, namespacePosition, cursor + 1, tagType, cdata);
+						}
+					}
+					else if (xml[cursor] == '/' && cursor + 1 < xml.length && xml[cursor + 1] == '>') {
+						if (tagType == TagType.OPEN) {
+							if (inAtt) { //closing a open tag with attributes
+								return getTagWithAttributes(Arrays.copyOfRange(xml, startTag + 1, cursor), cursor + 1, namespacePosition - startTag, TagType.SELF_CLOSED, false);
+							}
+							else { //closing a tag without attributes
+								return new Tag(xml, startTag + 1, cursor - startTag - 1, namespacePosition, cursor + 1, TagType.SELF_CLOSED, false); //cdata can not be in an attribute
+							}
+						}
+						else { //closing tag
+							return new Tag(xml, startTag + 1, cursor - startTag - 1, namespacePosition, cursor + 1, tagType, cdata);
+						}
+					}
+					else if (xml[cursor] == '=') { //if there is an equal is -> there is/are attributes
+						inAtt = true;
+					}
+					else if (!space && xml[cursor] == ':') { // there is a namespace (: detected and no space has been processed
+						namespacePosition = cursor;
+					}
+					else if (xml[cursor] == ' ') {
+						space = true;
+					}
+					else if (xml[cursor] == '<') { //<![CDATA[. detection
+
+						//check if cdata
+						if (xml.length > cursor + 8  //"<![CDATA[".lenght= 9 ('<' already processed)
+								&& xml[cursor + 1] == '!'
+								&& xml[cursor + 2] == '['
+								&& xml[cursor + 3] == 'C'
+								&& xml[cursor + 4] == 'D'
+								&& xml[cursor + 5] == 'A'
+								&& xml[cursor + 6] == 'T'
+								&& xml[cursor + 7] == 'A'
+								&& xml[cursor + 8] == '['
+								) {
+							inCDATA = true;
+							cdata = true;
+							cursor += 8;
+						}
+					}
 				}
 				else {
-					return new Tag(xml, startTag + 1, cursor - startTag - 1, namespacePosition, cursor + 1, tagType, cdata);
-				}
-			}
-			else if (in && xml[cursor] == '/' && cursor + 1 < xml.length && xml[cursor + 1] == '>' && !inCDATA) {
-				if (tagType == TagType.OPEN) {
-					if (inAtt) {
-						return getTagWithAttributes(Arrays.copyOfRange(xml, startTag + 1, cursor), cursor + 1, namespacePosition - startTag, TagType.SELF_CLOSED, false);
+					if (xml[cursor] == ']') { //out of cdata detection
+						if (xml.length > cursor + 2  //"]]>".lenght= 3 (']' already processed)
+								&& xml[cursor + 1] == ']'
+								&& xml[cursor + 2] == '>'
+								) {
+							inCDATA = false;
+							cursor += 2;
+						}
 					}
-					else {
-						return new Tag(xml, startTag + 1, cursor - startTag - 1, namespacePosition, cursor + 1, TagType.SELF_CLOSED, false); //cdata can not be in an attribute
-					}
-				}
-				else {
-					//return new Tag(new String(xml, startTag + 2, cursor - startTag - 1), cursor + 1, tagType);
-					return new Tag(xml, startTag + 1, cursor - startTag - 1, namespacePosition, cursor + 1, tagType, cdata);
-				}
-			}
-			else if (in && xml[cursor] == '=' && !inCDATA) { //if there is an equal is -> there is/are attributes
-				inAtt = true;
-			}
-			else if (in && !space && xml[cursor] == ':') { // there is a namespace (: detected and no space has been processed
-				namespacePosition = cursor;
-			}
-			else if (in && xml[cursor] == ' ' && !inCDATA) {
-				space = true;
-			}
-			else if (in && xml[cursor] == '<' && !inCDATA) { //<![CDATA[. detection
-
-				//check if cdata
-				if (xml.length > cursor + 8  //"<![CDATA[".lenght= 9 ('<' already processed)
-						&& xml[cursor + 1] == '!'
-						&& xml[cursor + 2] == '['
-						&& xml[cursor + 3] == 'C'
-						&& xml[cursor + 4] == 'D'
-						&& xml[cursor + 5] == 'A'
-						&& xml[cursor + 6] == 'T'
-						&& xml[cursor + 7] == 'A'
-						&& xml[cursor + 8] == '['
-						) {
-					inCDATA = true;
-					cdata = true;
-					cursor += 8;
-				}
-			}
-			else if (in && inCDATA && xml[cursor] == ']') { //out of cdata detection
-
-				if (xml.length > cursor + 2  //"]]>".lenght= 3 (']' already processed)
-						&& xml[cursor + 1] == ']'
-						&& xml[cursor + 2] == '>'
-						) {
-					inCDATA = false;
-					cursor += 2;
 				}
 			}
 

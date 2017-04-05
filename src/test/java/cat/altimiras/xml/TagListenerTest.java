@@ -31,10 +31,10 @@ public class TagListenerTest {
 		when(stringListener.notify("element1", "111")).thenReturn(false);
 
 		//register listener
-		parser.register("element1", stringListener);
+		parser.register("element2", stringListener);
 
 		parser.parse(xml);
-		verify(stringListener, times(1)).notify("element1", "111");
+		verify(stringListener, times(1)).notify("element2", "222");
 	}
 
 	@Test

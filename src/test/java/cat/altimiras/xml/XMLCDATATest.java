@@ -19,7 +19,7 @@ public class XMLCDATATest {
 
 		SimpleTestObj o = parser.parse(xml);
 
-		assertEquals("lolo <br> lolo", o.getElement1());
+		assertEquals("lolo <lo>A\n         </lo> lolo", o.getElement1());
 		assertEquals("222", o.getElement2());
 	}
 
