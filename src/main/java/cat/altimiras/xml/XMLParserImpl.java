@@ -493,13 +493,15 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 		while (cursor < xml.length) {
 
 			if (!inCDATA) { //if not in CDATA find a start of OPEN or CLOSE tag
-				if (!in && (xml[cursor] == ' ' || xml[cursor] =='\n')) {
+				if ((!in && xml[cursor] == ' ') || xml[cursor] =='\n') { //discard EOF and spaces, only if not in tag declaration
 					cursor++;
 					continue;
 				} else if (xml[cursor] == '<' && cursor + 1 < xml.length && xml[cursor + 1] == '/') {
 					startTag = cursor + 1;
 					in = true;
 					tagType = TagType.CLOSE;
+                    cursor++;
+                    continue;
 				}
 				else if (xml[cursor] == '<') {
 					startTag = cursor;
