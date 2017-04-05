@@ -36,7 +36,7 @@ public class PseudoPerformanceComparator {
 	}
 
     //THIS IS NOT A REAL PERFORMANCE TEST!!
-	//@Test
+	@Test
 	public void parseBigListIgnore() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/performance/bigListIgnoreTest.xml"), "UTF-8");

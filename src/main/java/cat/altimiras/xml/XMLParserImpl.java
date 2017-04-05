@@ -493,15 +493,13 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 		while (cursor < xml.length) {
 
 			if (!inCDATA) { //if not in CDATA find a start of OPEN or CLOSE tag
-				if (xml[cursor] == ' ' || xml[cursor] =='\n') {
+				if (!in && (xml[cursor] == ' ' || xml[cursor] =='\n')) {
 					cursor++;
 					continue;
 				} else if (xml[cursor] == '<' && cursor + 1 < xml.length && xml[cursor + 1] == '/') {
 					startTag = cursor + 1;
 					in = true;
 					tagType = TagType.CLOSE;
-					//cursor++;
-					//continue; //detect close tag, move forward
 				}
 				else if (xml[cursor] == '<') {
 					startTag = cursor;
@@ -557,7 +555,8 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 								) {
 							inCDATA = true;
 							cdata = true;
-							cursor += 8;
+							cursor += 9;
+                            continue;
 						}
 					}
 				}
@@ -568,7 +567,8 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 								&& xml[cursor + 2] == '>'
 								) {
 							inCDATA = false;
-							cursor += 2;
+							cursor += 3;
+                            continue;
 						}
 					}
 				}
