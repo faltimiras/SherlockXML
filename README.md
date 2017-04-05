@@ -1,9 +1,9 @@
 # XMLParser
-XML Parser build to parse, obviously valid XML, but also corrupted/incomplete or partially XMLs
+Parser built to parse, obviously valid XML, but also corrupted/incomplete or partially XMLs
 
 Build simply and fast by default, no annotation, no magic... just convert and XML to and Java object.
 
-Just needs that XML tags have a correspondence with a member in a Java class
+Just needs a correspondence between XML tags and a member in the Java class
 
 ```
 <example>this is an example</example> -> private String example
@@ -23,9 +23,14 @@ Don't waste time parsing huge XML if you only need a little part of it.
 
 extremely simple, just this...
 ```
+XMLFactory.init(ComplexObj.class);
+
 XMLParser<ComplexObj> parser = XMLFactory.getParser(ComplexObj.class);
 ComplexObj o = parser.parse(xml);
 ```
+
+XMLFactory.init() initialize factory with all objects that will support. Do it on aplication start. It preprocess classes to be faster then.
+XMLFactory.getParse() must be called every time a new xml has to be parsed. DO NOT reuse.
 
 #Known limitations
 Do not support tag names collisions. ns:tagA and ns1:tagA is the same for this parser and it expects for a class called tagA.
