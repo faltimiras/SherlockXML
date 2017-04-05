@@ -37,7 +37,7 @@ public class PseudoPerformanceComparator {
 	}
 
     //THIS IS NOT A REAL PERFORMANCE TEST!!
-	//@Test
+	@Test
 	public void parseBigListIgnore() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/performance/bigListIgnoreTest.xml"), "UTF-8");
@@ -50,6 +50,26 @@ public class PseudoPerformanceComparator {
 			ListTestObj o = parser.parse(xml);
 
 			assertEquals(4896, o.getList().size());
+		}
+		long end = System.currentTimeMillis();
+
+		System.out.println("Diff:" + (end - ini));
+	}
+
+	//THIS IS NOT A REAL PERFORMANCE TEST!!
+	//@Test
+	public void parseBigListAttIgnore() throws Exception {
+
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/performance/bigListAttTest.xml"), "UTF-8");
+
+		ClassIntrospector c = new ClassIntrospector(ListTestObj.class);
+
+		long ini = System.currentTimeMillis();
+		XMLParser<ListTestObj> parser = new XMLParserImpl<>(ListTestObj.class, c);
+		for (int i = 0; i < LOOPS; i++) {
+			ListTestObj o = parser.parse(xml);
+
+			assertEquals(6138, o.getList().size());
 		}
 		long end = System.currentTimeMillis();
 

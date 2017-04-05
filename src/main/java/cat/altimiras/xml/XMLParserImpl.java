@@ -207,7 +207,24 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 				((List) obj).add(value);
 			}
 			else {
-				Field field = getField(obj, fieldName);
+				Field field = classIntrospector.getField(obj.getClass(), fieldName);
+				if (field != null) {
+					field.set(obj, convertTo(field, value));
+				}
+			}
+		}
+		catch (Exception e) {
+			//ignore. If not exist, we just ignore it.
+		}
+	}
+
+	private void setToObj(Object obj, Field field, Object value){
+
+		try {
+			if (obj instanceof List) {
+				((List) obj).add(value);
+			}
+			else {
 				if (field != null) {
 					field.set(obj, convertTo(field, value));
 				}
@@ -272,12 +289,16 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 	private Boolean onSelfClosedTag(Context context, Tag tag) throws InvalidXMLFormatException {
 		boolean stop;
 
-		Field field = getField(currentContext.object, tag.name);
+		Field field = classIntrospector.getField(context.object.getClass(), tag.name);
 
 		Object object;
 		if (field == null) {
 			if (currentContext instanceof XMLParserImpl.ListContext) {
 				object = classIntrospector.getInstance(((ListContext) currentContext).className);
+
+				//set attributes to object just created
+				setAttributes(object, tag);
+				setToObj(context.object, field, object);
 			}
 			else {
 				//return null to ignore tag
@@ -291,15 +312,14 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 			}
 			else {
 				object = classIntrospector.getInstance(field.getAnnotatedType().getType());
+
+				//set attributes to object just created
+				setAttributes(object, tag);
 			}
+
+			setToObj(context.object, field, object);
 		}
-
-		//set attributes to object just created
-		setAttributes(object, tag);
-		setToObj(context.object, tag.name, object);
-
 		stop = notify(tag.name, object);
-
 		return stop;
 	}
 
@@ -317,7 +337,6 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 	private Boolean onCloseTag(Context context, Tag tag, byte[] xml) {
 		Tag open = context.tag;
 		boolean stop;
-
 
 		if (context instanceof XMLParserImpl.ObjectContext) { //object or list
 			Context parent = contexts.peek();
@@ -361,7 +380,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 	private Context onOpenTag(Context currentContext, Tag tag) throws InvalidXMLFormatException {
 		Context context;
 
-		Field field = getField(currentContext.object, tag.name);
+		Field field = classIntrospector.getField(currentContext.object.getClass(), tag.name);
 
 		try {
 			if (field == null) {
@@ -404,7 +423,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 					//set attributes to object just created
 					setAttributes(context.object, tag);
 
-					setToObj(currentContext.object, tag.name, context.object);
+					setToObj(currentContext.object, field, context.object);
 				}
 			}
 		}
@@ -413,18 +432,6 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 		}
 		context.tag = tag;
 		return context;
-	}
-
-	/**
-	 * Return field with name <name> if exist on obj. Null otherwise.
-	 *
-	 * @param obj
-	 * @param name
-	 *
-	 * @return
-	 */
-	private Field getField(Object obj, String name) {
-		return classIntrospector.getField(obj.getClass(), name);
 	}
 
 	/**
@@ -678,5 +685,4 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 			return namespace != null;
 		}
 	}
-
 }
