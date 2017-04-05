@@ -5,9 +5,7 @@ import cat.altimiras.xml.ClassIntrospector;
 import cat.altimiras.xml.XMLParser;
 import cat.altimiras.xml.XMLParserImpl;
 import cat.altimiras.xml.pojo.ListTestObj;
-import cat.altimiras.xml.pojo.SimpleTestObj;
 import org.apache.commons.io.IOUtils;
-import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
@@ -37,7 +35,7 @@ public class PseudoPerformanceComparator {
 	}
 
     //THIS IS NOT A REAL PERFORMANCE TEST!!
-	@Test
+	//@Test
 	public void parseBigListIgnore() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/performance/bigListIgnoreTest.xml"), "UTF-8");

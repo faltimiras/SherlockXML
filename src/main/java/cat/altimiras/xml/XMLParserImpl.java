@@ -24,7 +24,12 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 	/**
 	 * Java object that is building from xml data.
 	 */
-	private T obj = null;
+	final private T obj;
+
+	/**
+	 * Java class name object hased. For performance comparation
+	 */
+	final private int objClassNameHashCode;
 
 	/**
 	 * Current tag that is being processed information
@@ -45,6 +50,8 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 		this.classIntrospector = classIntrospector;
 
 		obj = typeArgumentClass.newInstance();
+		objClassNameHashCode = obj.getClass().getSimpleName().hashCode();
+
 
 		currentContext = new Context();
 		currentContext.object = obj;
@@ -92,7 +99,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 				continue;
 			}
 
-			if (tag.name.equals(obj.getClass().getSimpleName())) {
+			if (tag.name.hashCode() == objClassNameHashCode) { //obj.getClass().getSimpleName().hashCode();
 				if (tag.isOpening()) {
 					setAttributes(obj, tag); //if parent obj has attributes
 					continue;
@@ -166,13 +173,14 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 	private boolean checkIgnoreTag(Tag tag) {
 
 		//found obj we want
-		if (!found && tag.name.equals(obj.getClass().getSimpleName())) {
+		int tagNameHash = tag.name.hashCode();
+		if (!found && tagNameHash == objClassNameHashCode) { //obj.getClass().getSimpleName().hashCode();
 			found = true;
 			return false;
 		}
 
 		//skip tags at the beginning that don't care
-		if (!found && !tag.name.equals(obj.getClass().getSimpleName())) {
+		if (!found && tagNameHash != objClassNameHashCode) { //obj.getClass().getSimpleName().hashCode();
 			return true;
 		}
 
@@ -218,7 +226,14 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 		}
 	}
 
-	private void setToObj(Object obj, Field field, Object value){
+	/**
+	 * Sets value to field on obj
+	 *
+	 * @param obj
+	 * @param field
+	 * @param value
+	 */
+	private void setToObj(Object obj, Field field, Object value) {
 
 		try {
 			if (obj instanceof List) {
