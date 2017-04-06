@@ -9,12 +9,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+import static cat.altimiras.xml.Tag.TagType.CLOSE;
+import static cat.altimiras.xml.Tag.TagType.OPEN;
+import static cat.altimiras.xml.Tag.TagType.SELF_CLOSED;
+
 public class XMLParserImpl<T> implements XMLParser<T> {
 
 	/**
 	 * Stack with tags opened and still not closed
 	 */
-	private Stack<Context> contexts = new Stack<>();
+	final private Stack<Context> contexts = new Stack<>();
 
 	/**
 	 * Listeners for tags. Notified every time a tag is totally processed (on close </..> tag)
@@ -41,20 +45,27 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 	 */
 	private Tag ignoringTag = null;
 
-	private boolean found = false;
+	private boolean found = false; //TODO necessari encara?¿?
 
+	/**
+	 * Contains field definitions and instances to populate fast objectes
+	 */
 	private ClassIntrospector<T> classIntrospector;
+
+	final private TagParser tagParser;
 
 	public XMLParserImpl(Class<T> typeArgumentClass, ClassIntrospector<T> classIntrospector) throws Exception {
 
 		this.classIntrospector = classIntrospector;
+
+		this.tagParser = new TagParser();
 
 		obj = typeArgumentClass.newInstance();
 		objClassNameHashCode = obj.getClass().getSimpleName().hashCode();
 
 		currentContext = new Context();
 		currentContext.object = obj;
-		currentContext.tag = new Tag(obj.getClass().getSimpleName(), 0, TagType.OPEN);
+		currentContext.tag = new Tag(obj.getClass().getSimpleName(), null, 0, OPEN, null, false);
 		contexts.push(currentContext);
 	}
 
@@ -74,8 +85,6 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 		return parse(xmlStr.getBytes());
 	}
 
-	//TODO support comments <!-- -->
-
 	@Override
 	public T parse(byte[] xml) throws InvalidXMLFormatException, NullPointerException {
 
@@ -87,7 +96,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 
 		while (cursor < xml.length) {
 			//extract tag to process
-			Tag tag = getTag(xml, cursor);
+			Tag tag = tagParser.getTag(xml, cursor);
 			if (tag == null) {
 				break;
 			}
@@ -109,14 +118,14 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 			}
 
 			//Start to process tag
-			if (tag.type == TagType.CLOSE) {
+			if (tag.type == CLOSE) {
 				if (!contexts.isEmpty()) {
 					if (onCloseTag(contexts.pop(), tag, xml)) {
 						break;
 					}
 				}
 			}
-			else if (tag.type == TagType.SELF_CLOSED) {
+			else if (tag.type == SELF_CLOSED) {
 
 				if (!contexts.isEmpty()) {
 					Boolean notify = onSelfClosedTag(contexts.peek(), tag);
@@ -184,12 +193,12 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 		}
 
 		//if current tag is a closing and it is the same we are ignoring, stop ignoring and start to process next tag
-		if (ignoringTag != null && ignoringTag.name.equals(tag.name) && tag.type == TagType.CLOSE) {
+		if (ignoringTag != null && ignoringTag.name.equals(tag.name) && tag.type == CLOSE) {
 			ignoringTag = null;
 			return true;
 		}
 		// if current ignoring tag is self-closed, just stop to ignore it. As it is self closed
-		if (ignoringTag != null && ignoringTag.type == TagType.SELF_CLOSED) {
+		if (ignoringTag != null && ignoringTag.type == SELF_CLOSED) {
 			ignoringTag = null;
 			return false;
 		}
@@ -471,12 +480,12 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 	/**
 	 * Looks for next tag on xml
 	 *
-	 * @param xml    xml content
-	 * @param cursor until has been parsed
+	 * @param //xml    xml content
+	 * @param //cursor until has been parsed
 	 *
 	 * @return Tag
 	 */
-	private Tag getTag(byte[] xml, int cursor) {
+	/*private Tag getTag(byte[] xml, int cursor) {
 
 		TagType tagType = null;
 
@@ -487,9 +496,14 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 		boolean space = false; //space processed on tag declaration
 		boolean inCDATA = false; //processing a cdata
 		boolean cdata = false; //contains cdata content
-		List<Attribute> attributes; //possible attributes
-		byte[] attBuffer = new byte[200]; //this is a hard limit. attributes names and attributes values can not be longer than that.
-		int attBufferCursor = 0;
+		Attribute attribute = null;
+		List<Attribute> attributes = null; //possible attributes
+
+
+		boolean endName = false;
+		int quotes = 0;
+
+		String name = null;
 
 		byte val;
 		while (cursor < xml.length) {
@@ -521,15 +535,25 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 
 			if (in) { //are inside a tag definition
 				if (!inCDATA) { //not inside a CDATA element
-					if (val == '>') {
+					if (val == '>') { //detecting close tag definition
 						if (inAtt) {
-							return getTagWithAttributes(Arrays.copyOfRange(xml, startTag + 1, cursor), cursor + 1, namespacePosition - startTag, TagType.OPEN, cdata);
+							if (bufferCursor != 0){
+								attribute.value = new String(buffer, 1, bufferCursor-2); //skiping "
+								attributes.add(attribute);
+							}
+
+							return new Tag(xml, startTag + 1, cursor - startTag - 1, namespacePosition, cursor + 1, tagType, cdata, attributes);
+							//return getTagWithAttributes(Arrays.copyOfRange(xml, startTag + 1, cursor), cursor + 1, namespacePosition - startTag, TagType.OPEN, cdata);
 						}
 						else {
-							return new Tag(xml, startTag + 1, cursor - startTag - 1, namespacePosition, cursor + 1, tagType, cdata);
+
+							name = new String(buffer, 0, bufferCursor);
+							bufferCursor=0; //buffer has consumed, reset cursor
+							//return new Tag(xml, startTag + 1, cursor - startTag - 1, namespacePosition, cursor + 1, tagType, cdata);
+							return new Tag(name,cursor +1, tagType);
 						}
 					}
-					else if (val == '/' && cursor + 1 < xml.length && xml[cursor + 1] == '>') {
+					else if (val == '/' && cursor + 1 < xml.length && xml[cursor + 1] == '>') { //detecting close tag
 						if (tagType == TagType.OPEN) {
 							if (inAtt) { //closing a open tag with attributes
 								return getTagWithAttributes(Arrays.copyOfRange(xml, startTag + 1, cursor), cursor + 1, namespacePosition - startTag, TagType.SELF_CLOSED, false);
@@ -544,12 +568,25 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 					}
 					else if (val == '=') { //if there is an equal is -> there is/are attributes
 						inAtt = true;
+						if(attributes == null) {
+							attributes = new ArrayList<>(5);
+						}
+						attribute = new Attribute();
+						attribute.name = new String(buffer,0, bufferCursor);
+						bufferCursor = 0;
 					}
 					else if (!space && val == ':') { // there is a namespace (: detected and no space has been processed
 						namespacePosition = cursor;
 					}
 					else if (val == ' ') {
 						space = true;
+
+						if (inAtt) {
+							attribute.value = new String(buffer,0, bufferCursor);
+							bufferCursor = 0;
+							attributes.add(attribute);
+							attribute = null;
+						}
 					}
 					else if (val == '<') { //<![CDATA[. detection
 
@@ -569,8 +606,10 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 							cursor += 9;
 							continue;
 						}
-					}else {
-						attBuffer[attBufferCursor] = xml[cursor];
+					}
+					else  {
+						buffer[bufferCursor] = val; //aggregation partitial bytes to build tag name, attribute name or attribute value
+						bufferCursor++;
 					}
 				}
 				else { //inCDATA -> finding end of CDATA
@@ -646,7 +685,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 
 		return tag;
 	}
-
+*/
 	private class Context {
 		protected Tag tag;
 		protected Object object;
@@ -658,7 +697,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 	private class ListContext extends ObjectContext {
 		protected String className;
 	}
-
+/*
 	private class Attribute {
 		private String name;
 		private String value;
@@ -729,4 +768,5 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 			return namespace != null;
 		}
 	}
+	*/
 }
