@@ -74,4 +74,11 @@ public class PseudoPerformanceComparator {
 
 		System.out.println("Diff:" + (end - ini));
 	}
+
+	@Test
+	public void tenTimes() throws Exception {
+		for (int i = 0; i<10 ; i++){
+			parseBigListIgnore();
+		}
+	}
 }
