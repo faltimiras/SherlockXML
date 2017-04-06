@@ -487,6 +487,9 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 		boolean space = false; //space processed on tag declaration
 		boolean inCDATA = false; //processing a cdata
 		boolean cdata = false; //contains cdata content
+		List<Attribute> attributes; //possible attributes
+		byte[] attBuffer = new byte[200]; //this is a hard limit. attributes names and attributes values can not be longer than that.
+		int attBufferCursor = 0;
 
 		while (cursor < xml.length) {
 
@@ -563,6 +566,8 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 							cursor += 9;
 							continue;
 						}
+					}else {
+						attBuffer[attBufferCursor] = xml[cursor];
 					}
 				}
 				else { //inCDATA -> finding end of CDATA
@@ -689,6 +694,11 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 				this.name = new String(xml, startPos + namespaceLength, endPos - namespaceLength);
 				this.namespace = new String(xml, startPos, namespacePos - startPos);
 			}
+		}
+
+		public Tag(byte[] xml, int startPos, int endPos, int namespacePos, int position, TagType type, boolean cdata, List<Attribute> attributes) {
+			this(xml, startPos, endPos, namespacePos, position, type, cdata);
+			this.attributes = attributes;
 		}
 
 		public int getStartPosition() {
