@@ -491,25 +491,28 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 		byte[] attBuffer = new byte[200]; //this is a hard limit. attributes names and attributes values can not be longer than that.
 		int attBufferCursor = 0;
 
+		byte val;
 		while (cursor < xml.length) {
 
+			val = xml[cursor];
+
 			if (!inCDATA) { //if not in CDATA find a start of OPEN or CLOSE tag
-				if (!in && xml[cursor] == ' ') { //discard EOF and spaces, only if not inside a tag declaration
+				if (!in && val == ' ') { //discard EOF and spaces, only if not inside a tag declaration
 					cursor++;
 					continue;
 				}
-				else if (xml[cursor] == '\n') { //discard EOF
+				else if (val == '\n') { //discard EOF
 					cursor++;
 					continue;
 				}
-				else if (xml[cursor] == '<' && cursor + 1 < xml.length && xml[cursor + 1] == '/') {
+				else if (val == '<' && cursor + 1 < xml.length && xml[cursor + 1] == '/') {
 					startTag = cursor + 1;
 					in = true;
 					tagType = TagType.CLOSE;
 					cursor++;
 					continue;
 				}
-				else if (xml[cursor] == '<') {
+				else if (val == '<') {
 					startTag = cursor;
 					in = true;
 					tagType = TagType.OPEN;
@@ -518,7 +521,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 
 			if (in) { //are inside a tag definition
 				if (!inCDATA) { //not inside a CDATA element
-					if (xml[cursor] == '>') {
+					if (val == '>') {
 						if (inAtt) {
 							return getTagWithAttributes(Arrays.copyOfRange(xml, startTag + 1, cursor), cursor + 1, namespacePosition - startTag, TagType.OPEN, cdata);
 						}
@@ -526,7 +529,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 							return new Tag(xml, startTag + 1, cursor - startTag - 1, namespacePosition, cursor + 1, tagType, cdata);
 						}
 					}
-					else if (xml[cursor] == '/' && cursor + 1 < xml.length && xml[cursor + 1] == '>') {
+					else if (val == '/' && cursor + 1 < xml.length && xml[cursor + 1] == '>') {
 						if (tagType == TagType.OPEN) {
 							if (inAtt) { //closing a open tag with attributes
 								return getTagWithAttributes(Arrays.copyOfRange(xml, startTag + 1, cursor), cursor + 1, namespacePosition - startTag, TagType.SELF_CLOSED, false);
@@ -539,16 +542,16 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 							return new Tag(xml, startTag + 1, cursor - startTag - 1, namespacePosition, cursor + 1, tagType, cdata);
 						}
 					}
-					else if (xml[cursor] == '=') { //if there is an equal is -> there is/are attributes
+					else if (val == '=') { //if there is an equal is -> there is/are attributes
 						inAtt = true;
 					}
-					else if (!space && xml[cursor] == ':') { // there is a namespace (: detected and no space has been processed
+					else if (!space && val == ':') { // there is a namespace (: detected and no space has been processed
 						namespacePosition = cursor;
 					}
-					else if (xml[cursor] == ' ') {
+					else if (val == ' ') {
 						space = true;
 					}
-					else if (xml[cursor] == '<') { //<![CDATA[. detection
+					else if (val == '<') { //<![CDATA[. detection
 
 						//check if cdata
 						if (xml.length > cursor + 8  //"<![CDATA[".lenght= 9 ('<' already processed)
@@ -571,7 +574,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 					}
 				}
 				else { //inCDATA -> finding end of CDATA
-					if (xml[cursor] == ']') {
+					if (val == ']') {
 						if (xml.length > cursor + 2  //"]]>".lenght= 3 (']' already processed)
 								&& xml[cursor + 1] == ']'
 								&& xml[cursor + 2] == '>'
