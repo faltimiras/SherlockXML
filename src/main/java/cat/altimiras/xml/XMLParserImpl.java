@@ -376,10 +376,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 			if (tag.cdata) { //remove cdata beginning and end
 				//<![CDATA[".length= 9
 				// ]]>.length = 3
-				//String dirty = new String(xml, open.getEndPosition(), tag.getStartPosition() - open.getEndPosition()).trim();
-				//content = dirty.substring(9, dirty.length() - 3);
-
-				content = new String(xml, start + 9, end - start - 9 - 3);
+				content = new String(xml, start + 9, end - start - 12); //-9 -3 = -12
 			}
 			else {
 				content = new String(xml, start, end - start);
