@@ -12,7 +12,7 @@ class Tag {
 	protected List<Attribute> attributes;
 	protected boolean cdata;
 
-	private int startContent =0;
+	private int startContent = 0;
 	private int endContent = 0;
 	private int position;
 
@@ -45,8 +45,8 @@ class Tag {
 		return endContent;
 	}
 
-	public int getEndContentPosition(){
-		return getStartPosition() - endContent -1;
+	public int getEndContentPosition() {
+		return getStartPosition() - endContent - 1;
 	}
 
 	public int getEndPosition() {

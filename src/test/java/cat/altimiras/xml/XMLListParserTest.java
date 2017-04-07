@@ -12,13 +12,15 @@ import static org.junit.Assert.assertTrue;
 
 public class XMLListParserTest {
 
+	final private int BUFFER_SIZE = 200;
+
 	@Test
 	public void xmlListTest() throws Exception {
 
 		ClassIntrospector ci = new ClassIntrospector(ListTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listTest.xml"), "UTF-8");
-		XMLParser<ListTestObj> parser = new XMLParserImpl<>(ListTestObj.class, ci);
+		XMLParser<ListTestObj> parser = new XMLParserImpl<>(ListTestObj.class, ci, BUFFER_SIZE);
 
 		ListTestObj o = parser.parse(xml);
 
@@ -31,7 +33,7 @@ public class XMLListParserTest {
 		ClassIntrospector ci = new ClassIntrospector(ListTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/list2Test.xml"), "UTF-8");
-		XMLParser<ListTestObj> parser = new XMLParserImpl<>(ListTestObj.class, ci);
+		XMLParser<ListTestObj> parser = new XMLParserImpl<>(ListTestObj.class, ci, BUFFER_SIZE);
 
 		ListTestObj o = parser.parse(xml);
 
@@ -47,7 +49,7 @@ public class XMLListParserTest {
 		ClassIntrospector ci = new ClassIntrospector(Nested4TestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listNestedTest.xml"), "UTF-8");
-		XMLParser<Nested4TestObj> parser = new XMLParserImpl<>(Nested4TestObj.class, ci);
+		XMLParser<Nested4TestObj> parser = new XMLParserImpl<>(Nested4TestObj.class, ci, BUFFER_SIZE);
 
 		Nested4TestObj o = parser.parse(xml);
 
@@ -62,7 +64,7 @@ public class XMLListParserTest {
 		ClassIntrospector ci = new ClassIntrospector(Nested5TestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listNestedselfClosedTest.xml"), "UTF-8");
-		XMLParser<Nested5TestObj> parser = new XMLParserImpl<>(Nested5TestObj.class, ci);
+		XMLParser<Nested5TestObj> parser = new XMLParserImpl<>(Nested5TestObj.class, ci, BUFFER_SIZE);
 
 		Nested5TestObj o = parser.parse(xml);
 
@@ -80,7 +82,7 @@ public class XMLListParserTest {
 		ClassIntrospector ci = new ClassIntrospector(ListTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listSelfClosedTest.xml"), "UTF-8");
-		XMLParser<ListTestObj> parser = new XMLParserImpl<>(ListTestObj.class, ci);
+		XMLParser<ListTestObj> parser = new XMLParserImpl<>(ListTestObj.class, ci, BUFFER_SIZE);
 
 		ListTestObj o = parser.parse(xml);
 
@@ -98,7 +100,7 @@ public class XMLListParserTest {
 		ClassIntrospector ci = new ClassIntrospector(ListTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/emptyListTest.xml"), "UTF-8");
-		XMLParser<ListTestObj> parser = new XMLParserImpl<>(ListTestObj.class, ci);
+		XMLParser<ListTestObj> parser = new XMLParserImpl<>(ListTestObj.class, ci, BUFFER_SIZE);
 
 		ListTestObj o = parser.parse(xml);
 

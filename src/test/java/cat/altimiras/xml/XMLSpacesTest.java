@@ -8,13 +8,15 @@ import static org.junit.Assert.assertEquals;
 
 public class XMLSpacesTest {
 
+	final private int BUFFER_SIZE = 200;
+
 	@Test
 	public void trimStartTest() throws Exception {
 
 		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/spacesStartTest.xml"), "UTF-8");
-		XMLParser<SimpleTestObj> parser = new XMLParserImpl<>(SimpleTestObj.class, ci);
+		XMLParser<SimpleTestObj> parser = new XMLParserImpl<>(SimpleTestObj.class, ci, BUFFER_SIZE);
 
 		SimpleTestObj o = parser.parse(xml);
 
@@ -27,7 +29,7 @@ public class XMLSpacesTest {
 		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/spacesEndTest.xml"), "UTF-8");
-		XMLParser<SimpleTestObj> parser = new XMLParserImpl<>(SimpleTestObj.class, ci);
+		XMLParser<SimpleTestObj> parser = new XMLParserImpl<>(SimpleTestObj.class, ci, BUFFER_SIZE);
 
 		SimpleTestObj o = parser.parse(xml);
 
@@ -40,7 +42,7 @@ public class XMLSpacesTest {
 		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/spacesMiddleTest.xml"), "UTF-8");
-		XMLParser<SimpleTestObj> parser = new XMLParserImpl<>(SimpleTestObj.class, ci);
+		XMLParser<SimpleTestObj> parser = new XMLParserImpl<>(SimpleTestObj.class, ci, BUFFER_SIZE);
 
 		SimpleTestObj o = parser.parse(xml);
 

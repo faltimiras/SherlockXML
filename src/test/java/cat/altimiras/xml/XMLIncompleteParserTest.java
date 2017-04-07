@@ -4,12 +4,13 @@ import cat.altimiras.xml.pojo.ListTestObj;
 import cat.altimiras.xml.pojo.Nested3TestObj;
 import cat.altimiras.xml.pojo.Nested6TestObj;
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
 public class XMLIncompleteParserTest {
+
+	final private int BUFFER_SIZE = 200;
 
 	@Test
 	public void xmlIncompleteTest() throws Exception {
@@ -17,7 +18,7 @@ public class XMLIncompleteParserTest {
 		ClassIntrospector ci = new ClassIntrospector(Nested3TestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/incompleteXMLTest.xml"), "UTF-8");
-		XMLParser<Nested3TestObj> parser = new XMLParserImpl<>(Nested3TestObj.class, ci);
+		XMLParser<Nested3TestObj> parser = new XMLParserImpl<>(Nested3TestObj.class, ci, BUFFER_SIZE);
 
 		Nested3TestObj o = parser.parse(xml);
 
@@ -30,7 +31,7 @@ public class XMLIncompleteParserTest {
 		ClassIntrospector ci = new ClassIntrospector(Nested3TestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/incompleteXML2Test.xml"), "UTF-8");
-		XMLParser<Nested3TestObj> parser = new XMLParserImpl<>(Nested3TestObj.class, ci);
+		XMLParser<Nested3TestObj> parser = new XMLParserImpl<>(Nested3TestObj.class, ci, BUFFER_SIZE);
 
 		Nested3TestObj o = parser.parse(xml);
 
@@ -45,7 +46,7 @@ public class XMLIncompleteParserTest {
 		ClassIntrospector ci = new ClassIntrospector(ListTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/incompleteListXMLTest.xml"), "UTF-8");
-		XMLParser<ListTestObj> parser = new XMLParserImpl<>(ListTestObj.class, ci);
+		XMLParser<ListTestObj> parser = new XMLParserImpl<>(ListTestObj.class, ci, BUFFER_SIZE);
 
 		ListTestObj o = parser.parse(xml);
 
@@ -58,7 +59,7 @@ public class XMLIncompleteParserTest {
 		ClassIntrospector ci = new ClassIntrospector(Nested6TestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/incompleteListXML2Test.xml"), "UTF-8");
-		XMLParser<Nested6TestObj> parser = new XMLParserImpl<>(Nested6TestObj.class, ci);
+		XMLParser<Nested6TestObj> parser = new XMLParserImpl<>(Nested6TestObj.class, ci, BUFFER_SIZE);
 
 		Nested6TestObj o = parser.parse(xml);
 
@@ -74,5 +75,5 @@ public class XMLIncompleteParserTest {
 		assertEquals("777", o.getList().get(1).getList().get(1).getElement2());
 	}
 
-	
+
 }

@@ -10,27 +10,27 @@ import static junit.framework.TestCase.assertNotNull;
 public class XMLFactoryTest {
 
 	@Before
-	public void setUp(){
+	public void setUp() {
 		XMLFactory.reset();
 	}
 
-	@Test(expected = Exception.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void notInitFactory() throws Exception {
 		XMLFactory.getParser(SimpleTestObj.class);
 	}
 
-	@Test(expected = Exception.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void notProperInitFactory() throws Exception {
 		XMLFactory.init(Nested2TestObj.class);
 		XMLFactory.getParser(SimpleTestObj.class);
 	}
 
-	@Test(expected = Exception.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void emptyInitFactory() throws Exception {
 		XMLFactory.init();
 	}
 
-	@Test(expected = Exception.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void nullInitFactory() throws Exception {
 		XMLFactory.init(null);
 	}
@@ -43,9 +43,19 @@ public class XMLFactoryTest {
 		assertNotNull(p);
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test(expected = IllegalArgumentException.class)
 	public void nullParamFactory() throws Exception {
 		XMLFactory.init(SimpleTestObj.class);
 		XMLFactory.getParser(null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void badBufferParamFactory() throws Exception {
+		XMLFactory.getParser(SimpleTestObj.class, 100);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void negativeBufferParamFactory() throws Exception {
+		XMLFactory.getParser(SimpleTestObj.class, -100);
 	}
 }

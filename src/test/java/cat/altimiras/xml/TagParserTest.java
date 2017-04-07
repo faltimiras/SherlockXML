@@ -10,37 +10,39 @@ import static org.junit.Assert.assertEquals;
 
 public class TagParserTest {
 
+	final private int bufferSize = 100;
+
 	@Test
 	public void openTagTest() throws Exception {
-		Tag t = new TagParser().getTag("<t>".getBytes(), 0);
+		Tag t = new TagParser(bufferSize).getTag("<t>".getBytes(), 0);
 		assertEquals("t", t.name);
 		assertEquals(OPEN, t.type);
 	}
 
 	@Test
 	public void openTagWithNoisetest() throws Exception {
-		Tag t = new TagParser().getTag(" \n<t>".getBytes(), 0);
+		Tag t = new TagParser(bufferSize).getTag(" \n<t>".getBytes(), 0);
 		assertEquals("t", t.name);
 		assertEquals(OPEN, t.type);
 	}
 
 	@Test
 	public void closeTagTest() throws Exception {
-		Tag t = new TagParser().getTag("</t>".getBytes(), 0);
+		Tag t = new TagParser(bufferSize).getTag("</t>".getBytes(), 0);
 		assertEquals("t", t.name);
 		assertEquals(CLOSE, t.type);
 	}
 
 	@Test
 	public void selfCloseTagTest() throws Exception {
-		Tag t = new TagParser().getTag("<t/>".getBytes(), 0);
+		Tag t = new TagParser(bufferSize).getTag("<t/>".getBytes(), 0);
 		assertEquals("t", t.name);
 		assertEquals(SELF_CLOSED, t.type);
 	}
 
 	@Test
 	public void openWithAttributesTagTest() throws Exception {
-		Tag t = new TagParser().getTag("<t a=\"g\">".getBytes(), 0);
+		Tag t = new TagParser(bufferSize).getTag("<t a=\"g\">".getBytes(), 0);
 		assertEquals("t", t.name);
 		assertEquals(OPEN, t.type);
 		assertEquals("a", t.attributes.get(0).name);
@@ -49,7 +51,7 @@ public class TagParserTest {
 
 	@Test
 	public void openWithAttributesAndSpacesTag() throws Exception {
-		Tag t = new TagParser().getTag("<t a=\"g g\">".getBytes(), 0);
+		Tag t = new TagParser(bufferSize).getTag("<t a=\"g g\">".getBytes(), 0);
 		assertEquals("t", t.name);
 		assertEquals(OPEN, t.type);
 		assertEquals("a", t.attributes.get(0).name);
@@ -58,7 +60,7 @@ public class TagParserTest {
 
 	@Test
 	public void openWith2AttributesTagTest() throws Exception {
-		Tag t = new TagParser().getTag("<t a=\"g\" a2=\"g2\" >".getBytes(), 0);
+		Tag t = new TagParser(bufferSize).getTag("<t a=\"g\" a2=\"g2\" >".getBytes(), 0);
 		assertEquals("t", t.name);
 		assertEquals(OPEN, t.type);
 		assertEquals("a", t.attributes.get(0).name);
@@ -69,7 +71,7 @@ public class TagParserTest {
 
 	@Test
 	public void selfCloseWithAttributesTagTest() throws Exception {
-		Tag t = new TagParser().getTag("<t a=\"g\"/>".getBytes(), 0);
+		Tag t = new TagParser(bufferSize).getTag("<t a=\"g\"/>".getBytes(), 0);
 		assertEquals("t", t.name);
 		assertEquals(SELF_CLOSED, t.type);
 		assertEquals("a", t.attributes.get(0).name);
@@ -78,7 +80,7 @@ public class TagParserTest {
 
 	@Test
 	public void selfCloseWithAttributesAndNoiseTagTest() throws Exception {
-		Tag t = new TagParser().getTag("<t a=\"h=g\"/>".getBytes(), 0);
+		Tag t = new TagParser(bufferSize).getTag("<t a=\"h=g\"/>".getBytes(), 0);
 		assertEquals("t", t.name);
 		assertEquals(SELF_CLOSED, t.type);
 		assertEquals("a", t.attributes.get(0).name);
@@ -87,7 +89,7 @@ public class TagParserTest {
 
 	@Test
 	public void openWithNsTagTest() throws Exception {
-		Tag t = new TagParser().getTag("<n:t>".getBytes(), 0);
+		Tag t = new TagParser(bufferSize).getTag("<n:t>".getBytes(), 0);
 		assertEquals("t", t.name);
 		assertEquals("n", t.namespace);
 		assertEquals(OPEN, t.type);
@@ -95,7 +97,7 @@ public class TagParserTest {
 
 	@Test
 	public void selfClosedWithNsTagTest() throws Exception {
-		Tag t = new TagParser().getTag("<n:t/>".getBytes(), 0);
+		Tag t = new TagParser(bufferSize).getTag("<n:t/>".getBytes(), 0);
 		assertEquals("t", t.name);
 		assertEquals("n", t.namespace);
 		assertEquals(SELF_CLOSED, t.type);
@@ -103,7 +105,7 @@ public class TagParserTest {
 
 	@Test
 	public void selfClosedWithNs2TagTest() throws Exception {
-		Tag t = new TagParser().getTag("</nn:t>".getBytes(), 0);
+		Tag t = new TagParser(bufferSize).getTag("</nn:t>".getBytes(), 0);
 		assertEquals("t", t.name);
 		assertEquals("nn", t.namespace);
 		assertEquals(CLOSE, t.type);
@@ -111,7 +113,7 @@ public class TagParserTest {
 
 	@Test
 	public void openWithNs2TagTest() throws Exception {
-		Tag t = new TagParser().getTag("<nn:tt  xmlns:nn=\"http:/\" >".getBytes(), 0);
+		Tag t = new TagParser(bufferSize).getTag("<nn:tt  xmlns:nn=\"http:/\" >".getBytes(), 0);
 		assertEquals("tt", t.name);
 		assertEquals("nn", t.namespace);
 		assertEquals(OPEN, t.type);
@@ -119,7 +121,7 @@ public class TagParserTest {
 
 	@Test
 	public void openWithNs3TagTest() throws Exception {
-		Tag t = new TagParser().getTag("<nn:tt a=\"g\" xmlns:nn=\"http:/\" >".getBytes(), 0);
+		Tag t = new TagParser(bufferSize).getTag("<nn:tt a=\"g\" xmlns:nn=\"http:/\" >".getBytes(), 0);
 		assertEquals("tt", t.name);
 		assertEquals("nn", t.namespace);
 		assertEquals(OPEN, t.type);
@@ -129,7 +131,7 @@ public class TagParserTest {
 
 	@Test
 	public void openWithNs4TagTest() throws Exception {
-		Tag t = new TagParser().getTag("<nn:tt  xmlns:nn=\"http:/\" a=\"g\">".getBytes(), 0);
+		Tag t = new TagParser(bufferSize).getTag("<nn:tt  xmlns:nn=\"http:/\" a=\"g\">".getBytes(), 0);
 		assertEquals("tt", t.name);
 		assertEquals("nn", t.namespace);
 		assertEquals(OPEN, t.type);
@@ -140,7 +142,7 @@ public class TagParserTest {
 	@Test
 	public void closeTagWithContentBeforeTest() throws Exception {
 
-		Tag t = new TagParser().getTag(" a</nn:t>".getBytes(), 0);
+		Tag t = new TagParser(bufferSize).getTag(" a</nn:t>".getBytes(), 0);
 		assertEquals("t", t.name);
 		assertEquals("nn", t.namespace);
 		assertEquals(CLOSE, t.type);
@@ -152,7 +154,7 @@ public class TagParserTest {
 	@Test
 	public void closeTagWithContentAfterTest() throws Exception {
 
-		Tag t = new TagParser().getTag("aaaa </nn:t>".getBytes(), 0);
+		Tag t = new TagParser(bufferSize).getTag("aaaa </nn:t>".getBytes(), 0);
 		assertEquals("t", t.name);
 		assertEquals("nn", t.namespace);
 		assertEquals(CLOSE, t.type);
@@ -164,7 +166,7 @@ public class TagParserTest {
 	@Test
 	public void closeTagWithContentMiddleTest() throws Exception {
 
-		Tag t = new TagParser().getTag(" aaaa   </nn:t>".getBytes(), 0);
+		Tag t = new TagParser(bufferSize).getTag(" aaaa   </nn:t>".getBytes(), 0);
 		assertEquals("t", t.name);
 		assertEquals("nn", t.namespace);
 		assertEquals(CLOSE, t.type);
@@ -176,7 +178,7 @@ public class TagParserTest {
 	@Test
 	public void closeTagWithContentMiddle2Test() throws Exception {
 
-		Tag t = new TagParser().getTag(" a  a   </t>".getBytes(), 0);
+		Tag t = new TagParser(bufferSize).getTag(" a  a   </t>".getBytes(), 0);
 		assertEquals("t", t.name);
 		assertEquals(CLOSE, t.type);
 		assertEquals(1, t.getStartContentOffset());
@@ -187,7 +189,7 @@ public class TagParserTest {
 	@Test
 	public void closeTagWithContentMiddle3Test() throws Exception {
 
-		Tag t = new TagParser().getTag(" a  a   \n</t>".getBytes(), 0);
+		Tag t = new TagParser(bufferSize).getTag(" a  a   \n</t>".getBytes(), 0);
 		assertEquals("t", t.name);
 		assertEquals(CLOSE, t.type);
 		assertEquals(1, t.getStartContentOffset());
@@ -198,7 +200,7 @@ public class TagParserTest {
 	@Test
 	public void closeTagWithContentMiddle4Test() throws Exception {
 
-		Tag t = new TagParser().getTag(" a  \na   \n</t>".getBytes(), 0);
+		Tag t = new TagParser(bufferSize).getTag(" a  \na   \n</t>".getBytes(), 0);
 		assertEquals("t", t.name);
 		assertEquals(CLOSE, t.type);
 		assertEquals(1, t.getStartContentOffset());

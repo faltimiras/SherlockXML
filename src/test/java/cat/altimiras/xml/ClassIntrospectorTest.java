@@ -54,8 +54,8 @@ public class ClassIntrospectorTest {
 		assertEquals(String.class.getName(), classIntrospector.getField(SimpleTestObj.class, "element2").getType().getName());
 	}
 
-    @Test(expected = Exception.class)
-    public void testNotXMLElement() throws Exception {
-        new ClassIntrospector<>(NotXMLElement.class);
-    }
+	@Test(expected = Exception.class)
+	public void testNotXMLElement() throws Exception {
+		new ClassIntrospector<>(NotXMLElement.class);
+	}
 }

@@ -14,9 +14,11 @@ import static org.junit.Assert.assertEquals;
 @Ignore
 public class PseudoPerformanceComparator {
 
+	final private int BUFFER_SIZE = 200;
+
 	private static final int LOOPS = 1000;
 
-    //THIS IS NOT A REAL PERFORMANCE TEST!!
+	//THIS IS NOT A REAL PERFORMANCE TEST!!
 	@Test
 	public void parseBigList() throws Exception {
 
@@ -25,7 +27,7 @@ public class PseudoPerformanceComparator {
 		ClassIntrospector c = new ClassIntrospector(ListTestObj.class);
 
 		long ini = System.currentTimeMillis();
-		XMLParser<ListTestObj> parser = new XMLParserImpl<>(ListTestObj.class, c);
+		XMLParser<ListTestObj> parser = new XMLParserImpl<>(ListTestObj.class, c, BUFFER_SIZE);
 		for (int i = 0; i < LOOPS; i++) {
 			ListTestObj o = parser.parse(xml);
 
@@ -37,7 +39,7 @@ public class PseudoPerformanceComparator {
 
 	}
 
-    //THIS IS NOT A REAL PERFORMANCE TEST!!
+	//THIS IS NOT A REAL PERFORMANCE TEST!!
 	@Test
 	public void parseBigListIgnore() throws Exception {
 
@@ -46,7 +48,7 @@ public class PseudoPerformanceComparator {
 		ClassIntrospector c = new ClassIntrospector(ListTestObj.class);
 
 		long ini = System.currentTimeMillis();
-		XMLParser<ListTestObj> parser = new XMLParserImpl<>(ListTestObj.class, c);
+		XMLParser<ListTestObj> parser = new XMLParserImpl<>(ListTestObj.class, c, BUFFER_SIZE);
 		for (int i = 0; i < LOOPS; i++) {
 			ListTestObj o = parser.parse(xml);
 
@@ -66,7 +68,7 @@ public class PseudoPerformanceComparator {
 		ClassIntrospector c = new ClassIntrospector(ListTestObj.class);
 
 		long ini = System.currentTimeMillis();
-		XMLParser<ListTestObj> parser = new XMLParserImpl<>(ListTestObj.class, c);
+		XMLParser<ListTestObj> parser = new XMLParserImpl<>(ListTestObj.class, c, BUFFER_SIZE);
 		for (int i = 0; i < LOOPS; i++) {
 			ListTestObj o = parser.parse(xml);
 
@@ -79,7 +81,7 @@ public class PseudoPerformanceComparator {
 
 	@Test
 	public void tenTimes() throws Exception {
-		for (int i = 0; i<10 ; i++){
+		for (int i = 0; i < 10; i++) {
 			parseBigListIgnore();
 		}
 	}

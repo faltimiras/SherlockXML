@@ -3,7 +3,6 @@ package cat.altimiras.xml;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,18 +53,18 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 
 	final private TagParser tagParser;
 
-	public XMLParserImpl(Class<T> typeArgumentClass, ClassIntrospector<T> classIntrospector) throws Exception {
+	public XMLParserImpl(Class<T> typeArgumentClass, ClassIntrospector<T> classIntrospector, int tagBufferSize) throws Exception {
 
 		this.classIntrospector = classIntrospector;
 
-		this.tagParser = new TagParser();
+		this.tagParser = new TagParser(tagBufferSize);
 
 		obj = typeArgumentClass.newInstance();
 		objClassNameHashCode = obj.getClass().getSimpleName().hashCode();
 
 		currentContext = new Context();
 		currentContext.object = obj;
-		currentContext.tag = new Tag(obj.getClass().getSimpleName(), null, 0, OPEN, null, false, 0,0);
+		currentContext.tag = new Tag(obj.getClass().getSimpleName(), null, 0, OPEN, null, false, 0, 0);
 		contexts.push(currentContext);
 	}
 

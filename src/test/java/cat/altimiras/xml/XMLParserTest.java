@@ -9,12 +9,14 @@ import static org.junit.Assert.assertNull;
 
 public class XMLParserTest {
 
+	final private int BUFFER_SIZE = 200;
+
 	@Test(expected = NullPointerException.class)
 	public void invalidNullStrInputTest() throws Exception {
 
 		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
 
-		XMLParser<SimpleTestObj> parser = new XMLParserImpl<>(SimpleTestObj.class, ci);
+		XMLParser<SimpleTestObj> parser = new XMLParserImpl<>(SimpleTestObj.class, ci, BUFFER_SIZE);
 		SimpleTestObj o = parser.parse((String) null);
 	}
 
@@ -23,7 +25,7 @@ public class XMLParserTest {
 
 		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
 
-		XMLParser<SimpleTestObj> parser = new XMLParserImpl<>(SimpleTestObj.class, ci);
+		XMLParser<SimpleTestObj> parser = new XMLParserImpl<>(SimpleTestObj.class, ci, BUFFER_SIZE);
 		SimpleTestObj o = parser.parse((byte[]) null);
 	}
 
@@ -33,7 +35,7 @@ public class XMLParserTest {
 		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/simpleTest.xml"), "UTF-8");
-		XMLParser<SimpleTestObj> parser = new XMLParserImpl<>(SimpleTestObj.class, ci);
+		XMLParser<SimpleTestObj> parser = new XMLParserImpl<>(SimpleTestObj.class, ci, BUFFER_SIZE);
 
 		SimpleTestObj o = parser.parse(xml);
 
@@ -47,7 +49,7 @@ public class XMLParserTest {
 		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/simpleInlineTest.xml"), "UTF-8");
-		XMLParser<SimpleTestObj> parser = new XMLParserImpl<>(SimpleTestObj.class, ci);
+		XMLParser<SimpleTestObj> parser = new XMLParserImpl<>(SimpleTestObj.class, ci, BUFFER_SIZE);
 
 		SimpleTestObj o = parser.parse(xml);
 
@@ -59,7 +61,7 @@ public class XMLParserTest {
 
 		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
 
-		XMLParser<SimpleTestObj> parser = new XMLParserImpl<>(SimpleTestObj.class, ci);
+		XMLParser<SimpleTestObj> parser = new XMLParserImpl<>(SimpleTestObj.class, ci, BUFFER_SIZE);
 		SimpleTestObj o = parser.parse("asdfasdfasdfasdf");
 		assertNull(o);
 	}
@@ -69,7 +71,7 @@ public class XMLParserTest {
 
 		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
 
-		XMLParser<SimpleTestObj> parser = new XMLParserImpl<>(SimpleTestObj.class, ci);
+		XMLParser<SimpleTestObj> parser = new XMLParserImpl<>(SimpleTestObj.class, ci, BUFFER_SIZE);
 		SimpleTestObj o = parser.parse("");
 
 		assertNull(o.getElement1());

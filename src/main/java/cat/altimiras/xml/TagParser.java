@@ -8,12 +8,16 @@ class TagParser {
 	/**
 	 * Buffer to keep bytes until becomes an tag name, attribute name or attribute value
 	 */
-	private byte[] buffer = new byte[300]; //this is a hard limit. tag name, attributes names and attributes values can not be longer than 300.
+	private byte[] buffer;
 
 	/**
 	 * Position until data is valid on buffer
 	 */
 	private int bufferCursor = 0;
+
+	public TagParser(int tagBufferSize) {
+		buffer = new byte[tagBufferSize]; //this is a hard limit. tag name, attributes names and attributes values can not be longer than this value.
+	}
 
 	protected Tag getTag(byte[] xml, int cursor) {
 
@@ -46,14 +50,14 @@ class TagParser {
 					if (name == null) {
 						name = new String(buffer, 0, bufferCursor);
 					}
-					return new Tag(name, namespace, cursor + 1, tagType, attributes, cdata, startContentCursor,  endContentCursor);
+					return new Tag(name, namespace, cursor + 1, tagType, attributes, cdata, startContentCursor, endContentCursor);
 				}
 				if (val == '/' && cursor + 1 < xml.length && xml[cursor + 1] == '>') { //detecting close tag
 					//name = new String(buffer, 1, bufferCursor);
 					if (name == null) {
 						name = new String(buffer, 0, bufferCursor);
 					}
-					return new Tag(name, namespace, cursor + 1, Tag.TagType.SELF_CLOSED, attributes, cdata, 0 ,0);
+					return new Tag(name, namespace, cursor + 1, Tag.TagType.SELF_CLOSED, attributes, cdata, 0, 0);
 				}
 
 				//parsing characters in tag definition
@@ -109,17 +113,20 @@ class TagParser {
 						contentCursor++;
 						cursor++;
 						continue;
-					} else if (val == ' ') { //discard spaces between
+					}
+					else if (val == ' ') { //discard spaces between
 						contentCursor++;
 						cursor++;
 						continue;
-					} else {
+					}
+					else {
 						if (contentFound) { //content found previously
 							if (contentCursor != 0) {
-								endContentCursor= contentCursor;
+								endContentCursor = contentCursor;
 								contentCursor = 0;
 							}
-						} else {
+						}
+						else {
 							startContentCursor = contentCursor;
 							contentCursor = 0;
 							contentFound = true;

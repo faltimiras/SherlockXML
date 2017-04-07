@@ -10,6 +10,7 @@ import static org.junit.Assert.assertEquals;
 
 public class XMLNamespaceParserTest {
 
+	final private int BUFFER_SIZE = 200;
 
 	@Test
 	public void xmlNamespaceSimpleTest() throws Exception {
@@ -17,7 +18,7 @@ public class XMLNamespaceParserTest {
 		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/simpleNamespaceTest.xml"), "UTF-8");
-		XMLParser<SimpleTestObj> parser = new XMLParserImpl<>(SimpleTestObj.class, ci);
+		XMLParser<SimpleTestObj> parser = new XMLParserImpl<>(SimpleTestObj.class, ci, BUFFER_SIZE);
 
 		SimpleTestObj o = parser.parse(xml);
 
@@ -31,7 +32,7 @@ public class XMLNamespaceParserTest {
 		ClassIntrospector ci = new ClassIntrospector(Nested3TestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/attributesNamespaceTest.xml"), "UTF-8");
-		XMLParser<Nested3TestObj> parser = new XMLParserImpl<>(Nested3TestObj.class, ci);
+		XMLParser<Nested3TestObj> parser = new XMLParserImpl<>(Nested3TestObj.class, ci, BUFFER_SIZE);
 
 		Nested3TestObj o = parser.parse(xml);
 
@@ -46,7 +47,7 @@ public class XMLNamespaceParserTest {
 		ClassIntrospector ci = new ClassIntrospector(Nested5TestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listNestedselfClosedNamespaceTest.xml"), "UTF-8");
-		XMLParser<Nested5TestObj> parser = new XMLParserImpl<>(Nested5TestObj.class, ci);
+		XMLParser<Nested5TestObj> parser = new XMLParserImpl<>(Nested5TestObj.class, ci, BUFFER_SIZE);
 
 		Nested5TestObj o = parser.parse(xml);
 
@@ -64,7 +65,7 @@ public class XMLNamespaceParserTest {
 		ClassIntrospector ci = new ClassIntrospector(Nested5TestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/namespacesComplexTest.xml"), "UTF-8");
-		XMLParser<Nested5TestObj> parser = new XMLParserImpl<>(Nested5TestObj.class, ci);
+		XMLParser<Nested5TestObj> parser = new XMLParserImpl<>(Nested5TestObj.class, ci, BUFFER_SIZE);
 
 		Nested5TestObj o = parser.parse(xml);
 

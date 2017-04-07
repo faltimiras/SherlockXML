@@ -18,6 +18,8 @@ import static org.mockito.Mockito.when;
 
 public class TagListenerTest {
 
+	final private int BUFFER_SIZE = 200;
+
 
 	@Test
 	public void listenerStringTest() throws Exception {
@@ -25,7 +27,7 @@ public class TagListenerTest {
 		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/simpleTest.xml"), "UTF-8");
-		XMLParser<SimpleTestObj> parser = new XMLParserImpl<>(SimpleTestObj.class, ci);
+		XMLParser<SimpleTestObj> parser = new XMLParserImpl<>(SimpleTestObj.class, ci, BUFFER_SIZE);
 
 		TagListener stringListener = mock(TagListener.class);
 		when(stringListener.notify("element1", "111")).thenReturn(false);
@@ -43,7 +45,7 @@ public class TagListenerTest {
 		ClassIntrospector ci = new ClassIntrospector(Nested2TestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nested2Test.xml"), "UTF-8");
-		XMLParser<Nested2TestObj> parser = new XMLParserImpl<>(Nested2TestObj.class, ci);
+		XMLParser<Nested2TestObj> parser = new XMLParserImpl<>(Nested2TestObj.class, ci, BUFFER_SIZE);
 
 		TagListener objListener = mock(TagListener.class);
 		when(objListener.notify(eq("simpleTestObj1"), any())).thenReturn(false);
@@ -61,7 +63,7 @@ public class TagListenerTest {
 		ClassIntrospector ci = new ClassIntrospector(Nested2TestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nested2Test.xml"), "UTF-8");
-		XMLParser<Nested2TestObj> parser = new XMLParserImpl<>(Nested2TestObj.class, ci);
+		XMLParser<Nested2TestObj> parser = new XMLParserImpl<>(Nested2TestObj.class, ci, BUFFER_SIZE);
 
 		TagListener objListener = mock(TagListener.class);
 		when(objListener.notify(eq("tagNotFound"), any())).thenReturn(false);
@@ -79,7 +81,7 @@ public class TagListenerTest {
 		ClassIntrospector ci = new ClassIntrospector(Nested2TestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nested2Test.xml"), "UTF-8");
-		XMLParser<Nested2TestObj> parser = new XMLParserImpl<>(Nested2TestObj.class, ci);
+		XMLParser<Nested2TestObj> parser = new XMLParserImpl<>(Nested2TestObj.class, ci, BUFFER_SIZE);
 
 		TagListener objListener = mock(TagListener.class);
 		when(objListener.notify(eq("simpleTestObj1"), any())).thenReturn(true);

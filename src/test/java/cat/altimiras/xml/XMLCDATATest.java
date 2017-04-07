@@ -9,13 +9,15 @@ import static org.junit.Assert.assertEquals;
 
 public class XMLCDATATest {
 
+	final private int BUFFER_SIZE = 200;
+
 	@Test
 	public void xmlSimpleCDATATest() throws Exception {
 
 		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/CDATATest.xml"), "UTF-8");
-		XMLParser<SimpleTestObj> parser = new XMLParserImpl<>(SimpleTestObj.class, ci);
+		XMLParser<SimpleTestObj> parser = new XMLParserImpl<>(SimpleTestObj.class, ci, BUFFER_SIZE);
 
 		SimpleTestObj o = parser.parse(xml);
 

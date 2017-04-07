@@ -8,6 +8,7 @@ import static org.junit.Assert.assertEquals;
 
 public class XMLSelfClosedParserTest {
 
+	final private int BUFFER_SIZE = 200;
 
 	@Test
 	public void xmlSelfClosedTest() throws Exception {
@@ -15,7 +16,7 @@ public class XMLSelfClosedParserTest {
 		ClassIntrospector ci = new ClassIntrospector(Nested2TestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/selfClosedTest.xml"), "UTF-8");
-		XMLParser<Nested2TestObj> parser = new XMLParserImpl<>(Nested2TestObj.class, ci);
+		XMLParser<Nested2TestObj> parser = new XMLParserImpl<>(Nested2TestObj.class, ci, BUFFER_SIZE);
 
 		Nested2TestObj o = parser.parse(xml);
 

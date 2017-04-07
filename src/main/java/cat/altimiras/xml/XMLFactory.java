@@ -7,10 +7,12 @@ public class XMLFactory {
 
 	private static Map<String, ClassIntrospector> classesIntrospector = new HashMap<>();
 
-	public static void init(Class... classes) throws Exception{
+	final private static int TAG_BUFFER_SIZE_DEFAULT = 1000;
+
+	public static void init(Class... classes) throws Exception {
 
 		if (classes == null || classes.length == 0) {
-			throw  new Exception("init parameters can not be empty");
+			throw new IllegalArgumentException("init parameters can not be empty");
 		}
 
 		for (Class c : classes) {
@@ -21,16 +23,48 @@ public class XMLFactory {
 		}
 	}
 
-	public static XMLParser getParser(Class c) throws Exception {
+	/**
+	 * Get a parser for class c, with user defined buffer size
+	 *
+	 * @param c
+	 * @param tagBufferSize
+	 *
+	 * @return
+	 *
+	 * @throws Exception
+	 */
+	public static XMLParser getParser(Class c, int tagBufferSize) throws Exception {
+
+		if (c == null){
+			throw new IllegalArgumentException("Class can not be null");
+		}
+
+		if (tagBufferSize < TAG_BUFFER_SIZE_DEFAULT) {
+			throw new IllegalArgumentException("buffer size must be bigger than " + TAG_BUFFER_SIZE_DEFAULT);
+		}
 
 		ClassIntrospector classIntrospector = classesIntrospector.get(c.getSimpleName());
 		if (classIntrospector == null) {
-			throw new Exception("XMLFactory has not been properly initialzed. Class:" + c.getSimpleName() + ". Check init method");
+			throw new IllegalArgumentException("XMLFactory has not been properly initialzed. Class:" + c.getSimpleName() + ". Check init method");
 		}
-		return new XMLParserImpl<>(c, classIntrospector);
+		return new XMLParserImpl<>(c, classIntrospector, tagBufferSize);
 	}
 
-	public static void reset(){
+	/**
+	 * Get a parser for class c, with default tag buffer size
+	 *
+	 * @param c
+	 *
+	 * @return
+	 *
+	 * @throws Exception
+	 */
+	public static XMLParser getParser(Class c) throws Exception {
+		return getParser(c, TAG_BUFFER_SIZE_DEFAULT);
+	}
+
+
+	static void reset() {
 		classesIntrospector.clear();
 	}
 

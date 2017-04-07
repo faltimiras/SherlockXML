@@ -12,13 +12,15 @@ import static org.junit.Assert.assertNull;
 
 public class XMLNestedParserTest {
 
+	final private int BUFFER_SIZE = 200;
+
 	@Test
 	public void xmlNestedTest() throws Exception {
 
 		ClassIntrospector ci = new ClassIntrospector(NestedTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nestedTest.xml"), "UTF-8");
-		XMLParser<NestedTestObj> parser = new XMLParserImpl<>(NestedTestObj.class, ci);
+		XMLParser<NestedTestObj> parser = new XMLParserImpl<>(NestedTestObj.class, ci, BUFFER_SIZE);
 
 		NestedTestObj o = parser.parse(xml);
 
@@ -33,7 +35,7 @@ public class XMLNestedParserTest {
 		ClassIntrospector ci = new ClassIntrospector(Nested2TestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nested2Test.xml"), "UTF-8");
-		XMLParser<Nested2TestObj> parser = new XMLParserImpl<>(Nested2TestObj.class, ci);
+		XMLParser<Nested2TestObj> parser = new XMLParserImpl<>(Nested2TestObj.class, ci, BUFFER_SIZE);
 
 		Nested2TestObj o = parser.parse(xml);
 
@@ -48,7 +50,7 @@ public class XMLNestedParserTest {
 		ClassIntrospector ci = new ClassIntrospector(Nested3TestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nested3Test.xml"), "UTF-8");
-		XMLParser<Nested3TestObj> parser = new XMLParserImpl<>(Nested3TestObj.class, ci);
+		XMLParser<Nested3TestObj> parser = new XMLParserImpl<>(Nested3TestObj.class, ci, BUFFER_SIZE);
 
 		Nested3TestObj o = parser.parse(xml);
 
@@ -63,7 +65,7 @@ public class XMLNestedParserTest {
 		ClassIntrospector ci = new ClassIntrospector(NestedLoopTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nestedLoopTest.xml"), "UTF-8");
-		XMLParser<NestedLoopTestObj> parser = new XMLParserImpl<>(NestedLoopTestObj.class, ci);
+		XMLParser<NestedLoopTestObj> parser = new XMLParserImpl<>(NestedLoopTestObj.class, ci, BUFFER_SIZE);
 
 		NestedLoopTestObj o = parser.parse(xml);
 
