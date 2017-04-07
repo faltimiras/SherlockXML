@@ -6,7 +6,7 @@ import java.util.List;
 class TagParser {
 
 	/**
-	 * Buffer to keep bytes until becomes an tag name, attribute name or attribut value
+	 * Buffer to keep bytes until becomes an tag name, attribute name or attribute value
 	 */
 	private byte[] buffer = new byte[300]; //this is a hard limit. tag name, attributes names and attributes values can not be longer than 300.
 
@@ -20,7 +20,7 @@ class TagParser {
 		Tag.TagType tagType = null;
 		boolean in = false; //inside tag
 		boolean inCDATA = false; //processing a cdata
-		boolean cdata = false; //contains cdata content
+		boolean cdata = false; //tag contains cdata content
 		int quotes = 0;
 
 		Attribute attribute = null;
@@ -36,76 +36,76 @@ class TagParser {
 
 			val = xml[cursor];
 
-			if(in) {
+			if (in) {
 				if (val == '>') { //detecting close tag definition
-					if (name == null){
+					if (name == null) {
 						name = new String(buffer, 0, bufferCursor);
 					}
 					return new Tag(name, namespace, cursor + 1, tagType, attributes, cdata);
 				}
 				if (val == '/' && cursor + 1 < xml.length && xml[cursor + 1] == '>') { //detecting close tag
 					//name = new String(buffer, 1, bufferCursor);
-					if (name == null){
+					if (name == null) {
 						name = new String(buffer, 0, bufferCursor);
 					}
-					return new Tag(name, namespace,cursor + 1, Tag.TagType.SELF_CLOSED, attributes, cdata);
+					return new Tag(name, namespace, cursor + 1, Tag.TagType.SELF_CLOSED, attributes, cdata);
 				}
 
 				//parsing characters in tag definition
-				if ( val == ' ' && quotes != 1) {
-					if (name == null) { //fist space, until here tag name defined
+				if (val == ' ' && quotes != 1) {
+					if (name == null) { //first space, until here tag name defined
 						name = new String(buffer, 0, bufferCursor);
 						bufferCursor = 0;
-						quotes=0;
+						quotes = 0;
 					}
-
-
 				}
-				else if (val == '"'){
+				else if (val == '"') {
 					quotes++;
 
 					if (attribute != null && quotes == 2) {
 						attribute.value = new String(buffer, 0, bufferCursor);
-						bufferCursor=0;
+						bufferCursor = 0;
 						attributes.add(attribute);
 						attribute = null;
-						quotes=0;
+						quotes = 0;
 					}
 				}
 				else if (val == '=' && quotes == 0) { //attribute detected and it is not inside defining attribute name or value
 
-					if(attributes == null){
+					if (attributes == null) {
 						attributes = new ArrayList<>(5);
 					}
 
 					attribute = new Attribute();
 					attribute.name = new String(buffer, 0, bufferCursor);
-					bufferCursor=0;
+					bufferCursor = 0;
 
-					quotes=0;
+					quotes = 0;
 
-				} else if( val == ':'){ //namespace
+				}
+				else if (val == ':') { //namespace
 					if (namespace == null) {
 						namespace = new String(buffer, 0, bufferCursor);
 						bufferCursor = 0;
 					}
-
-				} else if(val == '/'){
+				}
+				else if (val == '/') {
 					//do nothing, just to not store it in the buffer
-				}  else { //store on buffer (only non special characters)
-					buffer[bufferCursor]= val;
+				}
+				else { //store on buffer (only non special characters)
+					buffer[bufferCursor] = val;
 					bufferCursor++;
 				}
-
-			} else {
+			}
+			else {
 				//not in tag definition. On content defintion
-				if(!inCDATA){
-					if (val == '\n'){
+				if (!inCDATA) {
+					if (val == '\n') {
 						cursor++;
 						continue;
 					}
 					//discard spaces between
-					if(val == ' '){ //TODO ojo espais dins content!!
+					if (val == ' ') {
 						cursor++;
 						continue;
 					}
@@ -141,7 +141,8 @@ class TagParser {
 							continue;
 						}
 					}
-				} else { //detect end CDATA
+				}
+				else { //detect end CDATA
 					if (val == ']') {
 						if (xml.length > cursor + 2  //"]]>".lenght= 3 (']' already processed)
 								&& xml[cursor + 1] == ']'
