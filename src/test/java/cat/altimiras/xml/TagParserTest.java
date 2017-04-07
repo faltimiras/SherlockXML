@@ -11,7 +11,7 @@ import static org.junit.Assert.assertEquals;
 public class TagParserTest {
 
 	@Test
-	public void openTagtest() throws Exception {
+	public void openTagTest() throws Exception {
 		Tag t = new TagParser().getTag("<t>".getBytes(), 0);
 		assertEquals("t", t.name);
 		assertEquals(OPEN, t.type);
@@ -25,21 +25,21 @@ public class TagParserTest {
 	}
 
 	@Test
-	public void closeTagtest() throws Exception {
+	public void closeTagTest() throws Exception {
 		Tag t = new TagParser().getTag("</t>".getBytes(), 0);
 		assertEquals("t", t.name);
 		assertEquals(CLOSE, t.type);
 	}
 
 	@Test
-	public void selfCloseTagtest() throws Exception {
+	public void selfCloseTagTest() throws Exception {
 		Tag t = new TagParser().getTag("<t/>".getBytes(), 0);
 		assertEquals("t", t.name);
 		assertEquals(SELF_CLOSED, t.type);
 	}
 
 	@Test
-	public void openWithAttributesTagtest() throws Exception {
+	public void openWithAttributesTagTest() throws Exception {
 		Tag t = new TagParser().getTag("<t a=\"g\">".getBytes(), 0);
 		assertEquals("t", t.name);
 		assertEquals(OPEN, t.type);
@@ -48,7 +48,16 @@ public class TagParserTest {
 	}
 
 	@Test
-	public void openWith2AttributesTagtest() throws Exception {
+	public void openWithAttributesAndSpacesTag() throws Exception {
+		Tag t = new TagParser().getTag("<t a=\"g g\">".getBytes(), 0);
+		assertEquals("t", t.name);
+		assertEquals(OPEN, t.type);
+		assertEquals("a", t.attributes.get(0).name);
+		assertEquals("g g", t.attributes.get(0).value);
+	}
+
+	@Test
+	public void openWith2AttributesTagTest() throws Exception {
 		Tag t = new TagParser().getTag("<t a=\"g\" a2=\"g2\" >".getBytes(), 0);
 		assertEquals("t", t.name);
 		assertEquals(OPEN, t.type);
@@ -59,7 +68,7 @@ public class TagParserTest {
 	}
 
 	@Test
-	public void selfCloseWithAttributesTagtest() throws Exception {
+	public void selfCloseWithAttributesTagTest() throws Exception {
 		Tag t = new TagParser().getTag("<t a=\"g\"/>".getBytes(), 0);
 		assertEquals("t", t.name);
 		assertEquals(SELF_CLOSED, t.type);
@@ -68,7 +77,7 @@ public class TagParserTest {
 	}
 
 	@Test
-	public void selfCloseWithAttributesAndNoiseTagtest() throws Exception {
+	public void selfCloseWithAttributesAndNoiseTagTest() throws Exception {
 		Tag t = new TagParser().getTag("<t a=\"h=g\"/>".getBytes(), 0);
 		assertEquals("t", t.name);
 		assertEquals(SELF_CLOSED, t.type);
@@ -77,7 +86,7 @@ public class TagParserTest {
 	}
 
 	@Test
-	public void openWithNsTagtest() throws Exception {
+	public void openWithNsTagTest() throws Exception {
 		Tag t = new TagParser().getTag("<n:t>".getBytes(), 0);
 		assertEquals("t", t.name);
 		assertEquals("n", t.namespace);
@@ -85,7 +94,7 @@ public class TagParserTest {
 	}
 
 	@Test
-	public void selfClosedWithNsTagtest() throws Exception {
+	public void selfClosedWithNsTagTest() throws Exception {
 		Tag t = new TagParser().getTag("<n:t/>".getBytes(), 0);
 		assertEquals("t", t.name);
 		assertEquals("n", t.namespace);
@@ -93,7 +102,7 @@ public class TagParserTest {
 	}
 
 	@Test
-	public void selfClosedWithNs2Tagtest() throws Exception {
+	public void selfClosedWithNs2TagTest() throws Exception {
 		//namespace selfclosed
 		Tag t = new TagParser().getTag("</nn:t>".getBytes(), 0);
 		assertEquals("t", t.name);
@@ -102,7 +111,7 @@ public class TagParserTest {
 	}
 
 	@Test
-	public void openWithNs2Tagtest() throws Exception {
+	public void openWithNs2TagTest() throws Exception {
 		Tag t = new TagParser().getTag("<nn:tt  xmlns:nn=\"http:/\" >".getBytes(), 0);
 		assertEquals("tt", t.name);
 		assertEquals("nn", t.namespace);
@@ -110,7 +119,7 @@ public class TagParserTest {
 	}
 
 	@Test
-	public void openWithNs3Tagtest() throws Exception {
+	public void openWithNs3TagTest() throws Exception {
 		//namespace open
 		Tag t = new TagParser().getTag("<nn:tt a=\"g\" xmlns:nn=\"http:/\" >".getBytes(), 0);
 		assertEquals("tt", t.name);
@@ -121,7 +130,7 @@ public class TagParserTest {
 	}
 
 	@Test
-	public void openWithNs4Tagtest() throws Exception {
+	public void openWithNs4TagTest() throws Exception {
 		//namespace open
 		Tag t = new TagParser().getTag("<nn:tt  xmlns:nn=\"http:/\" a=\"g\">".getBytes(), 0);
 		assertEquals("tt", t.name);

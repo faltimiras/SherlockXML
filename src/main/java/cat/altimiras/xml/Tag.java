@@ -13,13 +13,6 @@ class Tag {
 	protected String namespace;
 	protected boolean cdata;
 
-	public Tag(String name, String namespace, int position, TagType type, boolean cdata) {
-		this.position = position;
-		this.name = name;
-		this.type = type;
-		this.namespace = namespace;
-		this.cdata = cdata;
-	}
 	public Tag(String name, String namespace, int position, TagType type, List<Attribute> attributes, boolean cdata) {
 		this.position = position;
 		this.name = name;

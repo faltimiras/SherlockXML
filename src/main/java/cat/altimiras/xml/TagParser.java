@@ -52,13 +52,14 @@ class TagParser {
 				}
 
 				//parsing characters in tag definition
-				if ( val == ' ') {
+				if ( val == ' ' && quotes != 1) {
 					if (name == null) { //fist space, until here tag name defined
 						name = new String(buffer, 0, bufferCursor);
 						bufferCursor = 0;
+						quotes=0;
 					}
 
-					quotes=0;
+
 				}
 				else if (val == '"'){
 					quotes++;
@@ -68,6 +69,7 @@ class TagParser {
 						bufferCursor=0;
 						attributes.add(attribute);
 						attribute = null;
+						quotes=0;
 					}
 				}
 				else if (val == '=' && quotes == 0) { //attribute detected and it is not inside defining attribute name or value
@@ -126,19 +128,18 @@ class TagParser {
 						if (xml.length > cursor + 2  //"<![CDATA[".lenght= 9 ('<' already processed)
 								&& xml[cursor + 1] == '!'
 								&& xml[cursor + 2] == '['
-								/*&& xml[cursor + 3] == 'C'
+								&& xml[cursor + 3] == 'C'
 								&& xml[cursor + 4] == 'D'
 								&& xml[cursor + 5] == 'A'
 								&& xml[cursor + 6] == 'T'
 								&& xml[cursor + 7] == 'A'
-								&& xml[cursor + 8] == '['*/
+								&& xml[cursor + 8] == '['
 								) {
 							inCDATA = true;
 							cursor += 9;
 							in = false;
 							continue;
 						}
-
 					}
 				} else { //detect end CDATA
 					if (val == ']') {
@@ -154,11 +155,8 @@ class TagParser {
 					}
 				}
 			}
-
 			cursor++;
 		}
-
-
 		return null;
 	}
 }
