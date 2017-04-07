@@ -6,16 +6,18 @@ import cat.altimiras.xml.XMLParser;
 import cat.altimiras.xml.XMLParserImpl;
 import cat.altimiras.xml.pojo.ListTestObj;
 import org.apache.commons.io.IOUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
+@Ignore
 public class PseudoPerformanceComparator {
 
 	private static final int LOOPS = 1000;
 
     //THIS IS NOT A REAL PERFORMANCE TEST!!
-	//@Test
+	@Test
 	public void parseBigList() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/performance/bigListTest.xml"), "UTF-8");
@@ -36,7 +38,7 @@ public class PseudoPerformanceComparator {
 	}
 
     //THIS IS NOT A REAL PERFORMANCE TEST!!
-	//@Test
+	@Test
 	public void parseBigListIgnore() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/performance/bigListIgnoreTest.xml"), "UTF-8");
@@ -56,7 +58,7 @@ public class PseudoPerformanceComparator {
 	}
 
 	//THIS IS NOT A REAL PERFORMANCE TEST!!
-	//@Test
+	@Test
 	public void parseBigListAttIgnore() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/performance/bigListAttTest.xml"), "UTF-8");
