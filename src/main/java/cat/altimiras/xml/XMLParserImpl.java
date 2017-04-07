@@ -65,7 +65,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 
 		currentContext = new Context();
 		currentContext.object = obj;
-		currentContext.tag = new Tag(obj.getClass().getSimpleName(), null, 0, OPEN, null, false);
+		currentContext.tag = new Tag(obj.getClass().getSimpleName(), null, 0, OPEN, null, false, 0,0);
 		contexts.push(currentContext);
 	}
 
@@ -95,6 +95,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 		int cursor = 0;
 
 		while (cursor < xml.length) {
+
 			//extract tag to process
 			Tag tag = tagParser.getTag(xml, cursor);
 			if (tag == null) {
@@ -370,14 +371,18 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 		}
 		else { //is String | Integer | Double | Long
 			String content;
+			int end = tag.getStartPosition() - tag.getEndContentOffset();
+			int start = open.getEndPosition() + tag.getStartContentOffset();
 			if (tag.cdata) { //remove cdata beginning and end
 				//<![CDATA[".length= 9
 				// ]]>.length = 3
-				String dirty = new String(xml, open.getEndPosition(), tag.getStartPosition() - open.getEndPosition()).trim();
-				content = dirty.substring(9, dirty.length() - 3);
+				//String dirty = new String(xml, open.getEndPosition(), tag.getStartPosition() - open.getEndPosition()).trim();
+				//content = dirty.substring(9, dirty.length() - 3);
+
+				content = new String(xml, start + 9, end - start - 9 - 3);
 			}
 			else {
-				content = new String(xml, open.getEndPosition(), tag.getStartPosition() - open.getEndPosition()).trim();
+				content = new String(xml, start, end - start);
 			}
 
 			setToObj(context.object, context.tag.name, content);

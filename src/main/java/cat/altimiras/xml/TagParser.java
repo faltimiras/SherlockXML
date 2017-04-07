@@ -31,6 +31,11 @@ class TagParser {
 
 		bufferCursor = 0;
 
+		int contentCursor = 0;
+		int startContentCursor = 0;
+		int endContentCursor = 0;
+		boolean contentFound = false;
+
 		byte val;
 		while (cursor < xml.length) {
 
@@ -41,14 +46,14 @@ class TagParser {
 					if (name == null) {
 						name = new String(buffer, 0, bufferCursor);
 					}
-					return new Tag(name, namespace, cursor + 1, tagType, attributes, cdata);
+					return new Tag(name, namespace, cursor + 1, tagType, attributes, cdata, startContentCursor,  endContentCursor);
 				}
 				if (val == '/' && cursor + 1 < xml.length && xml[cursor + 1] == '>') { //detecting close tag
 					//name = new String(buffer, 1, bufferCursor);
 					if (name == null) {
 						name = new String(buffer, 0, bufferCursor);
 					}
-					return new Tag(name, namespace, cursor + 1, Tag.TagType.SELF_CLOSED, attributes, cdata);
+					return new Tag(name, namespace, cursor + 1, Tag.TagType.SELF_CLOSED, attributes, cdata, 0 ,0);
 				}
 
 				//parsing characters in tag definition
@@ -98,16 +103,28 @@ class TagParser {
 				}
 			}
 			else {
-				//not in tag definition. On content defintion
+				//not in tag definition. On content definition
 				if (!inCDATA) {
 					if (val == '\n') {
+						contentCursor++;
 						cursor++;
 						continue;
-					}
-					//discard spaces between
-					if (val == ' ') {
+					} else if (val == ' ') { //discard spaces between
+						contentCursor++;
 						cursor++;
 						continue;
+					} else {
+						if (contentFound) { //content found previously
+							if (contentCursor != 0) {
+								endContentCursor= contentCursor;
+								contentCursor = 0;
+							}
+						} else {
+							startContentCursor = contentCursor;
+							contentCursor = 0;
+							contentFound = true;
+						}
+
 					}
 
 					//detecting tag definitions

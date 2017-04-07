@@ -103,7 +103,6 @@ public class TagParserTest {
 
 	@Test
 	public void selfClosedWithNs2TagTest() throws Exception {
-		//namespace selfclosed
 		Tag t = new TagParser().getTag("</nn:t>".getBytes(), 0);
 		assertEquals("t", t.name);
 		assertEquals("nn", t.namespace);
@@ -120,7 +119,6 @@ public class TagParserTest {
 
 	@Test
 	public void openWithNs3TagTest() throws Exception {
-		//namespace open
 		Tag t = new TagParser().getTag("<nn:tt a=\"g\" xmlns:nn=\"http:/\" >".getBytes(), 0);
 		assertEquals("tt", t.name);
 		assertEquals("nn", t.namespace);
@@ -131,12 +129,80 @@ public class TagParserTest {
 
 	@Test
 	public void openWithNs4TagTest() throws Exception {
-		//namespace open
 		Tag t = new TagParser().getTag("<nn:tt  xmlns:nn=\"http:/\" a=\"g\">".getBytes(), 0);
 		assertEquals("tt", t.name);
 		assertEquals("nn", t.namespace);
 		assertEquals(OPEN, t.type);
 		assertEquals("a", t.attributes.get(1).name);
 		assertEquals("g", t.attributes.get(1).value);
+	}
+
+	@Test
+	public void closeTagWithContentBeforeTest() throws Exception {
+
+		Tag t = new TagParser().getTag(" a</nn:t>".getBytes(), 0);
+		assertEquals("t", t.name);
+		assertEquals("nn", t.namespace);
+		assertEquals(CLOSE, t.type);
+		assertEquals(1, t.getStartContentOffset());
+		assertEquals(1, t.getEndContentPosition());
+		assertEquals(0, t.getEndContentOffset());
+	}
+
+	@Test
+	public void closeTagWithContentAfterTest() throws Exception {
+
+		Tag t = new TagParser().getTag("aaaa </nn:t>".getBytes(), 0);
+		assertEquals("t", t.name);
+		assertEquals("nn", t.namespace);
+		assertEquals(CLOSE, t.type);
+		assertEquals(0, t.getStartContentOffset());
+		assertEquals(3, t.getEndContentPosition());
+		assertEquals(1, t.getEndContentOffset());
+	}
+
+	@Test
+	public void closeTagWithContentMiddleTest() throws Exception {
+
+		Tag t = new TagParser().getTag(" aaaa   </nn:t>".getBytes(), 0);
+		assertEquals("t", t.name);
+		assertEquals("nn", t.namespace);
+		assertEquals(CLOSE, t.type);
+		assertEquals(1, t.getStartContentOffset());
+		assertEquals(4, t.getEndContentPosition());
+		assertEquals(3, t.getEndContentOffset());
+	}
+
+	@Test
+	public void closeTagWithContentMiddle2Test() throws Exception {
+
+		Tag t = new TagParser().getTag(" a  a   </t>".getBytes(), 0);
+		assertEquals("t", t.name);
+		assertEquals(CLOSE, t.type);
+		assertEquals(1, t.getStartContentOffset());
+		assertEquals(4, t.getEndContentPosition());
+		assertEquals(3, t.getEndContentOffset());
+	}
+
+	@Test
+	public void closeTagWithContentMiddle3Test() throws Exception {
+
+		Tag t = new TagParser().getTag(" a  a   \n</t>".getBytes(), 0);
+		assertEquals("t", t.name);
+		assertEquals(CLOSE, t.type);
+		assertEquals(1, t.getStartContentOffset());
+		assertEquals(4, t.getEndContentPosition());
+		assertEquals(4, t.getEndContentOffset());
+	}
+
+	@Test
+	public void closeTagWithContentMiddle4Test() throws Exception {
+
+		Tag t = new TagParser().getTag(" a  \na   \n</t>".getBytes(), 0);
+		assertEquals("t", t.name);
+		assertEquals(CLOSE, t.type);
+		assertEquals(1, t.getStartContentOffset());
+		assertEquals(5, t.getEndContentPosition());
+		assertEquals(4, t.getEndContentOffset());
 	}
 }
