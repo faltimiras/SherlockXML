@@ -1,5 +1,8 @@
 package cat.altimiras.xml;
 
+import cat.altimiras.xml.exceptions.BufferOverflowException;
+import cat.altimiras.xml.exceptions.InvalidXMLFormatException;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
@@ -44,7 +47,10 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 	 */
 	private Tag ignoringTag = null;
 
-	private boolean found = false; //TODO necessari encara?¿?
+	/**
+	 * If object has to be populated has been found or not. Used if obj do not correspond to base tag.
+	 */
+	private boolean found = false;
 
 	/**
 	 * Contains field definitions and instances to populate fast objectes
@@ -77,7 +83,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 	}
 
 	@Override
-	public T parse(String xmlStr) throws InvalidXMLFormatException, NullPointerException {
+	public T parse(String xmlStr) throws InvalidXMLFormatException, BufferOverflowException {
 		if (xmlStr == null) {
 			throw new NullPointerException();
 		}
@@ -85,7 +91,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 	}
 
 	@Override
-	public T parse(byte[] xml) throws InvalidXMLFormatException, NullPointerException {
+	public T parse(byte[] xml) throws InvalidXMLFormatException, BufferOverflowException {
 
 		if (xml == null) {
 			throw new NullPointerException();
@@ -158,7 +164,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 	}
 
 	/**
-	 * Flush to base object data is on the context but it can not be flushed due to XML is not correct and some tags hasn't been closed
+	 * Flush to base object data is on the context but it could not be flushed due to XML is not correct and some tags hasn't been closed
 	 */
 	private void flushIncomplete() {
 

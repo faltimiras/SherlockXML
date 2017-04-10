@@ -1,5 +1,7 @@
 package cat.altimiras.xml;
 
+import cat.altimiras.xml.exceptions.BufferOverflowException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +21,7 @@ class TagParser {
 		buffer = new byte[tagBufferSize]; //this is a hard limit. tag name, attributes names and attributes values can not be longer than this value.
 	}
 
-	protected Tag getTag(byte[] xml, int cursor) {
+	protected Tag getTag(byte[] xml, int cursor)  throws BufferOverflowException {
 
 		Tag.TagType tagType = null;
 		boolean in = false; //inside tag
@@ -40,147 +42,158 @@ class TagParser {
 		int endContentCursor = 0;
 		boolean contentFound = false;
 
-		byte val;
-		while (cursor < xml.length) {
+		try {
 
-			val = xml[cursor];
+			byte val;
+			while (cursor < xml.length) {
 
-			if (in) {
-				if (val == '>') { //detecting close tag definition
-					if (name == null) {
-						name = new String(buffer, 0, bufferCursor);
+				val = xml[cursor];
+
+				if (in) {
+					if (val == '>') { //detecting close tag definition
+						if (name == null) {
+							name = new String(buffer, 0, bufferCursor);
+						}
+						return new Tag(name, namespace, cursor + 1, tagType, attributes, cdata, startContentCursor, endContentCursor);
 					}
-					return new Tag(name, namespace, cursor + 1, tagType, attributes, cdata, startContentCursor, endContentCursor);
-				}
-				if (val == '/' && cursor + 1 < xml.length && xml[cursor + 1] == '>') { //detecting close tag
-					//name = new String(buffer, 1, bufferCursor);
-					if (name == null) {
-						name = new String(buffer, 0, bufferCursor);
+					if (val == '/' && cursor + 1 < xml.length && xml[cursor + 1] == '>') { //detecting close tag
+						//name = new String(buffer, 1, bufferCursor);
+						if (name == null) {
+							name = new String(buffer, 0, bufferCursor);
+						}
+						return new Tag(name, namespace, cursor + 1, Tag.TagType.SELF_CLOSED, attributes, cdata, 0, 0);
 					}
-					return new Tag(name, namespace, cursor + 1, Tag.TagType.SELF_CLOSED, attributes, cdata, 0, 0);
-				}
 
-				//parsing characters in tag definition
-				if (val == ' ' && quotes != 1) {
-					if (name == null) { //first space, until here tag name defined
-						name = new String(buffer, 0, bufferCursor);
+					//parsing characters in tag definition
+					if (val == ' ' && quotes != 1) {
+						if (name == null) { //first space, until here tag name defined
+							name = new String(buffer, 0, bufferCursor);
+							bufferCursor = 0;
+							quotes = 0;
+						}
+					}
+					else if (val == '"') {
+						quotes++;
+
+						if (attribute != null && quotes == 2) {
+							attribute.value = new String(buffer, 0, bufferCursor);
+							bufferCursor = 0;
+							attributes.add(attribute);
+							attribute = null;
+							quotes = 0;
+						}
+					}
+					else if (val == '=' && quotes == 0) { //attribute detected and it is not inside defining attribute name or value
+
+						if (attributes == null) {
+							attributes = new ArrayList<>(5);
+						}
+
+						attribute = new Attribute();
+						attribute.name = new String(buffer, 0, bufferCursor);
 						bufferCursor = 0;
+
 						quotes = 0;
-					}
-				}
-				else if (val == '"') {
-					quotes++;
 
-					if (attribute != null && quotes == 2) {
-						attribute.value = new String(buffer, 0, bufferCursor);
-						bufferCursor = 0;
-						attributes.add(attribute);
-						attribute = null;
-						quotes = 0;
+					}
+					else if (val == ':') { //namespace
+						if (namespace == null) {
+							namespace = new String(buffer, 0, bufferCursor);
+							bufferCursor = 0;
+						}
+					}
+					else if (val == '/') {
+						//do nothing, just to not store it in the buffer
+					}
+					else if ( val == '\n') {
+						//do nothing, just to not store it in the buffer
+					}
+					else if ( val == '\t') {
+						//do nothing, just to not store it in the buffer
+					}
+					else { //store on buffer (only non special characters)
+						buffer[bufferCursor] = val;
+						bufferCursor++;
 					}
 				}
-				else if (val == '=' && quotes == 0) { //attribute detected and it is not inside defining attribute name or value
-
-					if (attributes == null) {
-						attributes = new ArrayList<>(5);
-					}
-
-					attribute = new Attribute();
-					attribute.name = new String(buffer, 0, bufferCursor);
-					bufferCursor = 0;
-
-					quotes = 0;
-
-				}
-				else if (val == ':') { //namespace
-					if (namespace == null) {
-						namespace = new String(buffer, 0, bufferCursor);
-						bufferCursor = 0;
-					}
-				}
-				else if (val == '/') {
-					//do nothing, just to not store it in the buffer
-				}
-				else { //store on buffer (only non special characters)
-					buffer[bufferCursor] = val;
-					bufferCursor++;
-				}
-			}
-			else {
-				//not in tag definition. On content definition
-				if (!inCDATA) {
-					if (val == '\n') {
-						contentCursor++;
-						cursor++;
-						continue;
-					}
-					else if (val == ' ') { //discard spaces between
-						contentCursor++;
-						cursor++;
-						continue;
-					}
-					else {
-						if (contentFound) { //content found previously
-							if (contentCursor != 0) {
-								endContentCursor = contentCursor;
-								contentCursor = 0;
-							}
+				else {
+					//not in tag definition. On content definition
+					if (!inCDATA) {
+						if (val == '\n') {
+							contentCursor++;
+							cursor++;
+							continue;
+						}
+						else if (val == ' ') { //discard spaces between
+							contentCursor++;
+							cursor++;
+							continue;
 						}
 						else {
-							startContentCursor = contentCursor;
-							contentCursor = 0;
-							contentFound = true;
+							if (contentFound) { //content found previously
+								if (contentCursor != 0) {
+									endContentCursor = contentCursor;
+									contentCursor = 0;
+								}
+							}
+							else {
+								startContentCursor = contentCursor;
+								contentCursor = 0;
+								contentFound = true;
+							}
+
 						}
 
-					}
-
-					//detecting tag definitions
-					if (val == '<' && cursor + 1 < xml.length && xml[cursor + 1] == '/') { //check is closing tag definition
-						//startTag = cursor + 1;
-						in = true;
-						tagType = Tag.TagType.CLOSE;
-						cursor++;
-						continue;
-					}
-
-					if (val == '<') { //check for open tag definition
-						//startTag = cursor;
-						in = true;
-						tagType = Tag.TagType.OPEN;
-
-						//check if it is CDATA (only checking 3, for performace
-						if (xml.length > cursor + 2  //"<![CDATA[".lenght= 9 ('<' already processed)
-								&& xml[cursor + 1] == '!'
-								&& xml[cursor + 2] == '['
-								&& xml[cursor + 3] == 'C'
-								&& xml[cursor + 4] == 'D'
-								&& xml[cursor + 5] == 'A'
-								&& xml[cursor + 6] == 'T'
-								&& xml[cursor + 7] == 'A'
-								&& xml[cursor + 8] == '['
-								) {
-							inCDATA = true;
-							cursor += 9;
-							in = false;
+						//detecting tag definitions
+						if (val == '<' && cursor + 1 < xml.length && xml[cursor + 1] == '/') { //check is closing tag definition
+							//startTag = cursor + 1;
+							in = true;
+							tagType = Tag.TagType.CLOSE;
+							cursor++;
 							continue;
+						}
+
+						if (val == '<') { //check for open tag definition
+							//startTag = cursor;
+							in = true;
+							tagType = Tag.TagType.OPEN;
+
+							//check if it is CDATA (only checking 3, for performace
+							if (xml.length > cursor + 2  //"<![CDATA[".lenght= 9 ('<' already processed)
+									&& xml[cursor + 1] == '!'
+									&& xml[cursor + 2] == '['
+									&& xml[cursor + 3] == 'C'
+									&& xml[cursor + 4] == 'D'
+									&& xml[cursor + 5] == 'A'
+									&& xml[cursor + 6] == 'T'
+									&& xml[cursor + 7] == 'A'
+									&& xml[cursor + 8] == '['
+									) {
+								inCDATA = true;
+								cursor += 9;
+								in = false;
+								continue;
+							}
+						}
+					}
+					else { //detect end CDATA
+						if (val == ']') {
+							if (xml.length > cursor + 2  //"]]>".lenght= 3 (']' already processed)
+									&& xml[cursor + 1] == ']'
+									&& xml[cursor + 2] == '>'
+									) {
+								inCDATA = false;
+								cdata = true;
+								cursor += 3;
+								continue;
+							}
 						}
 					}
 				}
-				else { //detect end CDATA
-					if (val == ']') {
-						if (xml.length > cursor + 2  //"]]>".lenght= 3 (']' already processed)
-								&& xml[cursor + 1] == ']'
-								&& xml[cursor + 2] == '>'
-								) {
-							inCDATA = false;
-							cdata = true;
-							cursor += 3;
-							continue;
-						}
-					}
-				}
+				cursor++;
 			}
-			cursor++;
+		} catch (ArrayIndexOutOfBoundsException e){
+			throw new BufferOverflowException("Tag buffer overflow. Your XML has tag names, attribute names or attribute values longer than defined size of buffer. Buffer size:" + buffer.length + ". Set a bigger value creating the parser. ex: XMLFactory.getParser(IAmAClass.class, 5000)");
 		}
 		return null;
 	}

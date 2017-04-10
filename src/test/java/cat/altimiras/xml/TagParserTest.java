@@ -60,7 +60,7 @@ public class TagParserTest {
 
 	@Test
 	public void openWith2AttributesTagTest() throws Exception {
-		Tag t = new TagParser(bufferSize).getTag("<t a=\"g\" a2=\"g2\" >".getBytes(), 0);
+		Tag t = new TagParser(bufferSize).getTag("<t a=\"g\" \t\n a2=\"g2\" >".getBytes(), 0);
 		assertEquals("t", t.name);
 		assertEquals(OPEN, t.type);
 		assertEquals("a", t.attributes.get(0).name);
@@ -85,6 +85,17 @@ public class TagParserTest {
 		assertEquals(SELF_CLOSED, t.type);
 		assertEquals("a", t.attributes.get(0).name);
 		assertEquals("h=g", t.attributes.get(0).value);
+	}
+
+	@Test
+	public void selfCloseWithAttributesAndNoise2TagTest() throws Exception {
+		Tag t = new TagParser(bufferSize).getTag("<t a=\"h=g\"  \n\n b=\"h\" />".getBytes(), 0);
+		assertEquals("t", t.name);
+		assertEquals(SELF_CLOSED, t.type);
+		assertEquals("a", t.attributes.get(0).name);
+		assertEquals("h=g", t.attributes.get(0).value);
+		assertEquals("b", t.attributes.get(1).name);
+		assertEquals("h", t.attributes.get(1).value);
 	}
 
 	@Test
