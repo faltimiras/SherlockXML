@@ -158,8 +158,8 @@ class TagParser {
 							in = true;
 							tagType = Tag.TagType.OPEN;
 
-							//check if it is CDATA (only checking 3, for performace
-							if (xml.length > cursor + 2  //"<![CDATA[".lenght= 9 ('<' already processed)
+							//check if it is CDATA
+							if (xml.length > cursor + 8  //"<![CDATA[".lenght= 9 ('<' already processed)
 									&& xml[cursor + 1] == '!'
 									&& xml[cursor + 2] == '['
 									&& xml[cursor + 3] == 'C'
@@ -193,7 +193,7 @@ class TagParser {
 				cursor++;
 			}
 		} catch (ArrayIndexOutOfBoundsException e){
-			throw new BufferOverflowException("Tag buffer overflow. Your XML has tag names, attribute names or attribute values longer than defined size of buffer. Buffer size:" + buffer.length + ". Set a bigger value creating the parser. ex: XMLFactory.getParser(IAmAClass.class, 5000)");
+			throw new BufferOverflowException("Tag buffer overflow. Your XML has tag names, attribute names or attribute values longer than defined size of buffer. Buffer size:" + buffer.length + ". Set a bigger value on parser creation. ex: XMLFactory.getParser(IAmAClass.class, 5000)");
 		}
 		return null;
 	}
