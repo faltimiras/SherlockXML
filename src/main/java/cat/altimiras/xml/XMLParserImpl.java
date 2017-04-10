@@ -59,7 +59,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 
 	final private TagParser tagParser;
 
-	public XMLParserImpl(Class<T> typeArgumentClass, ClassIntrospector<T> classIntrospector, int tagBufferSize) throws Exception {
+	public XMLParserImpl(Class<T> typeArgumentClass, ClassIntrospector<T> classIntrospector, int tagBufferSize) throws IllegalAccessException, InstantiationException {
 
 		this.classIntrospector = classIntrospector;
 
