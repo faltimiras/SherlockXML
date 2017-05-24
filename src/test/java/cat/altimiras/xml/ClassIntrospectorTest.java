@@ -18,10 +18,10 @@ public class ClassIntrospectorTest {
 
 		ClassIntrospector<SimpleTestObj> classIntrospector = new ClassIntrospector<>(SimpleTestObj.class);
 
-		assertEquals("element1", classIntrospector.getField(SimpleTestObj.class, "element1").getName());
-		assertEquals(String.class.getName(), classIntrospector.getField(SimpleTestObj.class, "element1").getType().getName());
-		assertEquals("element2", classIntrospector.getField(SimpleTestObj.class, "element2").getName());
-		assertEquals(String.class.getName(), classIntrospector.getField(SimpleTestObj.class, "element2").getType().getName());
+		assertEquals("element1", classIntrospector.getField(SimpleTestObj.class, "element1".getBytes()).getName());
+		assertEquals(String.class.getName(), classIntrospector.getField(SimpleTestObj.class, "element1".getBytes()).getType().getName());
+		assertEquals("element2", classIntrospector.getField(SimpleTestObj.class, "element2".getBytes()).getName());
+		assertEquals(String.class.getName(), classIntrospector.getField(SimpleTestObj.class, "element2".getBytes()).getType().getName());
 	}
 
 	@Test
@@ -29,15 +29,15 @@ public class ClassIntrospectorTest {
 
 		ClassIntrospector<NestedTestObj> classIntrospector = new ClassIntrospector<>(NestedTestObj.class);
 
-		assertEquals("title", classIntrospector.getField(NestedTestObj.class, "title").getName());
-		assertEquals(String.class.getName(), classIntrospector.getField(NestedTestObj.class, "title").getType().getName());
-		assertEquals("simpleTestObj", classIntrospector.getField(NestedTestObj.class, "simpleTestObj").getName());
-		assertEquals(SimpleTestObj.class.getName(), classIntrospector.getField(NestedTestObj.class, "simpleTestObj").getType().getName());
+		assertEquals("title", classIntrospector.getField(NestedTestObj.class, "title".getBytes()).getName());
+		assertEquals(String.class.getName(), classIntrospector.getField(NestedTestObj.class, "title".getBytes()).getType().getName());
+		assertEquals("simpleTestObj", classIntrospector.getField(NestedTestObj.class, "simpleTestObj".getBytes()).getName());
+		assertEquals(SimpleTestObj.class.getName(), classIntrospector.getField(NestedTestObj.class, "simpleTestObj".getBytes()).getType().getName());
 
-		assertEquals("element1", classIntrospector.getField(SimpleTestObj.class, "element1").getName());
-		assertEquals(String.class.getName(), classIntrospector.getField(SimpleTestObj.class, "element1").getType().getName());
-		assertEquals("element2", classIntrospector.getField(SimpleTestObj.class, "element2").getName());
-		assertEquals(String.class.getName(), classIntrospector.getField(SimpleTestObj.class, "element2").getType().getName());
+		assertEquals("element1", classIntrospector.getField(SimpleTestObj.class, "element1".getBytes()).getName());
+		assertEquals(String.class.getName(), classIntrospector.getField(SimpleTestObj.class, "element1".getBytes()).getType().getName());
+		assertEquals("element2", classIntrospector.getField(SimpleTestObj.class, "element2".getBytes()).getName());
+		assertEquals(String.class.getName(), classIntrospector.getField(SimpleTestObj.class, "element2".getBytes()).getType().getName());
 	}
 
 	@Test
@@ -45,13 +45,13 @@ public class ClassIntrospectorTest {
 
 		ClassIntrospector<ListTestObj> classIntrospector = new ClassIntrospector<>(ListTestObj.class);
 
-		assertEquals("list", classIntrospector.getField(ListTestObj.class, "list").getName());
-		assertEquals(List.class.getName(), classIntrospector.getField(ListTestObj.class, "list").getType().getName());
+		assertEquals("list", classIntrospector.getField(ListTestObj.class, "list".getBytes()).getName());
+		assertEquals(List.class.getName(), classIntrospector.getField(ListTestObj.class, "list".getBytes()).getType().getName());
 
-		assertEquals("element1", classIntrospector.getField(SimpleTestObj.class, "element1").getName());
-		assertEquals(String.class.getName(), classIntrospector.getField(SimpleTestObj.class, "element1").getType().getName());
-		assertEquals("element2", classIntrospector.getField(SimpleTestObj.class, "element2").getName());
-		assertEquals(String.class.getName(), classIntrospector.getField(SimpleTestObj.class, "element2").getType().getName());
+		assertEquals("element1", classIntrospector.getField(SimpleTestObj.class, "element1".getBytes()).getName());
+		assertEquals(String.class.getName(), classIntrospector.getField(SimpleTestObj.class, "element1".getBytes()).getType().getName());
+		assertEquals("element2", classIntrospector.getField(SimpleTestObj.class, "element2".getBytes()).getName());
+		assertEquals(String.class.getName(), classIntrospector.getField(SimpleTestObj.class, "element2".getBytes()).getType().getName());
 	}
 
     @Test(expected = Exception.class)

@@ -1,5 +1,8 @@
 package cat.altimiras.xml;
 
+import cat.altimiras.xml.exceptions.BufferOverflowException;
+import cat.altimiras.xml.exceptions.InvalidXMLFormatException;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
@@ -9,12 +12,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+import static cat.altimiras.xml.Tag.TagType.CLOSE;
+import static cat.altimiras.xml.Tag.TagType.OPEN;
+import static cat.altimiras.xml.Tag.TagType.SELF_CLOSED;
+
 public class XMLParserImpl<T> implements XMLParser<T> {
 
 	/**
 	 * Stack with tags opened and still not closed
 	 */
-	private Stack<Context> contexts = new Stack<>();
+	final private Stack<Context> contexts = new Stack<>();
 
 	/**
 	 * Listeners for tags. Notified every time a tag is totally processed (on close </..> tag)
@@ -29,7 +36,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 	/**
 	 * Java class name object hased. For performance comparation
 	 */
-	final private int objClassNameHashCode;
+	final private byte[] objClassNameBytes;
 
 	/**
 	 * Current tag that is being processed information
@@ -41,20 +48,30 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 	 */
 	private Tag ignoringTag = null;
 
+	/**
+	 * If object has to be populated has been found or not. Used if obj do not correspond to base tag.
+	 */
 	private boolean found = false;
 
+	/**
+	 * Contains field definitions and instances to populate fast objectes
+	 */
 	private ClassIntrospector<T> classIntrospector;
 
-	public XMLParserImpl(Class<T> typeArgumentClass, ClassIntrospector<T> classIntrospector) throws Exception {
+	final private TagParser tagParser;
+
+	public XMLParserImpl(Class<T> typeArgumentClass, ClassIntrospector<T> classIntrospector, int tagBufferSize) throws IllegalAccessException, InstantiationException {
 
 		this.classIntrospector = classIntrospector;
 
+		this.tagParser = new TagParser(tagBufferSize);
+
 		obj = typeArgumentClass.newInstance();
-		objClassNameHashCode = obj.getClass().getSimpleName().hashCode();
+		objClassNameBytes = obj.getClass().getSimpleName().getBytes();
 
 		currentContext = new Context();
 		currentContext.object = obj;
-		currentContext.tag = new Tag(obj.getClass().getSimpleName(), 0, TagType.OPEN);
+		currentContext.tag = new Tag(obj.getClass().getSimpleName().getBytes(), null, 0, OPEN, null, false, 0, 0);
 		contexts.push(currentContext);
 	}
 
@@ -67,17 +84,15 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 	}
 
 	@Override
-	public T parse(String xmlStr) throws InvalidXMLFormatException, NullPointerException {
+	public T parse(String xmlStr) throws InvalidXMLFormatException, BufferOverflowException {
 		if (xmlStr == null) {
 			throw new NullPointerException();
 		}
 		return parse(xmlStr.getBytes());
 	}
 
-	//TODO support comments <!-- -->
-
 	@Override
-	public T parse(byte[] xml) throws InvalidXMLFormatException, NullPointerException {
+	public T parse(byte[] xml) throws InvalidXMLFormatException, BufferOverflowException {
 
 		if (xml == null) {
 			throw new NullPointerException();
@@ -86,8 +101,9 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 		int cursor = 0;
 
 		while (cursor < xml.length) {
+
 			//extract tag to process
-			Tag tag = getTag(xml, cursor);
+			Tag tag = tagParser.getTag(xml, cursor);
 			if (tag == null) {
 				break;
 			}
@@ -98,7 +114,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 				continue;
 			}
 
-			if (tag.name.hashCode() == objClassNameHashCode) { //obj.getClass().getSimpleName().hashCode();
+			if (Arrays.equals(tag.name,objClassNameBytes)) { //obj.getClass().getSimpleName().hashCode();
 				if (tag.isOpening()) {
 					setAttributes(obj, tag); //if parent obj has attributes
 					continue;
@@ -109,14 +125,14 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 			}
 
 			//Start to process tag
-			if (tag.type == TagType.CLOSE) {
+			if (tag.type == CLOSE) {
 				if (!contexts.isEmpty()) {
 					if (onCloseTag(contexts.pop(), tag, xml)) {
 						break;
 					}
 				}
 			}
-			else if (tag.type == TagType.SELF_CLOSED) {
+			else if (tag.type == SELF_CLOSED) {
 
 				if (!contexts.isEmpty()) {
 					Boolean notify = onSelfClosedTag(contexts.peek(), tag);
@@ -149,7 +165,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 	}
 
 	/**
-	 * Flush to base object data is on the context but it can not be flushed due to XML is not correct and some tags hasn't been closed
+	 * Flush to base object data is on the context but it could not be flushed due to XML is not correct and some tags hasn't been closed
 	 */
 	private void flushIncomplete() {
 
@@ -173,23 +189,23 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 
 		//found obj we want
 		int tagNameHash = tag.name.hashCode();
-		if (!found && tagNameHash == objClassNameHashCode) { //obj.getClass().getSimpleName().hashCode();
+		if (!found && Arrays.equals(tag.name,objClassNameBytes)) { //obj.getClass().getSimpleName().hashCode();
 			found = true;
 			return false;
 		}
 
 		//skip tags at the beginning that don't care
-		if (!found && tagNameHash != objClassNameHashCode) { //obj.getClass().getSimpleName().hashCode();
+		if (!found && !Arrays.equals(tag.name,objClassNameBytes)) { //obj.getClass().getSimpleName().hashCode();
 			return true;
 		}
 
 		//if current tag is a closing and it is the same we are ignoring, stop ignoring and start to process next tag
-		if (ignoringTag != null && ignoringTag.name.equals(tag.name) && tag.type == TagType.CLOSE) {
+		if (ignoringTag != null && Arrays.equals(tag.name,ignoringTag.name)  && tag.type == CLOSE) {
 			ignoringTag = null;
 			return true;
 		}
 		// if current ignoring tag is self-closed, just stop to ignore it. As it is self closed
-		if (ignoringTag != null && ignoringTag.type == TagType.SELF_CLOSED) {
+		if (ignoringTag != null && ignoringTag.type == SELF_CLOSED) {
 			ignoringTag = null;
 			return false;
 		}
@@ -208,20 +224,24 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 	 * @param fieldName
 	 * @param value
 	 */
-	private void setToObj(Object obj, String fieldName, Object value) {
+	private void setToObj(Object obj, byte[] fieldName, Object value) {
 		try {
 			if (obj instanceof List) {
 				((List) obj).add(value);
 			}
 			else {
-				Field field = classIntrospector.getField(obj.getClass(), fieldName);
-				if (field != null) {
-					field.set(obj, convertTo(field, value));
+				if (fieldName != null) {
+					Field field = classIntrospector.getField(obj.getClass(), fieldName);
+					if (field != null) {
+						field.set(obj, convertTo(field, value));
+					}
 				}
 			}
 		}
 		catch (Exception e) {
 			//ignore. If not exist, we just ignore it.
+			//FIXME
+			e.printStackTrace();
 		}
 	}
 
@@ -249,29 +269,30 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 		}
 	}
 
-	private Object convertTo(Field field, Object value) {
+	private Object convertTo(Field field, Object valueRaw) {
 
 		Class t = field.getType();
 
+
 		if (t.isAssignableFrom(String.class)) {
-			return value;
+			return new String(new String((byte[])valueRaw));
 		}
 		else if (t.isAssignableFrom(Integer.TYPE) || t.isAssignableFrom(Integer.class)) {
-			return Integer.valueOf((String) value);
+			return Integer.valueOf((String) new String(new String((byte[])valueRaw)));
 		}
 		else if (t.isAssignableFrom(Long.TYPE) || t.isAssignableFrom(Long.class)) {
-			return Long.valueOf((String) value);
+			return Long.valueOf((String) new String(new String((byte[])valueRaw)));
 		}
 		else if (t.isAssignableFrom(Double.TYPE) || t.isAssignableFrom(Double.class)) {
-			return Double.valueOf((String) value);
+			return Double.valueOf((String) new String(new String((byte[])valueRaw)));
 		}
 		else if (t.isAssignableFrom(Float.TYPE) || t.isAssignableFrom(Float.class)) {
-			return Float.valueOf((String) value);
+			return Float.valueOf((String) new String(new String((byte[])valueRaw)));
 		}
 		else if (t.isAssignableFrom(Boolean.TYPE) || t.isAssignableFrom(Boolean.class)) {
-			return Boolean.valueOf((String) value);
+			return Boolean.valueOf((String) new String(new String((byte[])valueRaw)));
 		}
-		return value;
+		return valueRaw;
 	}
 
 	/**
@@ -360,15 +381,20 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 			stop = notify(tag.name, context.object);
 		}
 		else { //is String | Integer | Double | Long
-			String content;
+			byte[] content;
+			int end = tag.getStartPosition() - tag.getEndContentOffset();
+			int start = open.getEndPosition() + tag.getStartContentOffset();
 			if (tag.cdata) { //remove cdata beginning and end
 				//<![CDATA[".length= 9
 				// ]]>.length = 3
-				String dirty = new String(xml, open.getEndPosition(), tag.getStartPosition() - open.getEndPosition()).trim();
-				content = dirty.substring(9, dirty.length() - 3);
+				content = new byte[end - start - 12];
+				System.arraycopy(xml,start + 9, content, 0,end - start - 12);
+				//content = new String(xml, start + 9, end - start - 12); //-9 -3 = -12
 			}
 			else {
-				content = new String(xml, open.getEndPosition(), tag.getStartPosition() - open.getEndPosition()).trim();
+				//content = new String(xml, start, end - start);
+				content = new byte[end - start];
+				System.arraycopy(xml,start, content, 0,end - start);
 			}
 
 			setToObj(context.object, context.tag.name, content);
@@ -414,7 +440,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 				if (t.isAssignableFrom(ArrayList.class)) {
 					context = new ListContext();
 
-					((ListContext) context).className = (((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0]).getTypeName();
+					((ListContext) context).className = (((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0]).getTypeName().getBytes();
 					//initialize list
 					List currentList = new ArrayList<>();
 					field.setAccessible(true);
@@ -455,7 +481,7 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 	 *
 	 * @return
 	 */
-	private boolean notify(String tag, Object value) {
+	private boolean notify(byte[] tag, Object value) {
 
 		if (listeners == null) {
 			return false;
@@ -463,183 +489,9 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 
 		TagListener listener = listeners.get(tag);
 		if (listener != null) {
-			return listener.notify(tag, value);
+			return listener.notify(new String(tag), value);
 		}
 		return false; //to continue
-	}
-
-	/**
-	 * Looks for next tag on xml
-	 *
-	 * @param xml    xml content
-	 * @param cursor until has been parsed
-	 *
-	 * @return Tag
-	 */
-	private Tag getTag(byte[] xml, int cursor) {
-
-		TagType tagType = null;
-
-		int startTag = cursor;
-		int namespacePosition = 0;
-		boolean in = false; //inside tag
-		boolean inAtt = false; //there are attributes
-		boolean space = false; //space processed on tag declaration
-		boolean inCDATA = false; //processing a cdata
-		boolean cdata = false; //contains cdata content
-
-		byte val;
-		while (cursor < xml.length) {
-
-			val = xml[cursor];
-
-			if (!inCDATA) { //if not in CDATA find a start of OPEN or CLOSE tag
-				if (!in && val == ' ') { //discard EOF and spaces, only if not inside a tag declaration
-					cursor++;
-					continue;
-				}
-				else if (val == '\n') { //discard EOF
-					cursor++;
-					continue;
-				}
-				else if (val == '<' && cursor + 1 < xml.length && xml[cursor + 1] == '/') {
-					startTag = cursor + 1;
-					in = true;
-					tagType = TagType.CLOSE;
-					cursor++;
-					continue;
-				}
-				else if (val == '<') {
-					startTag = cursor;
-					in = true;
-					tagType = TagType.OPEN;
-				}
-			}
-
-			if (in) { //are inside a tag definition
-				if (!inCDATA) { //not inside a CDATA element
-					if (val == '>') {
-						if (inAtt) {
-							return getTagWithAttributes(Arrays.copyOfRange(xml, startTag + 1, cursor), cursor + 1, namespacePosition - startTag, TagType.OPEN, cdata);
-						}
-						else {
-							return new Tag(xml, startTag + 1, cursor - startTag - 1, namespacePosition, cursor + 1, tagType, cdata);
-						}
-					}
-					else if (val == '/' && cursor + 1 < xml.length && xml[cursor + 1] == '>') {
-						if (tagType == TagType.OPEN) {
-							if (inAtt) { //closing a open tag with attributes
-								return getTagWithAttributes(Arrays.copyOfRange(xml, startTag + 1, cursor), cursor + 1, namespacePosition - startTag, TagType.SELF_CLOSED, false);
-							}
-							else { //closing a tag without attributes
-								return new Tag(xml, startTag + 1, cursor - startTag - 1, namespacePosition, cursor + 1, TagType.SELF_CLOSED, false); //cdata can not be in an attribute
-							}
-						}
-						else { //closing tag
-							return new Tag(xml, startTag + 1, cursor - startTag - 1, namespacePosition, cursor + 1, tagType, cdata);
-						}
-					}
-					else if (val == '=') { //if there is an equal is -> there is/are attributes
-						inAtt = true;
-					}
-					else if (!space && val == ':') { // there is a namespace (: detected and no space has been processed
-						namespacePosition = cursor;
-					}
-					else if (val == ' ') {
-						space = true;
-					}
-					else if (val == '<') { //<![CDATA[. detection
-
-						//check if cdata
-						if (xml.length > cursor + 8  //"<![CDATA[".lenght= 9 ('<' already processed)
-								&& xml[cursor + 1] == '!'
-								&& xml[cursor + 2] == '['
-								&& xml[cursor + 3] == 'C'
-								&& xml[cursor + 4] == 'D'
-								&& xml[cursor + 5] == 'A'
-								&& xml[cursor + 6] == 'T'
-								&& xml[cursor + 7] == 'A'
-								&& xml[cursor + 8] == '['
-								) {
-							inCDATA = true;
-							cdata = true;
-							cursor += 9;
-							continue;
-						}
-					}
-				}
-				else { //inCDATA -> finding end of CDATA
-					if (val == ']') {
-						if (xml.length > cursor + 2  //"]]>".lenght= 3 (']' already processed)
-								&& xml[cursor + 1] == ']'
-								&& xml[cursor + 2] == '>'
-								) {
-							inCDATA = false;
-							cursor += 3;
-							continue;
-						}
-					}
-				}
-			}
-
-			cursor++;
-		}
-		return null;
-	}
-
-	private Tag getTagWithAttributes(byte[] tagDeclaration, int generalCursor, int namespacePos, TagType tagType, boolean cdata) {
-
-		int cursor = 0; //skip first <
-		int startAttName = 0;
-		int startAttValue = 0;
-		int quotes = 0;
-		boolean endName = false;
-
-		Tag tag = new Tag();
-		tag.position = generalCursor;
-		tag.attributes = new ArrayList<>(5);
-		tag.type = tagType;
-		tag.cdata = cdata;
-
-		Attribute att = null;
-
-		while (cursor < tagDeclaration.length) {
-
-			if (!endName && tagDeclaration[cursor] == ' ') { //end of tag name
-
-				if (namespacePos <= 0) { //if selfClosed with no namespace => namespace < 0
-					tag.name = new String(tagDeclaration, 0, cursor);
-				}
-				else {
-					tag.name = new String(tagDeclaration, namespacePos, cursor - namespacePos);
-					tag.namespace = new String(tagDeclaration, 0, namespacePos - 1);
-				}
-
-				endName = true;
-				startAttName = cursor;
-			}
-			else if (tagDeclaration[cursor] == '=' && quotes == 0) { //ends attribute name, starts attribute value and not inside attribute value
-				att = new Attribute();
-				att.name = new String(tagDeclaration, startAttName, cursor - startAttName).trim();
-				startAttValue = cursor;
-			}
-			else if (att != null && tagDeclaration[cursor] == '"' && quotes == 1) { //find end of attribute value
-				att.value = new String(tagDeclaration, startAttValue + 2, cursor - startAttValue - 2);
-				tag.attributes.add(att);
-
-				//reset counters for next Attribute
-				att = null;
-				quotes = 0;
-				startAttName = cursor + 1; //skip ", +1
-			}
-			else if (tagDeclaration[cursor] == '"') {
-				quotes++;
-			}
-
-			cursor++;
-		}
-
-		return tag;
 	}
 
 	private class Context {
@@ -651,72 +503,6 @@ public class XMLParserImpl<T> implements XMLParser<T> {
 	}
 
 	private class ListContext extends ObjectContext {
-		protected String className;
-	}
-
-	private class Attribute {
-		private String name;
-		private String value;
-	}
-
-	private enum TagType {OPEN, CLOSE, SELF_CLOSED}
-
-	private class Tag {
-
-		private String name;
-		private int position;
-		private TagType type;
-		private List<Attribute> attributes;
-		private String namespace;
-		private boolean cdata;
-
-		public Tag() {
-		}
-
-		public Tag(String name, int position, TagType type) {
-			this.position = position;
-			this.name = name;
-			this.type = type;
-		}
-
-		//return new Tag(new String(xml, startTag + 1, cursor - startTag - 1), cursor + 1, tagType);
-		public Tag(byte[] xml, int startPos, int endPos, int namespacePos, int position, TagType type, boolean cdata) {
-			this.position = position;
-			this.type = type;
-			this.cdata = cdata;
-			if (namespacePos == 0) {
-				this.name = new String(xml, startPos, endPos).trim();
-			}
-			else {
-				int namespaceLength = namespacePos - startPos + 1;
-				this.name = new String(xml, startPos + namespaceLength, endPos - namespaceLength);
-				this.namespace = new String(xml, startPos, namespacePos - startPos);
-			}
-		}
-
-		public int getStartPosition() {
-			if (namespace == null) {
-				return position - name.length() - 3; // 3 = <(1= /(2)>(3)
-			}
-			else {
-				return position - name.length() - 3 - namespace.length() - 1; // 3 = <(1= /(2)>(3)
-			}
-		}
-
-		public int getEndPosition() {
-			return position;
-		}
-
-		public boolean isOpening() {
-			return type == TagType.OPEN || type == TagType.SELF_CLOSED;
-		}
-
-		public boolean isClosing() {
-			return type == TagType.CLOSE || type == TagType.SELF_CLOSED;
-		}
-
-		public boolean hasNamespace() {
-			return namespace != null;
-		}
+		protected byte[] className;
 	}
 }

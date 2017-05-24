@@ -11,6 +11,6 @@ public interface TagListener {
 	 *
 	 * @return true parsing must to stop otherwise continues
 	 */
-	public boolean notify(String tag, Object value);
+	boolean notify(String tag, Object value);
 
 }

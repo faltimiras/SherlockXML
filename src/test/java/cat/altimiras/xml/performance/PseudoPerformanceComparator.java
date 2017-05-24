@@ -8,6 +8,8 @@ import cat.altimiras.xml.pojo.ListTestObj;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 import static org.junit.Assert.assertEquals;
 
 public class PseudoPerformanceComparator {
@@ -39,7 +41,7 @@ public class PseudoPerformanceComparator {
 	@Test
 	public void parseBigListIgnore() throws Exception {
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/performance/bigListIgnoreTest.xml"), "UTF-8");
+		byte[] xml = IOUtils.toByteArray(this.getClass().getResourceAsStream("/performance/bigListIgnoreTest.xml"));
 
 		ClassIntrospector c = new ClassIntrospector(ListTestObj.class);
 
@@ -80,5 +82,44 @@ public class PseudoPerformanceComparator {
 		for (int i = 0; i<10 ; i++){
 			parseBigListIgnore();
 		}
+	}
+
+
+	@Test
+	public void dasfasdf() throws Exception {
+
+		byte[] s = IOUtils.toString(this.getClass().getResourceAsStream("/performance/bigListAttTest.xml"), "UTF-8").getBytes();
+
+		byte[] a ="sdasdfasdfasdfasdfasdf".getBytes();
+		byte[] b = "3sdasdfasdfasdfasdfasdf".getBytes();
+
+		String ab = "sdasdfasdfasdfasdfasdf";
+		String bb = "asdfasdfasdfasdfasdf";
+
+		long ini = System.currentTimeMillis();
+
+
+		for (int i = 0; i < 1000000; i++) {
+
+			//Arrays.equals(a,b);
+			ab.equals(bb);
+
+		/*
+			byte[] t = new byte[50];
+			 System.arraycopy(s,200,t,0,50);
+			String a = new String(t);
+*/
+/*
+			for(int ii = 0; ii <50; ii++){
+				char[] t = new char[50];
+				t[ii]= (char)s[200+ii];
+				String.copyValueOf(t);
+			}
+*/
+		}
+		long end = System.currentTimeMillis();
+
+		System.out.println("Diff:" + (end - ini));
+
 	}
 }
