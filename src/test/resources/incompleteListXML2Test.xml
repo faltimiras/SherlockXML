@@ -1,8 +1,8 @@
-<pp:Nested6TestObj>
+<pp:Nested6TestObj xmlns:pp="http://www.asdfasdf.com">
     <title>lolo</title>
     <list>
         <pp:Nested5TestObj>
-            <po:list>
+            <po:list xmlns:po="http://www.asdfasdf.com">
                 <po:simpleTestObj1 element1="111"/>
                 <simpleTestObj1 element2="222"/>
                 <po:simpleTestObj1 element2="333"/>
@@ -11,6 +11,6 @@
             <title>title</title>
         </pp:Nested5TestObj>
         <pp:Nested5TestObj>
-            <po:list>
+            <po:list xmlns:po="http://www.aaaasdfasdf.com">
                 <po:simpleTestObj1 element1="666"/>
                 <simpleTestObj1 element2="777"/>

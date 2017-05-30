@@ -12,19 +12,17 @@ import static org.junit.Assert.assertTrue;
 
 public class XMLListParserTest {
 
-	final private int BUFFER_SIZE = 200;
-
 	@Test
 	public void xmlListTest() throws Exception {
 
 		ClassIntrospector ci = new ClassIntrospector(ListTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listTest.xml"), "UTF-8");
-		XMLParser<ListTestObj> parser = new XMLParserImpl<>(ListTestObj.class, ci, BUFFER_SIZE);
+		XMLParser<ListTestObj> parser = new WoodStoxParserImpl<>(ListTestObj.class, ci);
 
 		ListTestObj o = parser.parse(xml);
 
-		assertEquals("111", o.getList().get(0).getElement1());
+		assertEquals("111", o.getList().get(0).getElement1().trim());
 	}
 
 	@Test
@@ -33,14 +31,15 @@ public class XMLListParserTest {
 		ClassIntrospector ci = new ClassIntrospector(ListTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/list2Test.xml"), "UTF-8");
-		XMLParser<ListTestObj> parser = new XMLParserImpl<>(ListTestObj.class, ci, BUFFER_SIZE);
+		XMLParser<ListTestObj> parser = new WoodStoxParserImpl<>(ListTestObj.class, ci);
 
 		ListTestObj o = parser.parse(xml);
 
-		assertEquals("111", o.getList().get(0).getElement1());
-		assertEquals("222", o.getList().get(1).getElement2());
-		assertEquals("111", o.getList().get(2).getElement1());
-		assertEquals("222", o.getList().get(2).getElement2());
+		assertEquals("111", o.getList().get(0).getElement1().trim());
+		assertEquals("222", o.getList().get(1).getElement2().trim());
+		assertEquals("111", o.getList().get(2).getElement1().trim());
+		assertEquals("222", o.getList().get(2).getElement2().trim());
+		assertEquals(3, o.getList().size());
 	}
 
 	@Test
@@ -49,13 +48,13 @@ public class XMLListParserTest {
 		ClassIntrospector ci = new ClassIntrospector(Nested4TestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listNestedTest.xml"), "UTF-8");
-		XMLParser<Nested4TestObj> parser = new XMLParserImpl<>(Nested4TestObj.class, ci, BUFFER_SIZE);
+		XMLParser<Nested4TestObj> parser = new WoodStoxParserImpl<>(Nested4TestObj.class, ci);
 
 		Nested4TestObj o = parser.parse(xml);
 
 		assertEquals("title", o.getTitle());
-		assertEquals("111", o.getSimpleElements().get(0).getElement1());
-		assertEquals("222", o.getSimpleElements().get(0).getElement2());
+		assertEquals("111", o.getSimpleElements().get(0).getElement1().trim());
+		assertEquals("222", o.getSimpleElements().get(0).getElement2().trim());
 	}
 
 	@Test
@@ -64,16 +63,16 @@ public class XMLListParserTest {
 		ClassIntrospector ci = new ClassIntrospector(Nested5TestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listNestedselfClosedTest.xml"), "UTF-8");
-		XMLParser<Nested5TestObj> parser = new XMLParserImpl<>(Nested5TestObj.class, ci, BUFFER_SIZE);
+		XMLParser<Nested5TestObj> parser = new WoodStoxParserImpl<>(Nested5TestObj.class, ci);
 
 		Nested5TestObj o = parser.parse(xml);
 
 		assertEquals("title", o.getTitle());
-		assertEquals("111", o.getList().get(0).getElement1());
-		assertEquals("222", o.getList().get(1).getElement2());
-		assertEquals("333", o.getList().get(2).getElement2());
-		assertEquals("444", o.getList().get(3).getElement1());
-		assertEquals("555", o.getList().get(3).getElement2());
+		assertEquals("111", o.getList().get(0).getElement1().trim());
+		assertEquals("222", o.getList().get(1).getElement2().trim());
+		assertEquals("333", o.getList().get(2).getElement2().trim());
+		assertEquals("444", o.getList().get(3).getElement1().trim());
+		assertEquals("555", o.getList().get(3).getElement2().trim());
 	}
 
 	@Test
@@ -82,16 +81,16 @@ public class XMLListParserTest {
 		ClassIntrospector ci = new ClassIntrospector(ListTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listSelfClosedTest.xml"), "UTF-8");
-		XMLParser<ListTestObj> parser = new XMLParserImpl<>(ListTestObj.class, ci, BUFFER_SIZE);
+		XMLParser<ListTestObj> parser = new WoodStoxParserImpl<>(ListTestObj.class, ci);
 
 		ListTestObj o = parser.parse(xml);
 
-		assertEquals("111", o.getList().get(0).getElement1());
+		assertEquals("111", o.getList().get(0).getElement1().trim());
 		assertNull(o.getList().get(0).getElement2());
-		assertEquals("222", o.getList().get(1).getElement2());
+		assertEquals("222", o.getList().get(1).getElement2().trim());
 		assertNull(o.getList().get(1).getElement1());
-		assertEquals("333", o.getList().get(2).getElement1());
-		assertEquals("444", o.getList().get(2).getElement2());
+		assertEquals("333", o.getList().get(2).getElement1().trim());
+		assertEquals("444", o.getList().get(2).getElement2().trim());
 	}
 
 	@Test
@@ -100,7 +99,7 @@ public class XMLListParserTest {
 		ClassIntrospector ci = new ClassIntrospector(ListTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/emptyListTest.xml"), "UTF-8");
-		XMLParser<ListTestObj> parser = new XMLParserImpl<>(ListTestObj.class, ci, BUFFER_SIZE);
+		XMLParser<ListTestObj> parser = new WoodStoxParserImpl<>(ListTestObj.class, ci);
 
 		ListTestObj o = parser.parse(xml);
 

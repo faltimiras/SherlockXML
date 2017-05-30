@@ -8,15 +8,13 @@ import static org.junit.Assert.assertEquals;
 
 public class XMLTypesTest {
 
-	final private int BUFFER_SIZE = 200;
-
 	@Test
 	public void xmlTypeTest() throws Exception {
 
 		ClassIntrospector ci = new ClassIntrospector(TypeTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/typeTest.xml"), "UTF-8");
-		XMLParser<TypeTestObj> parser = new XMLParserImpl<>(TypeTestObj.class, ci, BUFFER_SIZE);
+		XMLParser<TypeTestObj> parser = new WoodStoxParserImpl<>(TypeTestObj.class, ci);
 
 		TypeTestObj o = parser.parse(xml);
 

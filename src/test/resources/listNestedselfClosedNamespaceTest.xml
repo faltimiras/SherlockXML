@@ -1,5 +1,5 @@
-<pp:Nested5TestObj>
-    <po:list>
+<pp:Nested5TestObj xmlns:pp="http://www.asdfasdf.com">
+    <po:list xmlns:po="http://www.asdfasdf.com">
             <po:simpleTestObj1 element1="111"/>
             <simpleTestObj1 element2="222"/>
             <po:simpleTestObj1 element2="333"/>

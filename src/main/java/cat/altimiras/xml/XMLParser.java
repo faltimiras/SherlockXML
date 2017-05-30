@@ -1,6 +1,5 @@
 package cat.altimiras.xml;
 
-import cat.altimiras.xml.exceptions.BufferOverflowException;
 import cat.altimiras.xml.exceptions.InvalidXMLFormatException;
 
 public interface XMLParser<T> {
@@ -14,9 +13,9 @@ public interface XMLParser<T> {
 	 *
 	 * @throws Exception
 	 */
-	T parse(String xml) throws InvalidXMLFormatException, BufferOverflowException;
+	T parse(String xml) throws InvalidXMLFormatException;
 
-	T parse(byte[] xml) throws InvalidXMLFormatException, BufferOverflowException;
+	T parse(byte[] xml) throws InvalidXMLFormatException;
 
 	/**
 	 * Register a TagListener to xml tag

@@ -10,19 +10,17 @@ import static org.junit.Assert.assertEquals;
 
 public class XMLIncompleteParserTest {
 
-	final private int BUFFER_SIZE = 200;
-
 	@Test
 	public void xmlIncompleteTest() throws Exception {
 
 		ClassIntrospector ci = new ClassIntrospector(Nested3TestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/incompleteXMLTest.xml"), "UTF-8");
-		XMLParser<Nested3TestObj> parser = new XMLParserImpl<>(Nested3TestObj.class, ci, BUFFER_SIZE);
+		XMLParser<Nested3TestObj> parser = new WoodStoxParserImpl<>(Nested3TestObj.class, ci);
 
 		Nested3TestObj o = parser.parse(xml);
 
-		assertEquals("111", o.getSimpleTestObj1().getElement1());
+		assertEquals("111", o.getSimpleTestObj1().getElement1().trim());
 	}
 
 	@Test
@@ -31,13 +29,13 @@ public class XMLIncompleteParserTest {
 		ClassIntrospector ci = new ClassIntrospector(Nested3TestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/incompleteXML2Test.xml"), "UTF-8");
-		XMLParser<Nested3TestObj> parser = new XMLParserImpl<>(Nested3TestObj.class, ci, BUFFER_SIZE);
+		XMLParser<Nested3TestObj> parser = new WoodStoxParserImpl<>(Nested3TestObj.class, ci);
 
 		Nested3TestObj o = parser.parse(xml);
 
 		assertEquals("title", o.getTitle());
-		assertEquals("111", o.getSimpleTestObj1().getElement1());
-		assertEquals("222", o.getNestedTestObj().getSimpleTestObj().getElement1());
+		assertEquals("111", o.getSimpleTestObj1().getElement1().trim());
+		assertEquals("222", o.getNestedTestObj().getSimpleTestObj().getElement1().trim());
 	}
 
 	@Test
@@ -46,11 +44,11 @@ public class XMLIncompleteParserTest {
 		ClassIntrospector ci = new ClassIntrospector(ListTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/incompleteListXMLTest.xml"), "UTF-8");
-		XMLParser<ListTestObj> parser = new XMLParserImpl<>(ListTestObj.class, ci, BUFFER_SIZE);
+		XMLParser<ListTestObj> parser = new WoodStoxParserImpl<>(ListTestObj.class, ci);
 
 		ListTestObj o = parser.parse(xml);
 
-		assertEquals("111", o.getList().get(0).getElement1());
+		assertEquals("111", o.getList().get(0).getElement1().trim());
 	}
 
 	@Test
@@ -59,20 +57,20 @@ public class XMLIncompleteParserTest {
 		ClassIntrospector ci = new ClassIntrospector(Nested6TestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/incompleteListXML2Test.xml"), "UTF-8");
-		XMLParser<Nested6TestObj> parser = new XMLParserImpl<>(Nested6TestObj.class, ci, BUFFER_SIZE);
+		XMLParser<Nested6TestObj> parser = new WoodStoxParserImpl<>(Nested6TestObj.class, ci);
 
 		Nested6TestObj o = parser.parse(xml);
 
-		assertEquals("lolo", o.getTitle());
+		assertEquals("lolo", o.getTitle().trim());
 		assertEquals(2, o.getList().size());
-		assertEquals("title", o.getList().get(0).getTitle());
-		assertEquals("111", o.getList().get(0).getList().get(0).getElement1());
-		assertEquals("222", o.getList().get(0).getList().get(1).getElement2());
-		assertEquals("333", o.getList().get(0).getList().get(2).getElement2());
-		assertEquals("444", o.getList().get(0).getList().get(3).getElement1());
-		assertEquals("555", o.getList().get(0).getList().get(3).getElement2());
-		assertEquals("666", o.getList().get(1).getList().get(0).getElement1());
-		assertEquals("777", o.getList().get(1).getList().get(1).getElement2());
+		assertEquals("title", o.getList().get(0).getTitle().trim());
+		assertEquals("111", o.getList().get(0).getList().get(0).getElement1().trim());
+		assertEquals("222", o.getList().get(0).getList().get(1).getElement2().trim());
+		assertEquals("333", o.getList().get(0).getList().get(2).getElement2().trim());
+		assertEquals("444", o.getList().get(0).getList().get(3).getElement1().trim());
+		assertEquals("555", o.getList().get(0).getList().get(3).getElement2().trim());
+		assertEquals("666", o.getList().get(1).getList().get(0).getElement1().trim());
+		assertEquals("777", o.getList().get(1).getList().get(1).getElement2().trim());
 	}
 
 

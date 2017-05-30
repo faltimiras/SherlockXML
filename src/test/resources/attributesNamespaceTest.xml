@@ -1,6 +1,6 @@
-<ms:Nested3TestObj>
-    <uu:simpleTestObj1>
-        <pp:element1>
+<ms:Nested3TestObj xmlns:ms="http://www.asdfasdf.com">
+    <uu:simpleTestObj1 xmlns:uu="http://www.asdfasdf.com">
+        <pp:element1 xmlns:pp="http://www.asdfasdf.com">
             111
         </pp:element1>
     </uu:simpleTestObj1>

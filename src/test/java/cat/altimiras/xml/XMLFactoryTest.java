@@ -49,13 +49,4 @@ public class XMLFactoryTest {
 		XMLFactory.getParser(null);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void badBufferParamFactory() throws Exception {
-		XMLFactory.getParser(SimpleTestObj.class, 100);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void negativeBufferParamFactory() throws Exception {
-		XMLFactory.getParser(SimpleTestObj.class, -100);
-	}
 }

@@ -1,5 +1,5 @@
-<ns:SimpleTestObj>
-    <ns1:element1>
+<ns:SimpleTestObj xmlns:ns="http://www.asdfasdf.com">
+    <ns1:element1 xmlns:ns1="http://www.aaasdfasdf.com">
         111
     </ns1:element1>
     <element2>

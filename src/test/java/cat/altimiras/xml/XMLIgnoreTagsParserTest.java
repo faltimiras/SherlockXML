@@ -9,20 +9,18 @@ import static org.junit.Assert.assertEquals;
 
 public class XMLIgnoreTagsParserTest {
 
-	final private int BUFFER_SIZE = 200;
-
 	@Test
 	public void xmlIgnoreTest() throws Exception {
 
 		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/ignoreTagsTest.xml"), "UTF-8");
-		XMLParser<SimpleTestObj> parser = new XMLParserImpl<>(SimpleTestObj.class, ci, BUFFER_SIZE);
+		XMLParser<SimpleTestObj> parser = new WoodStoxParserImpl<>(SimpleTestObj.class, ci);
 
 		SimpleTestObj o = parser.parse(xml);
 
-		assertEquals("111", o.getElement1());
-		assertEquals("222", o.getElement2());
+		assertEquals("111", o.getElement1().trim());
+		assertEquals("222", o.getElement2().trim());
 	}
 
 	/**
@@ -36,12 +34,12 @@ public class XMLIgnoreTagsParserTest {
 		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/ignoreTags2Test.xml"), "UTF-8");
-		XMLParser<SimpleTestObj> parser = new XMLParserImpl<>(SimpleTestObj.class, ci, BUFFER_SIZE);
+		XMLParser<SimpleTestObj> parser = new WoodStoxParserImpl<>(SimpleTestObj.class, ci);
 
 		SimpleTestObj o = parser.parse(xml);
 
-		assertEquals("111", o.getElement1());
-		assertEquals("222", o.getElement2());
+		assertEquals("111", o.getElement1().trim());
+		assertEquals("222", o.getElement2().trim());
 	}
 
 	@Test
@@ -50,12 +48,12 @@ public class XMLIgnoreTagsParserTest {
 		ClassIntrospector ci = new ClassIntrospector(Nested4TestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/ignoreSelfClosedTagTest.xml"), "UTF-8");
-		XMLParser<Nested4TestObj> parser = new XMLParserImpl<>(Nested4TestObj.class, ci, BUFFER_SIZE);
+		XMLParser<Nested4TestObj> parser = new WoodStoxParserImpl<>(Nested4TestObj.class, ci);
 
 		Nested4TestObj o = parser.parse(xml);
 
-		assertEquals("111", o.getSimpleElements().get(0).getElement1());
-		assertEquals("222", o.getSimpleElements().get(0).getElement2());
+		assertEquals("111", o.getSimpleElements().get(0).getElement1().trim());
+		assertEquals("222", o.getSimpleElements().get(0).getElement2().trim());
 		assertEquals("title", o.getTitle());
 	}
 
@@ -65,12 +63,12 @@ public class XMLIgnoreTagsParserTest {
 		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/ignoreBeginningTest.xml"), "UTF-8");
-		XMLParser<SimpleTestObj> parser = new XMLParserImpl<>(SimpleTestObj.class, ci, BUFFER_SIZE);
+		XMLParser<SimpleTestObj> parser = new WoodStoxParserImpl<>(SimpleTestObj.class, ci);
 
 		SimpleTestObj o = parser.parse(xml);
 
-		assertEquals("111", o.getElement1());
-		assertEquals("222", o.getElement2());
+		assertEquals("111", o.getElement1().trim());
+		assertEquals("222", o.getElement2().trim());
 	}
 
 }

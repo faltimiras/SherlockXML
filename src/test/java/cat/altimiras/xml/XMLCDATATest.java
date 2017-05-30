@@ -9,20 +9,18 @@ import static org.junit.Assert.assertEquals;
 
 public class XMLCDATATest {
 
-	final private int BUFFER_SIZE = 200;
-
 	@Test
 	public void xmlSimpleCDATATest() throws Exception {
 
 		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/CDATATest.xml"), "UTF-8");
-		XMLParser<SimpleTestObj> parser = new XMLParserImpl<>(SimpleTestObj.class, ci, BUFFER_SIZE);
+		XMLParser<SimpleTestObj> parser = new WoodStoxParserImpl<>(SimpleTestObj.class, ci);
 
 		SimpleTestObj o = parser.parse(xml);
 
-		assertEquals("lolo <lo>A\n         </lo> lolo", o.getElement1());
-		assertEquals("222", o.getElement2());
+		assertEquals("lolo <lo>A\n         </lo> lolo", o.getElement1().trim());
+		assertEquals("222", o.getElement2().trim());
 	}
 
 }
