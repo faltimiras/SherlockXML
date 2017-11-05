@@ -109,9 +109,7 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 			throw e;
 		}
 		catch (RuntimeException | IllegalAccessException | ClassNotFoundException e) {
-			e.printStackTrace();
 			throw new InvalidXMLFormatException("Impossible to parse XML. Msg:" + e.getMessage());
-
 		}
 		return obj;
 	}
