@@ -1,10 +1,14 @@
 package cat.altimiras.xml;
 
+import cat.altimiras.xml.pojo.ListPrimitivesObj;
 import cat.altimiras.xml.pojo.ListTestObj;
 import cat.altimiras.xml.pojo.Nested4TestObj;
 import cat.altimiras.xml.pojo.Nested5TestObj;
+import cat.altimiras.xml.pojo.Nested7TestObj;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
+
+import java.time.Instant;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -105,4 +109,38 @@ public class XMLListParserTest {
 
 		assertTrue(o.getList().isEmpty());
 	}
+
+	@Test
+	public void xmlListPrimitivesTest() throws Exception {
+
+		ClassIntrospector ci = new ClassIntrospector(ListPrimitivesObj.class);
+
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listPrimitives.xml"), "UTF-8");
+		XMLParser<ListPrimitivesObj> parser = new WoodStoxParserImpl<>(ListPrimitivesObj.class, ci);
+
+		ListPrimitivesObj o = parser.parse(xml);
+
+		assertEquals(new Integer(8),o.getValues().get(0));
+		assertEquals(new Integer(9), o.getValues().get(1));
+	}
+
+	@Test
+	public void xmlListPrimitives2Test() throws Exception {
+
+		ClassIntrospector ci = new ClassIntrospector(Nested7TestObj.class);
+
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listPrimitives2.xml"), "UTF-8");
+		XMLParser<Nested7TestObj> parser = new WoodStoxParserImpl<>(Nested7TestObj.class, ci);
+
+		Nested7TestObj o = parser.parse(xml);
+
+		assertEquals("hola", o.getField());
+		assertEquals(new Integer(8),o.getValues().get(0));
+		assertEquals(new Integer(9), o.getValues().get(1));
+		assertEquals(new Integer(1), o.getAaa().getValues().get(0));
+		assertEquals(new Integer(2), o.getAaa().getValues().get(1));
+		assertEquals(new Integer(3), o.getBbb().getValues().get(0));
+	}
+
+
 }

@@ -1,0 +1,18 @@
+<Nested7TestObj>
+    <field>hola</field>
+    <Values>
+        <val>8</val>
+        <val>9</val>
+    </Values>
+    <aaa>
+        <values>
+            <val>1</val>
+            <val>2</val>
+        </values>
+    </aaa>
+    <bbb>
+        <values>
+            <val>3</val>
+        </values>
+    </bbb>
+</Nested7TestObj>

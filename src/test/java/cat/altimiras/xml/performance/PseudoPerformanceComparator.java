@@ -17,7 +17,7 @@ public class PseudoPerformanceComparator {
 	private static final int LOOPS = 1000;
 
 	//THIS IS NOT A REAL PERFORMANCE TEST!!
-	@Test
+	//@Test
 	public void parseBigList() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/performance/bigListTest.xml"), "UTF-8");
@@ -38,7 +38,7 @@ public class PseudoPerformanceComparator {
 	}
 
 	//THIS IS NOT A REAL PERFORMANCE TEST!!
-	@Test
+	//@Test
 	public void parseBigListIgnore() throws Exception {
 
 		byte[] xml = IOUtils.toString(this.getClass().getResourceAsStream("/performance/bigListIgnoreTest.xml"), "UTF-8").getBytes();
@@ -58,7 +58,7 @@ public class PseudoPerformanceComparator {
 	}
 
 	//THIS IS NOT A REAL PERFORMANCE TEST!!
-	@Test
+	//@Test
 	public void parseBigListAttIgnore() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/performance/bigListAttTest.xml"), "UTF-8");
@@ -77,7 +77,7 @@ public class PseudoPerformanceComparator {
 		System.out.println("Diff:" + (end - ini));
 	}
 
-	@Test
+	//@Test
 	public void tenTimes() throws Exception {
 
 		//Thread.sleep(20000);

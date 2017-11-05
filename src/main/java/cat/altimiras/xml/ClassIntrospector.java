@@ -70,7 +70,7 @@ public class ClassIntrospector<T> {
 
 	private void introspect(Class clazz) throws Exception {
 
-		if (!clazz.getGenericSuperclass().equals(XMLElement.class)) {
+		if (!clazz.getGenericSuperclass().equals(XMLElement.class) ) {
 			throw new Exception("All classes MUST extend XMLElement. " + clazz.getName() + " do not.");
 		}
 
@@ -88,22 +88,14 @@ public class ClassIntrospector<T> {
 				field.setAccessible(true);
 
 				//check primitives or simple objects
-				if (field.getType().isAssignableFrom(String.class)
-						|| field.getType().isAssignableFrom(Integer.class)
-						|| field.getType().isAssignableFrom(Integer.TYPE)
-						|| field.getType().isAssignableFrom(Long.class)
-						|| field.getType().isAssignableFrom(Long.TYPE)
-						|| field.getType().isAssignableFrom(Double.class)
-						|| field.getType().isAssignableFrom(Double.TYPE)
-						|| field.getType().isAssignableFrom(Float.class)
-						|| field.getType().isAssignableFrom(Float.TYPE)
-						|| field.getType().isAssignableFrom(Boolean.class)
-						|| field.getType().isAssignableFrom(Boolean.TYPE)) {
+				if (isPrimitive(field.getType())) {
 					fields.put(mergeHashCodes(field.getName(), clazz), field);
 				}
 				else if (field.getType().isAssignableFrom(List.class)) {
 					fields.put(mergeHashCodes(field.getName(), clazz), field);
-					introspect((Class) ((ParameterizedTypeImpl) field.getAnnotatedType().getType()).getActualTypeArguments()[0]);
+					if(! isPrimitive((Class) ((ParameterizedTypeImpl) field.getAnnotatedType().getType()).getActualTypeArguments()[0])) {
+						introspect((Class) ((ParameterizedTypeImpl) field.getAnnotatedType().getType()).getActualTypeArguments()[0]);
+					}
 				}
 				else {
 					//recursive introspection
@@ -116,5 +108,19 @@ public class ClassIntrospector<T> {
 
 	private long mergeHashCodes(Object a, Object b) {
 		return (((long) a.hashCode()) << 32) | (b.hashCode() & 0xffffffffL);
+	}
+
+	public static boolean isPrimitive(Class type){
+		return type.isAssignableFrom(String.class)
+				|| type.isAssignableFrom(Integer.class)
+				|| type.isAssignableFrom(Integer.TYPE)
+				|| type.isAssignableFrom(Long.class)
+				|| type.isAssignableFrom(Long.TYPE)
+				|| type.isAssignableFrom(Double.class)
+				|| type.isAssignableFrom(Double.TYPE)
+				|| type.isAssignableFrom(Float.class)
+				|| type.isAssignableFrom(Float.TYPE)
+				|| type.isAssignableFrom(Boolean.class)
+				|| type.isAssignableFrom(Boolean.TYPE);
 	}
 }

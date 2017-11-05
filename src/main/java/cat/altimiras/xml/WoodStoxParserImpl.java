@@ -11,6 +11,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -91,11 +92,9 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 						currentTagName = xmlStreamReader.getName().getLocalPart();
 
 						if (objHashCode != currentTagName.hashCode()) {
-
 							if (currentContext == null) { //Object to parse is not the most outer element
 								continue;
 							}
-
 							currentField = classIntrospector.getField(currentContext.object.getClass(), currentTagName);
 						}
 
@@ -103,12 +102,17 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 							Object o;
 
 							if (currentContext instanceof WoodStoxParserImpl.ListContext) {
+								//if list of primitives is not needed to create a new context, primitives values will be added to the list directly
+								if (((ListContext) currentContext).isPrimitive) {
+									continue;
+								}
 								o = classIntrospector.getInstance(((ListContext) currentContext).clazz);
 							}
 							else {
 								o = obj;
 							}
 
+							//create new context
 							currentContext = new Context();
 							currentContext.tag = currentTagName;
 							currentContext.object = o;
@@ -126,18 +130,15 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 						}
 						else {
 
-							if (currentField.getType().isAssignableFrom(String.class) ||
-									currentField.getType().isAssignableFrom(Integer.TYPE) || currentField.getType().isAssignableFrom(Integer.class) ||
-									currentField.getType().isAssignableFrom(Long.TYPE) || currentField.getType().isAssignableFrom(Long.class) ||
-									currentField.getType().isAssignableFrom(Double.TYPE) || currentField.getType().isAssignableFrom(Double.class) ||
-									currentField.getType().isAssignableFrom(Float.TYPE) || currentField.getType().isAssignableFrom(Float.class) ||
-									currentField.getType().isAssignableFrom(Boolean.TYPE) || currentField.getType().isAssignableFrom(Boolean.class)) {
+							if (ClassIntrospector.isPrimitive(currentField.getType())) {
 								simpleElement = true;
 							}
 							else if (currentField.getType().isAssignableFrom(ArrayList.class)) {
 								ListContext context = new ListContext();
 								context.tag = currentTagName;
-								context.clazz = Class.forName((((ParameterizedType) currentField.getGenericType()).getActualTypeArguments()[0]).getTypeName());
+								Type type = ((ParameterizedType) currentField.getGenericType()).getActualTypeArguments()[0];
+								context.clazz = Class.forName(type.getTypeName());
+								context.isPrimitive = ClassIntrospector.isPrimitive((Class) type);
 
 								//initialize list
 								List currentList = new ArrayList<>();
@@ -165,7 +166,6 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 
 								contexts.addFirst(currentContext);
 								simpleElement = false;
-
 							}
 						}
 						break;
@@ -176,14 +176,28 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 							setToObj(currentContext.object, currentField, content);
 							stop = notify(currentField.getName(), content);
 						}
+						else if (currentContext instanceof WoodStoxParserImpl.ListContext) {
+							if (!content.trim().isEmpty()) {
+								setToObj(currentContext.object, currentField, convertTo(((ListContext) currentContext).clazz, content));
+							}
+						}
 						break;
 					case XMLEvent.END_ELEMENT:
 
 						currentTagName = xmlStreamReader.getName().getLocalPart();
+						//if it is a simple element or a list of simple elements just mark the end
 						if (simpleElement) {
 							simpleElement = false;
 						}
-						else {
+						else  {
+
+							if (currentContext instanceof WoodStoxParserImpl.ListContext) {
+								if (((ListContext) currentContext).isPrimitive && !currentTagName.equals(currentContext.tag)) {
+									continue;
+								}
+
+							}
+
 							contexts.pollFirst();
 							if (!contexts.isEmpty()) {
 								Context parent = contexts.peek();
@@ -193,7 +207,6 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 								currentContext = parent;
 							}
 						}
-
 						break;
 					default:
 						//do nothing
@@ -209,7 +222,9 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 			throw e;
 		}
 		catch (RuntimeException | IllegalAccessException | ClassNotFoundException e) {
+			e.printStackTrace();
 			throw new InvalidXMLFormatException("Impossible to parse XML. Msg:" + e.getMessage());
+
 		}
 		return obj;
 	}
@@ -252,7 +267,7 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 			}
 			else {
 				if (field != null) {
-					field.set(obj, convertTo(field, value));
+					field.set(obj, convertTo(field.getType(), value));
 				}
 			}
 		}
@@ -261,9 +276,7 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 		}
 	}
 
-	private Object convertTo(Field field, Object value) {
-
-		Class t = field.getType();
+	private Object convertTo(Class t, Object value) {
 
 		if (t.isAssignableFrom(String.class)) {
 			return value;
@@ -307,6 +320,7 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 	}
 
 	private class ListContext extends Context {
-		protected Class clazz;
+		protected Class clazz; //type of list objects
+		protected boolean isPrimitive; //contains primitive objects
 	}
 }
