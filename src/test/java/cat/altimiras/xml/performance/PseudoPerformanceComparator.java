@@ -77,7 +77,7 @@ public class PseudoPerformanceComparator {
 		System.out.println("Diff:" + (end - ini));
 	}
 
-	//@Test
+	@Test
 	public void tenTimes() throws Exception {
 
 		//Thread.sleep(20000);

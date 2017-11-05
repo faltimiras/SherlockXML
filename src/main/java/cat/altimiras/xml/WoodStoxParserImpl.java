@@ -84,129 +84,16 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 
 			XMLStreamReader2 xmlStreamReader = (XMLStreamReader2) xmlInputFactory.createXMLStreamReader(xmlInputStream);
 			while (xmlStreamReader.hasNext() && !stop) {
-				String currentTagName;
 				int eventType = xmlStreamReader.next();
 				switch (eventType) {
 					case XMLEvent.START_ELEMENT:
-
-						currentTagName = xmlStreamReader.getName().getLocalPart();
-
-						if (objHashCode != currentTagName.hashCode()) {
-							if (currentContext == null) { //Object to parse is not the most outer element
-								continue;
-							}
-							currentField = classIntrospector.getField(currentContext.object.getClass(), currentTagName);
-						}
-
-						if (currentField == null) {
-							Object o;
-
-							if (currentContext instanceof WoodStoxParserImpl.ListContext) {
-								//if list of primitives is not needed to create a new context, primitives values will be added to the list directly
-								if (((ListContext) currentContext).isPrimitive) {
-									continue;
-								}
-								o = classIntrospector.getInstance(((ListContext) currentContext).clazz);
-							}
-							else {
-								o = obj;
-							}
-
-							//create new context
-							currentContext = new Context();
-							currentContext.tag = currentTagName;
-							currentContext.object = o;
-
-							//attributes
-							int attributeCount = xmlStreamReader.getAttributeCount();
-							for (int i = 0; i < attributeCount; i++) {
-								String attributeName = xmlStreamReader.getAttributeLocalName(i);
-								Field f = classIntrospector.getField(currentContext.object.getClass(), attributeName);
-								setToObj(currentContext.object, f, xmlStreamReader.getAttributeValue(i));
-							}
-
-							contexts.addFirst(currentContext);
-							simpleElement = false;
-						}
-						else {
-
-							if (ClassIntrospector.isPrimitive(currentField.getType())) {
-								simpleElement = true;
-							}
-							else if (currentField.getType().isAssignableFrom(ArrayList.class)) {
-								ListContext context = new ListContext();
-								context.tag = currentTagName;
-								Type type = ((ParameterizedType) currentField.getGenericType()).getActualTypeArguments()[0];
-								context.clazz = Class.forName(type.getTypeName());
-								context.isPrimitive = ClassIntrospector.isPrimitive((Class) type);
-
-								//initialize list
-								List currentList = new ArrayList<>();
-								currentField.setAccessible(true);
-								currentField.set(currentContext.object, currentList);
-
-								context.object = currentList;
-								currentContext = context;
-
-								contexts.addFirst(currentContext);
-
-							}
-							else {
-								currentContext = new Context();
-								currentContext.object = classIntrospector.getInstance(currentField.getType());
-								currentContext.tag = currentTagName;
-
-								//attributes
-								int attributeCount = xmlStreamReader.getAttributeCount();
-								for (int i = 0; i < attributeCount; i++) {
-									String attributeName = xmlStreamReader.getAttributeLocalName(i);
-									Field f = classIntrospector.getField(currentContext.object.getClass(), attributeName);
-									setToObj(currentContext.object, f, xmlStreamReader.getAttributeValue(i));
-								}
-
-								contexts.addFirst(currentContext);
-								simpleElement = false;
-							}
-						}
+						onStartElement(xmlStreamReader);
 						break;
 					case XMLEvent.CHARACTERS:
-
-						String content = xmlStreamReader.getText();
-						if (simpleElement) {
-							setToObj(currentContext.object, currentField, content);
-							stop = notify(currentField.getName(), content);
-						}
-						else if (currentContext instanceof WoodStoxParserImpl.ListContext) {
-							if (!content.trim().isEmpty()) {
-								setToObj(currentContext.object, currentField, convertTo(((ListContext) currentContext).clazz, content));
-							}
-						}
+						onContent(xmlStreamReader);
 						break;
 					case XMLEvent.END_ELEMENT:
-
-						currentTagName = xmlStreamReader.getName().getLocalPart();
-						//if it is a simple element or a list of simple elements just mark the end
-						if (simpleElement) {
-							simpleElement = false;
-						}
-						else  {
-
-							if (currentContext instanceof WoodStoxParserImpl.ListContext) {
-								if (((ListContext) currentContext).isPrimitive && !currentTagName.equals(currentContext.tag)) {
-									continue;
-								}
-
-							}
-
-							contexts.pollFirst();
-							if (!contexts.isEmpty()) {
-								Context parent = contexts.peek();
-								Field f = classIntrospector.getField(parent.object.getClass(), currentTagName);
-								setToObj(parent.object, f, currentContext.object);
-								stop = notify(currentTagName, currentContext.object);
-								currentContext = parent;
-							}
-						}
+						onCloseElement(xmlStreamReader);
 						break;
 					default:
 						//do nothing
@@ -227,6 +114,136 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 
 		}
 		return obj;
+	}
+
+	private void onCloseElement(XMLStreamReader2 xmlStreamReader) {
+		String currentTagName = xmlStreamReader.getName().getLocalPart();
+
+		//if it is a simple element or a list of simple elements just mark the end
+		if (simpleElement) {
+			simpleElement = false;
+		}
+		else {
+
+			if (currentContext instanceof WoodStoxParserImpl.ListContext) {
+				//when it is a list of primitives and  current tag(the closing one) is not the closing list tag just ignore current closing tag.
+				if (((ListContext) currentContext).isPrimitive && !currentTagName.equals(currentContext.tag)) {
+					return;
+				}
+			}
+
+			//Remove current context from the stack and set object in it to parent object
+			contexts.pollFirst();
+			if (!contexts.isEmpty()) {
+				Context parent = contexts.peek();
+				Field f = classIntrospector.getField(parent.object.getClass(), currentTagName);
+				setToObj(parent.object, f, currentContext.object);
+				stop = notify(currentTagName, currentContext.object);
+				currentContext = parent;
+			}
+		}
+	}
+
+	private void onContent(XMLStreamReader2 xmlStreamReader) {
+		String content = xmlStreamReader.getText();
+
+		//Set content in the current object
+		if (simpleElement) {
+			setToObj(currentContext.object, currentField, content);
+			stop = notify(currentField.getName(), content);
+		}
+		else if (currentContext instanceof WoodStoxParserImpl.ListContext) {
+			if (!content.trim().isEmpty()){
+				setToObj(currentContext.object, currentField, convertTo(((ListContext) currentContext).clazz, content));
+			}
+		}
+	}
+
+	private void onStartElement(XMLStreamReader2 xmlStreamReader) throws ClassNotFoundException, IllegalAccessException {
+		String currentTagName = xmlStreamReader.getName().getLocalPart();
+
+		if (objHashCode != currentTagName.hashCode()) {
+			if (currentContext == null) { //Object to parse is not the most outer element
+				return;
+			}
+			currentField = classIntrospector.getField(currentContext.object.getClass(), currentTagName);
+		}
+
+
+		if (currentField == null) {
+			atFirstElement(xmlStreamReader, currentTagName);
+		}
+		else {
+
+			//if current field is a primitive type is not needed to create a context, at onContent value will be set
+			if (ClassIntrospector.isPrimitive(currentField.getType())) {
+				simpleElement = true;
+			}
+			//if current field is a list context list must be created with the list where elements will be added
+			else if (ClassIntrospector.isList(currentField.getType())) {
+
+				//initialize list
+				List currentList = new ArrayList<>();
+				currentField.setAccessible(true);
+				currentField.set(currentContext.object, currentList);
+
+				//create list context
+				currentContext= new ListContext();
+				currentContext.tag = currentTagName;
+				currentContext.object = currentList;
+				Type type = ((ParameterizedType) currentField.getGenericType()).getActualTypeArguments()[0];
+				((ListContext)currentContext).clazz = Class.forName(type.getTypeName());
+				((ListContext)currentContext).isPrimitive = ClassIntrospector.isPrimitive((Class) type);
+				contexts.addFirst(currentContext);
+
+			}
+			//if field it is an object, create the context with a new instantiation of his class
+			else {
+				createCurrentContext(currentTagName, classIntrospector.getInstance(currentField.getType()));
+
+				//attributes
+				setAttributes(xmlStreamReader);
+				simpleElement = false;
+			}
+		}
+	}
+
+	private void atFirstElement(XMLStreamReader2 xmlStreamReader, String currentTagName) {
+		Object o;
+		if (currentContext instanceof WoodStoxParserImpl.ListContext) {
+			//if list of primitives is not needed to create a new context, primitives values will be added to the list directly
+			if (((ListContext) currentContext).isPrimitive) {
+				return;
+			}
+			o = classIntrospector.getInstance(((ListContext) currentContext).clazz);
+		}
+		else {
+			o = obj;
+		}
+
+		//create new context
+		createCurrentContext(currentTagName, o);
+
+		setAttributes(xmlStreamReader);
+		simpleElement = false;
+	}
+
+	private void createCurrentContext(String tagName, Object o) {
+		currentContext = new Context();
+		currentContext.object = o;
+		currentContext.tag = tagName;
+
+		contexts.addFirst(currentContext);
+	}
+
+	private void setAttributes(XMLStreamReader2 xmlStreamReader) {
+		//attributes
+		int attributeCount = xmlStreamReader.getAttributeCount();
+		for (int i = 0; i < attributeCount; i++) {
+			String attributeName = xmlStreamReader.getAttributeLocalName(i);
+			Field f = classIntrospector.getField(currentContext.object.getClass(), attributeName);
+			setToObj(currentContext.object, f, xmlStreamReader.getAttributeValue(i));
+		}
 	}
 
 	@Override

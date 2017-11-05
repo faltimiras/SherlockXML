@@ -5,6 +5,7 @@ import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -122,5 +123,9 @@ public class ClassIntrospector<T> {
 				|| type.isAssignableFrom(Float.TYPE)
 				|| type.isAssignableFrom(Boolean.class)
 				|| type.isAssignableFrom(Boolean.TYPE);
+	}
+
+	public static boolean isList(Class type){
+		return type.isAssignableFrom(ArrayList.class);
 	}
 }
