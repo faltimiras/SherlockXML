@@ -142,5 +142,20 @@ public class XMLListParserTest {
 		assertEquals(new Integer(3), o.getBbb().getValues().get(0));
 	}
 
+	@Test
+	public void xmlListPrimitivesNoWrapperTest() throws Exception {
+
+		ClassIntrospector ci = new ClassIntrospector(ListPrimitivesObj.class);
+
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listPrimitivesNoWrapper.xml"), "UTF-8");
+
+		XMLParser<ListPrimitivesObj> parser = new WoodStoxParserImpl<>(ListPrimitivesObj.class, ci);
+
+		ListPrimitivesObj o = parser.parse(xml);
+
+		assertEquals(new Integer(8),o.getValues().get(0));
+		assertEquals(new Integer(9), o.getValues().get(1));
+	}
+
 
 }

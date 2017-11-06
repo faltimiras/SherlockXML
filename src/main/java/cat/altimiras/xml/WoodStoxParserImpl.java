@@ -14,6 +14,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -193,11 +194,17 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 	}
 
 	private void createCurrentListContext(String currentTagName, Object o) throws IllegalAccessException, ClassNotFoundException {
-		
+
 		//initialize list and set it to the object
-		List currentList = new ArrayList<>();
+		List currentList;
 		currentField.setAccessible(true);
-		currentField.set(o, currentList);
+
+		if (currentField.get(o) == null){
+			currentList =  new ArrayList<>();
+			currentField.set(o,currentList);
+		} else {
+			currentList = (List)currentField.get(o);
+		}
 
 		//create list context
 		ListContext listContext= new ListContext();
