@@ -180,20 +180,28 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 			}
 			//if current field is a list context list must be created with the list where elements will be added
 			else if (ClassIntrospector.isList(currentField.getType())) {
-				createCurrentListContext(currentTagName, currentContext.object);
+				ListContext context = createCurrentListContext(currentTagName, currentContext.object);
+
+				//when is not a primitive list and is not wrapped (current tag and current list class are not the same. first list object context must be created
+				if (!context.isPrimitive && currentTagName.equals(context.clazz.getSimpleName())){
+
+					createCurrentContext(currentTagName, classIntrospector.getInstance(((ListContext)currentContext).clazz));
+					setAttributes(xmlStreamReader, currentContext.object);
+
+				}
 			}
 			//if field it is an object, create the context with a new instantiation of his class
 			else {
 				createCurrentContext(currentTagName, classIntrospector.getInstance(currentField.getType()));
 
 				//attributes
-				setAttributes(xmlStreamReader);
+				setAttributes(xmlStreamReader, currentContext.object);
 				simpleElement = false;
 			}
 		}
 	}
 
-	private void createCurrentListContext(String currentTagName, Object o) throws IllegalAccessException, ClassNotFoundException {
+	private ListContext createCurrentListContext(String currentTagName, Object o) throws IllegalAccessException, ClassNotFoundException {
 
 		//initialize list and set it to the object
 		List currentList;
@@ -206,16 +214,20 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 			currentList = (List)currentField.get(o);
 		}
 
+		Type type = ((ParameterizedType) currentField.getGenericType()).getActualTypeArguments()[0];
+
 		//create list context
 		ListContext listContext= new ListContext();
 		listContext.tag = currentTagName;
 		listContext.object = currentList;
-		Type type = ((ParameterizedType) currentField.getGenericType()).getActualTypeArguments()[0];
+
 		listContext.clazz = Class.forName(type.getTypeName());
 		listContext.isPrimitive = ClassIntrospector.isPrimitive((Class) type);
 
 		currentContext = listContext;
 		contexts.addFirst(currentContext);
+
+		return listContext;
 	}
 
 	private void atFirstElement(XMLStreamReader2 xmlStreamReader, String currentTagName) {
@@ -234,25 +246,27 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 		//create new context
 		createCurrentContext(currentTagName, o);
 
-		setAttributes(xmlStreamReader);
+		setAttributes(xmlStreamReader, o);
 		simpleElement = false;
 	}
 
-	private void createCurrentContext(String tagName, Object o) {
+	private Context createCurrentContext(String tagName, Object o) {
 		currentContext = new Context();
 		currentContext.object = o;
 		currentContext.tag = tagName;
 
 		contexts.addFirst(currentContext);
+
+		return currentContext;
 	}
 
-	private void setAttributes(XMLStreamReader2 xmlStreamReader) {
+	private void setAttributes(XMLStreamReader2 xmlStreamReader, Object o) {
 		//attributes
 		int attributeCount = xmlStreamReader.getAttributeCount();
 		for (int i = 0; i < attributeCount; i++) {
 			String attributeName = xmlStreamReader.getAttributeLocalName(i);
-			Field f = classIntrospector.getField(currentContext.object.getClass(), attributeName);
-			setToObj(currentContext.object, f, xmlStreamReader.getAttributeValue(i));
+			Field f = classIntrospector.getField(o.getClass(), attributeName);
+			setToObj(o, f, xmlStreamReader.getAttributeValue(i));
 		}
 	}
 

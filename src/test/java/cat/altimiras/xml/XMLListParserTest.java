@@ -2,6 +2,7 @@ package cat.altimiras.xml;
 
 import cat.altimiras.xml.pojo.ListPrimitivesObj;
 import cat.altimiras.xml.pojo.ListTestObj;
+import cat.altimiras.xml.pojo.ListTestObj2;
 import cat.altimiras.xml.pojo.Nested4TestObj;
 import cat.altimiras.xml.pojo.Nested5TestObj;
 import cat.altimiras.xml.pojo.Nested7TestObj;
@@ -174,6 +175,27 @@ public class XMLListParserTest {
 		assertEquals(new Integer(2), o.getAaa().getValues().get(1));
 		assertEquals(new Integer(3), o.getBbb().getValues().get(0));
 	}
+
+	@Test
+	public void xmlListNoWrapperWithAttributesTest() throws Exception {
+
+		ClassIntrospector ci = new ClassIntrospector(ListTestObj2.class);
+
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listPrimitivesNoWrapperWithAttributes.xml"), "UTF-8");
+		XMLParser<ListTestObj2> parser = new WoodStoxParserImpl<>(ListTestObj2.class, ci);
+
+		ListTestObj2 o = parser.parse(xml);
+
+		assertEquals("111", o.getList().get(0).getElement1().trim());
+		assertEquals("222", o.getList().get(0).getElement2().trim());
+		assertEquals("333", o.getList().get(1).getElement1().trim());
+		assertEquals("444", o.getList().get(1).getElement2().trim());
+		assertEquals("555", o.getList().get(2).getElement1().trim());
+		assertEquals("666", o.getList().get(2).getElement2().trim());
+		assertEquals(3, o.getList().size());
+	}
+
+
 
 
 }

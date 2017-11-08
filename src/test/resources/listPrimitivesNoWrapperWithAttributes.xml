@@ -1,0 +1,16 @@
+<ListTestObj2>
+    <SimpleTestObj element1="111">
+        <element2>
+            222
+        </element2>
+    </SimpleTestObj>
+    <SimpleTestObj element1="333" element2="444"/>
+    <SimpleTestObj>
+        <element1>
+            555
+        </element1>
+        <element2>
+            666
+        </element2>
+    </SimpleTestObj>
+</ListTestObj2>
