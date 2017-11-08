@@ -14,7 +14,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -152,7 +151,7 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 			stop = notify(currentField.getName(), content);
 		}
 		else if (currentContext instanceof WoodStoxParserImpl.ListContext) {
-			if (!content.trim().isEmpty()){
+			if (!content.trim().isEmpty()) {
 				setToObj(currentContext.object, currentField, convertTo(((ListContext) currentContext).clazz, content));
 			}
 		}
@@ -183,9 +182,9 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 				ListContext context = createCurrentListContext(currentTagName, currentContext.object);
 
 				//when is not a primitive list and is not wrapped (current tag and current list class are not the same. first list object context must be created
-				if (!context.isPrimitive && currentTagName.equals(context.clazz.getSimpleName())){
+				if (!context.isPrimitive && !context.hasWrapper) {
 
-					createCurrentContext(currentTagName, classIntrospector.getInstance(((ListContext)currentContext).clazz));
+					createCurrentContext(currentTagName, classIntrospector.getInstance(((ListContext) currentContext).clazz));
 					setAttributes(xmlStreamReader, currentContext.object);
 
 				}
@@ -207,22 +206,24 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 		List currentList;
 		currentField.setAccessible(true);
 
-		if (currentField.get(o) == null){
-			currentList =  new ArrayList<>();
-			currentField.set(o,currentList);
-		} else {
-			currentList = (List)currentField.get(o);
+		if (currentField.get(o) == null) {
+			currentList = new ArrayList<>();
+			currentField.set(o, currentList);
+		}
+		else {
+			currentList = (List) currentField.get(o);
 		}
 
 		Type type = ((ParameterizedType) currentField.getGenericType()).getActualTypeArguments()[0];
 
 		//create list context
-		ListContext listContext= new ListContext();
+		ListContext listContext = new ListContext();
 		listContext.tag = currentTagName;
 		listContext.object = currentList;
 
 		listContext.clazz = Class.forName(type.getTypeName());
 		listContext.isPrimitive = ClassIntrospector.isPrimitive((Class) type);
+		listContext.hasWrapper = !currentTagName.equals(listContext.clazz.getSimpleName());
 
 		currentContext = listContext;
 		contexts.addFirst(currentContext);
@@ -363,5 +364,6 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 	private class ListContext extends Context {
 		protected Class clazz; //type of list objects
 		protected boolean isPrimitive; //contains primitive objects
+		protected boolean hasWrapper; //list is wrapped with a tag
 	}
 }
