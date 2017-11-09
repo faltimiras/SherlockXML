@@ -1,0 +1,16 @@
+<NestedAnnotationTestObj>
+    <object>
+        <field>value</field>
+        <int>123</int>
+    </object>
+    <xmlList>
+        <wrapper>
+            <field>aaa</field>
+            <int>111</int>
+        </wrapper>
+        <wrapper>
+            <field>bbb</field>
+            <int>222</int>
+        </wrapper>
+    </xmlList>
+</NestedAnnotationTestObj>
