@@ -3,6 +3,8 @@ package cat.altimiras.xml;
 
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -69,6 +71,17 @@ public class ClassIntrospector<T> {
 		return null;
 	}
 
+	public int getClassHashCode(Class clazz) {
+		XmlRootElement root = (XmlRootElement)clazz.getAnnotation(XmlRootElement.class);
+		int hash;
+		if (root == null) {
+			hash = clazz.getSimpleName().hashCode();
+		} else {
+			hash = root.name().hashCode();
+		}
+		return hash;
+	}
+
 	private void introspect(Class clazz) throws Exception {
 
 		if (!clazz.getGenericSuperclass().equals(XMLElement.class) ) {
@@ -79,28 +92,39 @@ public class ClassIntrospector<T> {
 			return;
 		}
 		else {
-			XMLElement element = (XMLElement) Class.forName(clazz.getName()).newInstance();
+
+			Integer hash = getClassHashCode(clazz);
+			XMLElement element  = (XMLElement) Class.forName(clazz.getName()).newInstance();
 			instancesByClass.put(clazz.hashCode(), element);
-			instancesByName.put(clazz.getName().hashCode(), element);
+			instancesByName.put(hash, element);
 
 			Field[] fs = clazz.getDeclaredFields();
 			for (Field field : fs) {
+
+				javax.xml.bind.annotation.XmlElement fieldAnnotation = field.getAnnotation(XmlElement.class);
+				String fieldName;
+				if (fieldAnnotation ==  null) {
+					fieldName = field.getName();
+				} else {
+					fieldName = fieldAnnotation.name();
+				}
+
 
 				field.setAccessible(true);
 
 				//check primitives or simple objects
 				if (isPrimitive(field.getType())) {
-					fields.put(mergeHashCodes(field.getName(), clazz), field);
+					fields.put(mergeHashCodes(fieldName, clazz), field);
 				}
 				else if (field.getType().isAssignableFrom(List.class)) {
-					fields.put(mergeHashCodes(field.getName(), clazz), field);
+					fields.put(mergeHashCodes(fieldName, clazz), field);
 					if(! isPrimitive((Class) ((ParameterizedTypeImpl) field.getAnnotatedType().getType()).getActualTypeArguments()[0])) {
 						introspect((Class) ((ParameterizedTypeImpl) field.getAnnotatedType().getType()).getActualTypeArguments()[0]);
 					}
 				}
 				else {
 					//recursive introspection
-					fields.put(mergeHashCodes(field.getName(), clazz), field);
+					fields.put(mergeHashCodes(fieldName, clazz), field);
 					introspect(field.getType());
 				}
 			}

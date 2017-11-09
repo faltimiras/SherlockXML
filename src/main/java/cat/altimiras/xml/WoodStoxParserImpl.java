@@ -57,8 +57,7 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 		this.classIntrospector = classIntrospector;
 
 		obj = typeArgumentClass.newInstance();
-		objHashCode = obj.getClass().getSimpleName().hashCode();
-
+		objHashCode =  classIntrospector.getClassHashCode(typeArgumentClass); //obj.getClass().getSimpleName().hashCode();
 		xmlInputFactory.setProperty(XMLInputFactory.IS_COALESCING, true);
 	}
 

@@ -4,7 +4,9 @@ package cat.altimiras.xml;
 import cat.altimiras.xml.pojo.ListTestObj;
 import cat.altimiras.xml.pojo.NestedTestObj;
 import cat.altimiras.xml.pojo.NotXMLElement;
+import cat.altimiras.xml.pojo.SimpleAnnotationTestObj;
 import cat.altimiras.xml.pojo.SimpleTestObj;
+import com.sun.org.apache.xalan.internal.lib.ExsltBase;
 import org.junit.Test;
 
 import java.util.List;
@@ -57,5 +59,31 @@ public class ClassIntrospectorTest {
 	@Test(expected = Exception.class)
 	public void testNotXMLElement() throws Exception {
 		new ClassIntrospector<>(NotXMLElement.class);
+	}
+
+	@Test
+	public void testAnnotationClass() throws Exception {
+
+		ClassIntrospector<SimpleAnnotationTestObj> classIntrospector = new ClassIntrospector<>(SimpleAnnotationTestObj.class);
+
+		assertEquals(SimpleAnnotationTestObj.class.getName(), classIntrospector.getInstance("wrapper").getClass().getName());
+
+		assertEquals("value", classIntrospector.getField(SimpleAnnotationTestObj.class, "int").getName());
+		assertEquals(Integer.TYPE.getTypeName(), classIntrospector.getField(SimpleAnnotationTestObj.class, "int").getType().getName());
+		assertEquals("field", classIntrospector.getField(SimpleAnnotationTestObj.class, "field").getName());
+		assertEquals(String.class.getName(), classIntrospector.getField(SimpleAnnotationTestObj.class, "field").getType().getName());
+	}
+
+	@Test
+	public void testClassHashCode() throws Exception {
+
+		ClassIntrospector<ListTestObj> classIntrospector = new ClassIntrospector<>(ListTestObj.class);
+		int hashListTestObj = classIntrospector.getClassHashCode(ListTestObj.class);
+		assertEquals("ListTestObj".hashCode(), hashListTestObj);
+
+
+		ClassIntrospector<SimpleAnnotationTestObj> classIntrospector2 = new ClassIntrospector<>(SimpleAnnotationTestObj.class);
+		int hashSimpleAnnotationTestObj = classIntrospector2.getClassHashCode(SimpleAnnotationTestObj.class);
+		assertEquals("wrapper".hashCode(), hashSimpleAnnotationTestObj);
 	}
 }
