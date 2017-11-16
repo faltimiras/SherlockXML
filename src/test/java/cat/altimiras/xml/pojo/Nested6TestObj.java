@@ -7,7 +7,7 @@ import java.util.List;
 public class Nested6TestObj extends XMLElement {
 	private String title;
 	private SimpleTestObj simpleTestObj;
-	private List<Nested5TestObj> list;
+	private List<Nested5TestObj> Nested5TestObj;
 
 	public String getTitle() {
 		return title;
@@ -18,6 +18,6 @@ public class Nested6TestObj extends XMLElement {
 	}
 
 	public List<Nested5TestObj> getList() {
-		return list;
+		return Nested5TestObj;
 	}
 }

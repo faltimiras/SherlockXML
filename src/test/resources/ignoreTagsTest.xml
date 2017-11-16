@@ -1,11 +1,16 @@
-<SimpleTestObj>
-    <element1>
-        111
-    </element1>
-    <element2>
-        222
-    </element2>
-    <element3>
-        lolololo
-    </element3>
-</SimpleTestObj>
+<lala>
+    <SimpleTestObj>
+        <element1>
+            111
+        </element1>
+        <element2>
+            222
+        </element2>
+        <element3>
+            lolololo
+        </element3>
+    </SimpleTestObj>
+    <lololo>
+        <lulu bbb="cccc">aaaa</lulu>
+    </lololo>
+</lala>

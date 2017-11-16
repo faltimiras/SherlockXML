@@ -1,9 +1,17 @@
-<ListTestObj>
-    <list>
-        <SimpleTestObj>
-            <element1>
-                111
-            </element1>
-        </SimpleTestObj>
-    </list>
-</ListTestObj>
+<wrapperWeDontWant>
+    <lolo></lolo>
+    <ListTestObj aa ="bbbb">
+        <list>
+            <SimpleTestObj noway="lala">
+                <element1>
+                    111
+                </element1>
+            </SimpleTestObj>
+            <SimpleTestObj noway="lala">
+                <element1>
+                    111
+                </element1>
+            </SimpleTestObj>
+        </list>
+    </ListTestObj>
+</wrapperWeDontWant>

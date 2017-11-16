@@ -123,21 +123,33 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 		else {
 
 			if (currentContext instanceof WoodStoxParserImpl.ListContext) {
-				//when it is a list of primitives and  current tag(the closing one) is not the closing list tag just ignore current closing tag.
-				if (((ListContext) currentContext).isPrimitive && !currentTagName.equals(currentContext.tag)) {
-					return;
+
+				if (!currentTagName.equals(currentContext.tag)) {
+					//when it is a list of primitives and  current tag(the closing one) is not the closing list tag, just ignore current closing tag.
+					if (((ListContext) currentContext).isPrimitive) {
+						return;
+					}
+					else {
+						//when it is a list of obj. Current tag (closing one) is not the closing list tag, so obj context must be removed.
+						if (!((ListContext) currentContext).hasWrapper) {
+							apply(currentContext.tag);
+						}
+
+					}
 				}
 			}
+			apply(currentTagName);
+		}
+	}
 
-			//Remove current context from the stack and set object in it to parent object
-			contexts.pollFirst();
-			if (!contexts.isEmpty()) {
-				Context parent = contexts.peek();
-				Field f = classIntrospector.getField(parent.object.getClass(), currentTagName);
-				setToObj(parent.object, f, currentContext.object);
-				stop = notify(currentTagName, currentContext.object);
-				currentContext = parent;
-			}
+	private void apply(String tag){
+		contexts.pollFirst();
+		if (!contexts.isEmpty()) {
+			Context parent = contexts.peek();
+			Field f = classIntrospector.getField(parent.object.getClass(), tag);
+			setToObj(parent.object, f, currentContext.object);
+			stop = notify(tag, currentContext.object);
+			currentContext = parent;
 		}
 	}
 
@@ -163,6 +175,7 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 			if (currentContext == null) { //Object to parse is not the most outer element
 				return;
 			}
+
 			currentField = classIntrospector.getField(currentContext.object.getClass(), currentTagName);
 		}
 
