@@ -1,6 +1,7 @@
 package cat.altimiras.xml;
 
 import cat.altimiras.xml.exceptions.InvalidXMLFormatException;
+import com.ctc.wstx.exc.WstxParsingException;
 import org.codehaus.stax2.XMLInputFactory2;
 import org.codehaus.stax2.XMLStreamReader2;
 
@@ -12,6 +13,8 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,23 +60,32 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 		this.classIntrospector = classIntrospector;
 
 		obj = typeArgumentClass.newInstance();
-		objHashCode =  classIntrospector.getClassHashCode(typeArgumentClass); //obj.getClass().getSimpleName().hashCode();
+		objHashCode =  classIntrospector.getClassHashCode(typeArgumentClass);
 		xmlInputFactory.setProperty(XMLInputFactory.IS_COALESCING, true);
+
 	}
 
 	@Override
-	public T parse(String xml) throws InvalidXMLFormatException {
+	public T parse(String xml) throws InvalidXMLFormatException, CharacterCodingException {
 
 		if (xml == null) {
 			throw new NullPointerException();
 		}
-
-		return parse(xml.getBytes());
+		return parse(xml, Charset.forName("UTF-8"));
 	}
 
 	@Override
-	public T parse(byte[] xml) throws InvalidXMLFormatException {
+	public T parse(String xml, Charset charset) throws InvalidXMLFormatException, CharacterCodingException {
 
+		if (xml == null) {
+			throw new NullPointerException();
+		}
+		return parse(xml.getBytes(charset));
+	}
+
+	@Override
+	public T parse(byte[] xml) throws InvalidXMLFormatException, CharacterCodingException {
+		boolean canRead = false;
 		try {
 			if (xml == null) {
 				throw new NullPointerException();
@@ -82,6 +94,7 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 			InputStream xmlInputStream = new ByteArrayInputStream(xml);
 
 			XMLStreamReader2 xmlStreamReader = (XMLStreamReader2) xmlInputFactory.createXMLStreamReader(xmlInputStream);
+			canRead = true; //there is no cleaner way to differentiate error due to encoding.
 			while (xmlStreamReader.hasNext() && !stop) {
 				int eventType = xmlStreamReader.next();
 				switch (eventType) {
@@ -100,9 +113,13 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 				}
 			}
 		}
-
 		catch (XMLStreamException e) {
-			flushIncomplete();
+			if(canRead) {
+				flushIncomplete();
+			} else {
+				throw new CharacterCodingException();
+			}
+
 		}
 		catch (NullPointerException e) {
 			throw e;
@@ -356,7 +373,7 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 	/**
 	 * Flush to base object data is on the context but it could not be flushed due to XML is not correct and some tags hasn't been closed
 	 */
-	private void flushIncomplete() {
+	private void flushIncomplete() throws CharacterCodingException {
 
 		Context nested = contexts.pollFirst();
 
