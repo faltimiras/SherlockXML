@@ -8,6 +8,7 @@ import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class CharsetTest {
 
@@ -35,6 +36,19 @@ public class CharsetTest {
 
 		parser.parse(xml);
 
+	}
+
+	@Test()
+	public void noXml() throws Exception {
+
+		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
+
+		XMLParser<SimpleTestObj> parser = new WoodStoxParserImpl<>(SimpleTestObj.class, ci);
+
+		SimpleTestObj o =parser.parse("asdfasdf");
+
+		assertNull(o.getElement1());
+		assertNull(o.getElement2());
 	}
 
 }

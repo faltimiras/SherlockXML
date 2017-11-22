@@ -1,7 +1,6 @@
 package cat.altimiras.xml;
 
 import cat.altimiras.xml.exceptions.InvalidXMLFormatException;
-import com.ctc.wstx.exc.WstxParsingException;
 import org.codehaus.stax2.XMLInputFactory2;
 import org.codehaus.stax2.XMLStreamReader2;
 
@@ -60,7 +59,7 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 		this.classIntrospector = classIntrospector;
 
 		obj = typeArgumentClass.newInstance();
-		objHashCode =  classIntrospector.getClassHashCode(typeArgumentClass);
+		objHashCode = classIntrospector.getClassHashCode(typeArgumentClass);
 		xmlInputFactory.setProperty(XMLInputFactory.IS_COALESCING, true);
 
 	}
@@ -85,16 +84,22 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 
 	@Override
 	public T parse(byte[] xml) throws InvalidXMLFormatException, CharacterCodingException {
-		boolean canRead = false;
+
+		if (xml == null) {
+			throw new NullPointerException();
+		}
+
+		InputStream xmlInputStream = new ByteArrayInputStream(xml);
+		XMLStreamReader2 xmlStreamReader;
+
 		try {
-			if (xml == null) {
-				throw new NullPointerException();
-			}
+			xmlStreamReader = (XMLStreamReader2) xmlInputFactory.createXMLStreamReader(xmlInputStream);
+		}
+		catch (XMLStreamException e) {
+			throw new CharacterCodingException();
+		}
 
-			InputStream xmlInputStream = new ByteArrayInputStream(xml);
-
-			XMLStreamReader2 xmlStreamReader = (XMLStreamReader2) xmlInputFactory.createXMLStreamReader(xmlInputStream);
-			canRead = true; //there is no cleaner way to differentiate error due to encoding.
+		try {
 			while (xmlStreamReader.hasNext() && !stop) {
 				int eventType = xmlStreamReader.next();
 				switch (eventType) {
@@ -114,12 +119,7 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 			}
 		}
 		catch (XMLStreamException e) {
-			if(canRead) {
-				flushIncomplete();
-			} else {
-				throw new CharacterCodingException();
-			}
-
+			flushIncomplete();
 		}
 		catch (NullPointerException e) {
 			throw e;
@@ -159,7 +159,7 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 		}
 	}
 
-	private void apply(String tag){
+	private void apply(String tag) {
 		contexts.pollFirst();
 		if (!contexts.isEmpty()) {
 			Context parent = contexts.peek();
