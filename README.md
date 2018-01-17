@@ -1,4 +1,8 @@
 # SherlockXML
+
+![Sherlock holmes](sherlockholmes.jpg "Sherlock Holmes")
+
+
 Parser built to parse, obviously valid XML, but also corrupted/incomplete or partially XMLs
 
 Build simply and fast by default, no annotation, no magic... just convert and XML to and Java object.
