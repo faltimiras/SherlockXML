@@ -3,6 +3,7 @@ package cat.altimiras.xml.pojo;
 import cat.altimiras.xml.XMLElement;
 
 public class SimpleTestObj extends XMLElement {
+
 	private String element1;
 	private String element2;
 

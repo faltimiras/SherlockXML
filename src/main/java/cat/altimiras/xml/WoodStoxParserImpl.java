@@ -120,7 +120,6 @@ public class WoodStoxParserImpl<T extends XMLElement> implements XMLParser<T> {
 		}
 		catch (XMLStreamException e) {
 			flushIncomplete();
-			obj.markAsIncomplete();
 		}
 		catch (NullPointerException e) {
 			throw e;
@@ -406,6 +405,8 @@ public class WoodStoxParserImpl<T extends XMLElement> implements XMLParser<T> {
 			Field field = classIntrospector.getField(current.object.getClass(), nested.tag);
 			setToObj(current.object, field, nested.object);
 			nested = current;
+
+			obj.markAsIncomplete();
 		}
 	}
 

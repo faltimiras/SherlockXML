@@ -84,7 +84,7 @@ public class ClassIntrospector<T> {
 
 	private void introspect(Class clazz) throws Exception {
 
-		if (!clazz.getGenericSuperclass().equals(XMLElement.class) ) {
+		if (!clazz.getGenericSuperclass().equals(XMLElement.class)) {
 			throw new Exception("All classes MUST extend XMLElement. " + clazz.getName() + " do not.");
 		}
 

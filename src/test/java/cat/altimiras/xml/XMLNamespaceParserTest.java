@@ -78,7 +78,7 @@ public class XMLNamespaceParserTest {
 		assertEquals("333", o.getList().get(2).getElement2().trim());
 		assertEquals("444", o.getList().get(3).getElement1().trim());
 		assertEquals("555", o.getList().get(3).getElement2().trim());
-		assertTrue(o.isIncomplete());
+		assertFalse(o.isIncomplete());
 	}
 
 }

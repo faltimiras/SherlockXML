@@ -2,7 +2,7 @@ package cat.altimiras.xml;
 
 public abstract class XMLElement implements Cloneable {
 
-	private boolean incomplete = false;
+	private transient boolean incomplete = false;
 
 	/**
 	 * Object parsed has not been totally parsed due to xml is not totally completed.
@@ -12,7 +12,7 @@ public abstract class XMLElement implements Cloneable {
 		return incomplete;
 	}
 
-	protected void markAsIncomplete() {
+	void markAsIncomplete() {
 		this.incomplete = true;
 	}
 
