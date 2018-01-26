@@ -5,7 +5,7 @@ import cat.altimiras.xml.exceptions.InvalidXMLFormatException;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 
-public interface XMLParser<T> {
+public interface XMLParser<T extends XMLElement> {
 
 	/**
 	 * Parses a XML to T

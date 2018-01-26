@@ -8,6 +8,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 
 public class XMLNestedParserTest {
@@ -25,6 +26,7 @@ public class XMLNestedParserTest {
 		assertEquals("title", o.getTitle().trim());
 		assertEquals("111", o.getSimpleTestObj().getElement1().trim());
 		assertEquals("222", o.getSimpleTestObj().getElement2().trim());
+		assertFalse(o.isIncomplete());
 	}
 
 	@Test
@@ -40,6 +42,7 @@ public class XMLNestedParserTest {
 		assertEquals("title", o.getTitle().trim());
 		assertEquals("111", o.getSimpleTestObj1().getElement1().trim());
 		assertEquals("222", o.getSimpleTestObj2().getElement2().trim());
+		assertFalse(o.isIncomplete());
 	}
 
 	@Test
@@ -55,6 +58,7 @@ public class XMLNestedParserTest {
 		assertEquals("title", o.getTitle().trim());
 		assertEquals("111", o.getSimpleTestObj1().getElement1().trim());
 		assertEquals("222", o.getNestedTestObj().getSimpleTestObj().getElement1().trim());
+		assertFalse(o.isIncomplete());
 	}
 
 	@Test
@@ -71,6 +75,7 @@ public class XMLNestedParserTest {
 		assertEquals(2, o.getNestedLoopTestObj().getNum());
 		assertEquals(3, o.getNestedLoopTestObj().getNestedLoopTestObj().getNum());
 		assertNull(o.getNestedLoopTestObj().getNestedLoopTestObj().getNestedLoopTestObj());
+		assertFalse(o.isIncomplete());
 
 	}
 }

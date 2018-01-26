@@ -7,6 +7,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class XMLAnnotationsTest {
 
@@ -22,6 +23,7 @@ public class XMLAnnotationsTest {
 
 		assertEquals("value", o.getField().trim());
 		assertEquals(123, o.getValue());
+		assertFalse(o.isIncomplete());
 	}
 
 	@Test
@@ -40,5 +42,6 @@ public class XMLAnnotationsTest {
 		assertEquals(111, o.getList().get(0).getValue());
 		assertEquals("bbb", o.getList().get(1).getField());
 		assertEquals(222, o.getList().get(1).getValue());
+		assertFalse(o.isIncomplete());
 	}
 }

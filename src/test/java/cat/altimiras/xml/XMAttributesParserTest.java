@@ -6,6 +6,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class XMAttributesParserTest {
 
@@ -20,6 +21,7 @@ public class XMAttributesParserTest {
 		SimpleTestObj o = parser.parse(xml);
 
 		assertEquals("111", o.getElement1());
+		assertFalse(o.isIncomplete());
 	}
 
 	@Test
@@ -34,6 +36,7 @@ public class XMAttributesParserTest {
 
 		assertEquals("11=1", o.getElement1());
 		assertEquals("222", o.getElement2());
+		assertFalse(o.isIncomplete());
 	}
 
 	@Test
@@ -49,6 +52,7 @@ public class XMAttributesParserTest {
 		assertEquals("title", o.getTitle().trim());
 		assertEquals("111", o.getSimpleTestObj1().getElement1().trim());
 		assertEquals("222", o.getNestedTestObj().getSimpleTestObj().getElement1().trim());
+		assertFalse(o.isIncomplete());
 	}
 
 }

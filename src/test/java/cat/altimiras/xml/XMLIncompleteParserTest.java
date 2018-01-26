@@ -7,6 +7,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class XMLIncompleteParserTest {
 
@@ -49,6 +50,7 @@ public class XMLIncompleteParserTest {
 		ListTestObj o = parser.parse(xml);
 
 		assertEquals("111", o.getList().get(0).getElement1().trim());
+		assertTrue(o.isIncomplete());
 	}
 
 	@Test
@@ -71,6 +73,7 @@ public class XMLIncompleteParserTest {
 		assertEquals("555", o.getList().get(0).getList().get(3).getElement2().trim());
 		assertEquals("666", o.getList().get(1).getList().get(0).getElement1().trim());
 		assertEquals("777", o.getList().get(1).getList().get(1).getElement2().trim());
+		assertTrue(o.isIncomplete());
 	}
 
 

@@ -5,6 +5,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class XMLSelfClosedParserTest {
 
@@ -21,5 +22,6 @@ public class XMLSelfClosedParserTest {
 		assertEquals("title", o.getTitle().trim());
 		assertEquals("111", o.getSimpleTestObj1().getElement1().trim());
 		assertEquals("222", o.getSimpleTestObj2().getElement2().trim());
+		assertFalse(o.isIncomplete());
 	}
 }

@@ -7,6 +7,8 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class XMLNamespaceParserTest {
 
@@ -22,6 +24,7 @@ public class XMLNamespaceParserTest {
 
 		assertEquals("111", o.getElement1().trim());
 		assertEquals("222", o.getElement2().trim());
+		assertFalse(o.isIncomplete());
 	}
 
 	@Test
@@ -37,6 +40,7 @@ public class XMLNamespaceParserTest {
 		assertEquals("title", o.getTitle().trim());
 		assertEquals("111", o.getSimpleTestObj1().getElement1().trim());
 		assertEquals("222", o.getNestedTestObj().getSimpleTestObj().getElement1().trim());
+		assertFalse(o.isIncomplete());
 	}
 
 	@Test
@@ -55,6 +59,7 @@ public class XMLNamespaceParserTest {
 		assertEquals("333", o.getList().get(2).getElement2().trim());
 		assertEquals("444", o.getList().get(3).getElement1().trim());
 		assertEquals("555", o.getList().get(3).getElement2().trim());
+		assertFalse(o.isIncomplete());
 	}
 
 	@Test
@@ -73,6 +78,7 @@ public class XMLNamespaceParserTest {
 		assertEquals("333", o.getList().get(2).getElement2().trim());
 		assertEquals("444", o.getList().get(3).getElement1().trim());
 		assertEquals("555", o.getList().get(3).getElement2().trim());
+		assertTrue(o.isIncomplete());
 	}
 
 }

@@ -1,11 +1,11 @@
 <ListTestObj2>
-    <field>lolo</field>
     <SimpleTestObj element1="111">
-        <element2>
+       <!-- <element2>
             222
         </element2>
+        -->
     </SimpleTestObj>
-    <SimpleTestObj element1="333" element2="444"/>
+   <!-- <SimpleTestObj element1="333" element2="444"/>
     <SimpleTestObj>
         <element1>
             555
@@ -14,4 +14,6 @@
             666
         </element2>
     </SimpleTestObj>
+    -->
+    <field>lolo</field> <!--same listPrimitivesNoWapperWithAttributes but field after list-->
 </ListTestObj2>

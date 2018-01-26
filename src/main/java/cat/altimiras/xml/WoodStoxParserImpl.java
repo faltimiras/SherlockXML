@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class WoodStoxParserImpl<T> implements XMLParser<T> {
+public class WoodStoxParserImpl<T extends XMLElement> implements XMLParser<T> {
 
 	private XMLInputFactory2 xmlInputFactory = (XMLInputFactory2) XMLInputFactory.newInstance();
 
@@ -120,6 +120,7 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 		}
 		catch (XMLStreamException e) {
 			flushIncomplete();
+			obj.markAsIncomplete();
 		}
 		catch (NullPointerException e) {
 			throw e;
@@ -149,7 +150,7 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 					else {
 						//when it is a list of obj. Current tag (closing one) is not the closing list tag, so obj context must be removed.
 						if (!((ListContext) currentContext).hasWrapper) {
-							apply(currentContext.tag);
+							apply(currentTagName);
 						}
 
 					}
@@ -200,7 +201,8 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 		if (currentField == null) {
 			atFirstElement(xmlStreamReader, currentTagName);
 		}
-		else {
+
+		if (currentField != null) { //this looks stupid, but atFirstElement can change it values
 
 			//if current field is a primitive type is not needed to create a context, at onContent value will be set
 			if (ClassIntrospector.isPrimitive(currentField.getType())) {
@@ -267,9 +269,30 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 			if (((ListContext) currentContext).isPrimitive) {
 				return;
 			}
+			//detection if list has finished and next element is on the parent
+			if (!currentTagName.equals(currentContext.tag)) {
+				Context backup = contexts.pollFirst(); //remove listContext, but keep it
+				if (!contexts.isEmpty()) {
+					Context parent = contexts.peek();
+					Field f = classIntrospector.getField(parent.object.getClass(), currentTagName);
+
+					if (f != null) {
+						setToObj(parent.object, f, currentContext.object);
+						stop = notify(currentTagName, currentContext.object);
+						currentContext = parent;
+						currentField = classIntrospector.getField(currentContext.object.getClass(), currentTagName);
+						return;
+					}
+
+				}
+				contexts.push(backup); //if all checks has failed and the field is not on the parent, restore previous state
+			}
+
 			o = classIntrospector.getInstance(((ListContext) currentContext).clazz);
 		}
-		else {
+		else
+
+		{
 			o = obj;
 		}
 
@@ -277,6 +300,7 @@ public class WoodStoxParserImpl<T> implements XMLParser<T> {
 		createCurrentContext(currentTagName, o);
 
 		setAttributes(xmlStreamReader, o);
+
 		simpleElement = false;
 	}
 
