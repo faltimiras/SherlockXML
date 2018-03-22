@@ -405,9 +405,8 @@ public class WoodStoxParserImpl<T extends XMLElement> implements XMLParser<T> {
 			Field field = classIntrospector.getField(current.object.getClass(), nested.tag);
 			setToObj(current.object, field, nested.object);
 			nested = current;
-
-			obj.markAsIncomplete();
 		}
+		obj.markAsIncomplete();
 	}
 
 	private class Context {
