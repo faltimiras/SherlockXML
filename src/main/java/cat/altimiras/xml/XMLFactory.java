@@ -1,5 +1,10 @@
 package cat.altimiras.xml;
 
+import cat.altimiras.xml.obj.ClassIntrospector;
+import cat.altimiras.xml.obj.WoodStoxObjParserImpl;
+import cat.altimiras.xml.parsed.Parsed;
+import cat.altimiras.xml.parsed.WoodStoxParsedParserImpl;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,7 +45,11 @@ public class XMLFactory {
 		if (classIntrospector == null) {
 			throw new IllegalArgumentException("XMLFactory has not been properly initialzed. Class:" + c.getSimpleName() + ". Check init method");
 		}
-		return new WoodStoxParserImpl(c, classIntrospector);
+		return new WoodStoxObjParserImpl(c, classIntrospector);
+	}
+
+	public static XMLParser<Parsed> getParser(){
+		return new WoodStoxParsedParserImpl();
 	}
 
 	static void reset() {

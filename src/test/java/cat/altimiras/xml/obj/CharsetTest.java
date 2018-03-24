@@ -1,5 +1,6 @@
-package cat.altimiras.xml;
+package cat.altimiras.xml.obj;
 
+import cat.altimiras.xml.XMLParser;
 import cat.altimiras.xml.pojo.SimpleTestObj;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
@@ -18,7 +19,7 @@ public class CharsetTest {
 		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/utf16Test.xml"), "UTF-16");
-		XMLParser<SimpleTestObj> parser = new WoodStoxParserImpl<>(SimpleTestObj.class, ci);
+		XMLParser<SimpleTestObj> parser = new WoodStoxObjParserImpl<>(SimpleTestObj.class, ci);
 
 		SimpleTestObj o = parser.parse(xml, Charset.forName("UTF-16"));
 
@@ -32,23 +33,9 @@ public class CharsetTest {
 		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/utf16Test.xml"), "UTF-16");
-		XMLParser<SimpleTestObj> parser = new WoodStoxParserImpl<>(SimpleTestObj.class, ci);
+		XMLParser<SimpleTestObj> parser = new WoodStoxObjParserImpl<>(SimpleTestObj.class, ci);
 
 		parser.parse(xml);
 
 	}
-
-	@Test()
-	public void noXml() throws Exception {
-
-		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
-
-		XMLParser<SimpleTestObj> parser = new WoodStoxParserImpl<>(SimpleTestObj.class, ci);
-
-		SimpleTestObj o =parser.parse("asdfasdf");
-
-		assertNull(o.getElement1());
-		assertNull(o.getElement2());
-	}
-
 }

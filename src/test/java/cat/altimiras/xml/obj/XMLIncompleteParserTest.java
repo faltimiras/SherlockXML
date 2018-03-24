@@ -1,5 +1,6 @@
-package cat.altimiras.xml;
+package cat.altimiras.xml.obj;
 
+import cat.altimiras.xml.XMLParser;
 import cat.altimiras.xml.pojo.ListTestObj;
 import cat.altimiras.xml.pojo.Nested3TestObj;
 import cat.altimiras.xml.pojo.Nested6TestObj;
@@ -17,7 +18,7 @@ public class XMLIncompleteParserTest {
 		ClassIntrospector ci = new ClassIntrospector(Nested3TestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/incompleteXMLTest.xml"), "UTF-8");
-		XMLParser<Nested3TestObj> parser = new WoodStoxParserImpl<>(Nested3TestObj.class, ci);
+		XMLParser<Nested3TestObj> parser = new WoodStoxObjParserImpl<>(Nested3TestObj.class, ci);
 
 		Nested3TestObj o = parser.parse(xml);
 
@@ -30,7 +31,7 @@ public class XMLIncompleteParserTest {
 		ClassIntrospector ci = new ClassIntrospector(Nested3TestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/incompleteXML2Test.xml"), "UTF-8");
-		XMLParser<Nested3TestObj> parser = new WoodStoxParserImpl<>(Nested3TestObj.class, ci);
+		XMLParser<Nested3TestObj> parser = new WoodStoxObjParserImpl<>(Nested3TestObj.class, ci);
 
 		Nested3TestObj o = parser.parse(xml);
 
@@ -45,7 +46,7 @@ public class XMLIncompleteParserTest {
 		ClassIntrospector ci = new ClassIntrospector(ListTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/incompleteListXMLTest.xml"), "UTF-8");
-		XMLParser<ListTestObj> parser = new WoodStoxParserImpl<>(ListTestObj.class, ci);
+		XMLParser<ListTestObj> parser = new WoodStoxObjParserImpl<>(ListTestObj.class, ci);
 
 		ListTestObj o = parser.parse(xml);
 
@@ -59,7 +60,7 @@ public class XMLIncompleteParserTest {
 		ClassIntrospector ci = new ClassIntrospector(Nested6TestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/incompleteListXML2Test.xml"), "UTF-8");
-		XMLParser<Nested6TestObj> parser = new WoodStoxParserImpl<>(Nested6TestObj.class, ci);
+		XMLParser<Nested6TestObj> parser = new WoodStoxObjParserImpl<>(Nested6TestObj.class, ci);
 
 		Nested6TestObj o = parser.parse(xml);
 

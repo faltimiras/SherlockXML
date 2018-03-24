@@ -1,4 +1,4 @@
-package cat.altimiras.xml;
+package cat.altimiras.xml.obj;
 
 
 import cat.altimiras.xml.pojo.ListTestObj;
@@ -6,7 +6,6 @@ import cat.altimiras.xml.pojo.NestedTestObj;
 import cat.altimiras.xml.pojo.NotXMLElement;
 import cat.altimiras.xml.pojo.SimpleAnnotationTestObj;
 import cat.altimiras.xml.pojo.SimpleTestObj;
-import com.sun.org.apache.xalan.internal.lib.ExsltBase;
 import org.junit.Test;
 
 import java.util.List;

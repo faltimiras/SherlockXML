@@ -9,7 +9,8 @@
                     <title>333</title>
                 </Nested5TestObj>
             </Nested6TestObj>
-            <Nested6TestObj title="lala">
+            <Nested6TestObj>
+                <title>lala</title>
                 <Nested5TestObj title="444"></Nested5TestObj>
                 <Nested5TestObj title="555"/>
                 <Nested5TestObj>

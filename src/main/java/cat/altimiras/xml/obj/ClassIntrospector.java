@@ -1,6 +1,7 @@
-package cat.altimiras.xml;
+package cat.altimiras.xml.obj;
 
 
+import cat.altimiras.xml.XMLElement;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import javax.xml.bind.annotation.XmlElement;

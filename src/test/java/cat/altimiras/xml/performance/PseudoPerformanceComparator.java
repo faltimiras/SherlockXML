@@ -1,8 +1,8 @@
 package cat.altimiras.xml.performance;
 
 
-import cat.altimiras.xml.ClassIntrospector;
-import cat.altimiras.xml.WoodStoxParserImpl;
+import cat.altimiras.xml.obj.ClassIntrospector;
+import cat.altimiras.xml.obj.WoodStoxObjParserImpl;
 import cat.altimiras.xml.XMLParser;
 import cat.altimiras.xml.pojo.ListTestObj;
 import org.apache.commons.io.IOUtils;
@@ -25,7 +25,7 @@ public class PseudoPerformanceComparator {
 		ClassIntrospector c = new ClassIntrospector(ListTestObj.class);
 
 		long ini = System.currentTimeMillis();
-		XMLParser<ListTestObj> parser = new WoodStoxParserImpl<>(ListTestObj.class, c);
+		XMLParser<ListTestObj> parser = new WoodStoxObjParserImpl<>(ListTestObj.class, c);
 		for (int i = 0; i < LOOPS; i++) {
 			ListTestObj o = parser.parse(xml);
 
@@ -46,7 +46,7 @@ public class PseudoPerformanceComparator {
 		ClassIntrospector c = new ClassIntrospector(ListTestObj.class);
 
 		long ini = System.currentTimeMillis();
-		XMLParser<ListTestObj> parser = new WoodStoxParserImpl<>(ListTestObj.class, c);
+		XMLParser<ListTestObj> parser = new WoodStoxObjParserImpl<>(ListTestObj.class, c);
 		for (int i = 0; i < LOOPS; i++) {
 			ListTestObj o = parser.parse(xml);
 
@@ -66,7 +66,7 @@ public class PseudoPerformanceComparator {
 		ClassIntrospector c = new ClassIntrospector(ListTestObj.class);
 
 		long ini = System.currentTimeMillis();
-		XMLParser<ListTestObj> parser = new WoodStoxParserImpl<>(ListTestObj.class, c);
+		XMLParser<ListTestObj> parser = new WoodStoxObjParserImpl<>(ListTestObj.class, c);
 		for (int i = 0; i < LOOPS; i++) {
 			ListTestObj o = parser.parse(xml);
 

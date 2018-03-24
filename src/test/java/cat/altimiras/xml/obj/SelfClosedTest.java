@@ -1,5 +1,6 @@
-package cat.altimiras.xml;
+package cat.altimiras.xml.obj;
 
+import cat.altimiras.xml.XMLParser;
 import cat.altimiras.xml.pojo.Nested2TestObj;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
@@ -7,7 +8,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-public class XMLSelfClosedParserTest {
+public class SelfClosedTest {
 
 	@Test
 	public void xmlSelfClosedTest() throws Exception {
@@ -15,7 +16,7 @@ public class XMLSelfClosedParserTest {
 		ClassIntrospector ci = new ClassIntrospector(Nested2TestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/selfClosedTest.xml"), "UTF-8");
-		XMLParser<Nested2TestObj> parser = new WoodStoxParserImpl<>(Nested2TestObj.class, ci);
+		XMLParser<Nested2TestObj> parser = new WoodStoxObjParserImpl<>(Nested2TestObj.class, ci);
 
 		Nested2TestObj o = parser.parse(xml);
 

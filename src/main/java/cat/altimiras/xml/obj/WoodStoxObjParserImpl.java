@@ -1,5 +1,8 @@
-package cat.altimiras.xml;
+package cat.altimiras.xml.obj;
 
+import cat.altimiras.xml.TagListener;
+import cat.altimiras.xml.XMLElement;
+import cat.altimiras.xml.XMLParser;
 import cat.altimiras.xml.exceptions.InvalidXMLFormatException;
 import org.codehaus.stax2.XMLInputFactory2;
 import org.codehaus.stax2.XMLStreamReader2;
@@ -20,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class WoodStoxParserImpl<T extends XMLElement> implements XMLParser<T> {
+public class WoodStoxObjParserImpl<T extends XMLElement> implements XMLParser<T> {
 
 	private XMLInputFactory2 xmlInputFactory = (XMLInputFactory2) XMLInputFactory.newInstance();
 
@@ -30,7 +33,7 @@ public class WoodStoxParserImpl<T extends XMLElement> implements XMLParser<T> {
 	private Map<String, TagListener> listeners = null;
 
 	/**
-	 * Java object that is building from xml data.
+	 * Java object that is building from xml parsed.
 	 */
 	final private T obj;
 
@@ -55,7 +58,7 @@ public class WoodStoxParserImpl<T extends XMLElement> implements XMLParser<T> {
 	private boolean stop = false;
 
 
-	public WoodStoxParserImpl(Class<T> typeArgumentClass, ClassIntrospector<T> classIntrospector) throws IllegalAccessException, InstantiationException {
+	public WoodStoxObjParserImpl(Class<T> typeArgumentClass, ClassIntrospector<T> classIntrospector) throws IllegalAccessException, InstantiationException {
 		this.classIntrospector = classIntrospector;
 
 		obj = typeArgumentClass.newInstance();
@@ -139,7 +142,7 @@ public class WoodStoxParserImpl<T extends XMLElement> implements XMLParser<T> {
 		}
 		else {
 
-			if (currentContext instanceof WoodStoxParserImpl.ListContext) {
+			if (currentContext instanceof WoodStoxObjParserImpl.ListContext) {
 
 				if (!currentTagName.equals(currentContext.tag)) {
 					//when it is a list of primitives and  current tag(the closing one) is not the closing list tag, just ignore current closing tag.
@@ -178,7 +181,7 @@ public class WoodStoxParserImpl<T extends XMLElement> implements XMLParser<T> {
 			setToObj(currentContext.object, currentField, content);
 			stop = notify(currentField.getName(), content);
 		}
-		else if (currentContext instanceof WoodStoxParserImpl.ListContext) {
+		else if (currentContext instanceof WoodStoxObjParserImpl.ListContext) {
 			if (!content.trim().isEmpty()) {
 				setToObj(currentContext.object, currentField, convertTo(((ListContext) currentContext).clazz, content));
 			}
@@ -263,7 +266,7 @@ public class WoodStoxParserImpl<T extends XMLElement> implements XMLParser<T> {
 
 	private void atFirstElement(XMLStreamReader2 xmlStreamReader, String currentTagName) {
 		Object o;
-		if (currentContext instanceof WoodStoxParserImpl.ListContext) {
+		if (currentContext instanceof WoodStoxObjParserImpl.ListContext) {
 			//if list of primitives is not needed to create a new context, primitives values will be added to the list directly
 			if (((ListContext) currentContext).isPrimitive) {
 				return;
@@ -394,7 +397,7 @@ public class WoodStoxParserImpl<T extends XMLElement> implements XMLParser<T> {
 	}
 
 	/**
-	 * Flush to base object data is on the context but it could not be flushed due to XML is not correct and some tags hasn't been closed
+	 * Flush to base object parsed is on the context but it could not be flushed due to XML is not correct and some tags hasn't been closed
 	 */
 	private void flushIncomplete() throws CharacterCodingException {
 
@@ -405,7 +408,10 @@ public class WoodStoxParserImpl<T extends XMLElement> implements XMLParser<T> {
 			Field field = classIntrospector.getField(current.object.getClass(), nested.tag);
 			setToObj(current.object, field, nested.object);
 			nested = current;
+
+
 		}
+
 		obj.markAsIncomplete();
 	}
 

@@ -12,7 +12,7 @@ public abstract class XMLElement implements Cloneable {
 		return incomplete;
 	}
 
-	void markAsIncomplete() {
+	public void markAsIncomplete() {
 		this.incomplete = true;
 	}
 

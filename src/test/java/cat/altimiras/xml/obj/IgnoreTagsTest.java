@@ -1,5 +1,6 @@
-package cat.altimiras.xml;
+package cat.altimiras.xml.obj;
 
+import cat.altimiras.xml.XMLParser;
 import cat.altimiras.xml.pojo.Nested4TestObj;
 import cat.altimiras.xml.pojo.SimpleTestObj;
 import org.apache.commons.io.IOUtils;
@@ -7,7 +8,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class XMLIgnoreTagsParserTest {
+public class IgnoreTagsTest {
 
 	@Test
 	public void xmlIgnoreTest() throws Exception {
@@ -15,7 +16,7 @@ public class XMLIgnoreTagsParserTest {
 		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/ignoreTagsTest.xml"), "UTF-8");
-		XMLParser<SimpleTestObj> parser = new WoodStoxParserImpl<>(SimpleTestObj.class, ci);
+		XMLParser<SimpleTestObj> parser = new WoodStoxObjParserImpl<>(SimpleTestObj.class, ci);
 
 		SimpleTestObj o = parser.parse(xml);
 
@@ -34,7 +35,7 @@ public class XMLIgnoreTagsParserTest {
 		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/ignoreTags2Test.xml"), "UTF-8");
-		XMLParser<SimpleTestObj> parser = new WoodStoxParserImpl<>(SimpleTestObj.class, ci);
+		XMLParser<SimpleTestObj> parser = new WoodStoxObjParserImpl<>(SimpleTestObj.class, ci);
 
 		SimpleTestObj o = parser.parse(xml);
 
@@ -48,7 +49,7 @@ public class XMLIgnoreTagsParserTest {
 		ClassIntrospector ci = new ClassIntrospector(Nested4TestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/ignoreSelfClosedTagTest.xml"), "UTF-8");
-		XMLParser<Nested4TestObj> parser = new WoodStoxParserImpl<>(Nested4TestObj.class, ci);
+		XMLParser<Nested4TestObj> parser = new WoodStoxObjParserImpl<>(Nested4TestObj.class, ci);
 
 		Nested4TestObj o = parser.parse(xml);
 
@@ -63,7 +64,7 @@ public class XMLIgnoreTagsParserTest {
 		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/ignoreBeginningTest.xml"), "UTF-8");
-		XMLParser<SimpleTestObj> parser = new WoodStoxParserImpl<>(SimpleTestObj.class, ci);
+		XMLParser<SimpleTestObj> parser = new WoodStoxObjParserImpl<>(SimpleTestObj.class, ci);
 
 		SimpleTestObj o = parser.parse(xml);
 

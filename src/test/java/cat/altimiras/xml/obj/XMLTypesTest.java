@@ -1,5 +1,6 @@
-package cat.altimiras.xml;
+package cat.altimiras.xml.obj;
 
+import cat.altimiras.xml.XMLParser;
 import cat.altimiras.xml.pojo.TypeTestObj;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
@@ -14,7 +15,7 @@ public class XMLTypesTest {
 		ClassIntrospector ci = new ClassIntrospector(TypeTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/typeTest.xml"), "UTF-8");
-		XMLParser<TypeTestObj> parser = new WoodStoxParserImpl<>(TypeTestObj.class, ci);
+		XMLParser<TypeTestObj> parser = new WoodStoxObjParserImpl<>(TypeTestObj.class, ci);
 
 		TypeTestObj o = parser.parse(xml);
 

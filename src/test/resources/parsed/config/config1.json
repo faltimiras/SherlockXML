@@ -1,0 +1,13 @@
+{
+  "root": {
+    "simple1": "",
+    "simple2": "",
+    "arraySimple": [],
+    "arrayElements": [
+      {
+        "field1": "",
+        "field2": ""
+      }
+    ]
+  }
+}

@@ -1,7 +1,7 @@
 <ListTestObj2>
     <field>lolo</field>
-    <SimpleTestObj element1="111">
-        <element2>
+    <SimpleTestObj element1="111" >
+       <element2>
             222
         </element2>
     </SimpleTestObj>
