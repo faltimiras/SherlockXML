@@ -25,11 +25,17 @@ public class WoodStoxParsedParserImpl implements XMLParser<Parsed> {
 
 	private Context currentContext;
 
+	/**
+	 * Listeners for tags. Notified every time a tag is totally processed (on close </..> tag)
+	 */
+	private Map<String, TagListener> listeners = null;
 
 	/**
 	 * Stack with tags opened and still not closed
 	 */
 	final private ArrayDeque<Context> contexts = new ArrayDeque<>();
+
+	private boolean stop = false;
 
 	public WoodStoxParsedParserImpl() {
 
@@ -73,7 +79,7 @@ public class WoodStoxParsedParserImpl implements XMLParser<Parsed> {
 		}
 
 		try {
-			while (xmlStreamReader.hasNext()) {
+			while (xmlStreamReader.hasNext() && !stop) {
 				int eventType = xmlStreamReader.next();
 				switch (eventType) {
 					case XMLEvent.START_ELEMENT:
@@ -92,45 +98,75 @@ public class WoodStoxParsedParserImpl implements XMLParser<Parsed> {
 			}
 		}
 		catch (XMLStreamException e) {
-			//flushIncomplete();
+
+			flushIncomplete();
+
+			if (currentContext == null) {
+				return new Parsed();
+			}
+			else {
+				Parsed parsed = createParsed();
+				parsed.markAsIncomplete();
+				return parsed;
+			}
+
 		}
 		catch (NullPointerException e) {
 			throw e;
 		}
 		catch (Exception e) {
-			//TODO
-			e.printStackTrace();
 			throw new InvalidXMLFormatException("Impossible to parse XML. Msg:" + e.getMessage());
 		}
 
 		if (currentContext == null || currentContext.data == null) {
 			return new Parsed();
 		}
+
+		return createParsed();
+	}
+
+	private Parsed createParsed() {
 		Map<String, Object> p = new HashMap<>();
 		p.put(currentContext.tag, currentContext.getContent());
 		return new Parsed(currentContext.tag, p);
 	}
 
+	private void flushIncomplete() {
+
+		Context nested = contexts.pollFirst();
+
+		while (!contexts.isEmpty()) {
+			Context current = contexts.removeFirst();
+
+			Object previous = current.data.get(nested.tag);
+			if (previous == null) {
+				current.data.put(nested.tag, nested.getContent());
+			}
+			else {
+				//convert to list
+				convertToList(nested.tag, current, previous, nested.getContent());
+			}
+			nested = current;
+		}
+
+		currentContext = nested;
+	}
 
 	private void onOpenElement(XMLStreamReader2 xmlStreamReader) throws Exception {
 
 		String currentTagName = xmlStreamReader.getName().getLocalPart();
-
-		Context context = new Context();
-		context.tag = currentTagName;
-		context.data = new HashMap<>();
-
+		Context context = new Context(currentTagName);
 		setAttributes(xmlStreamReader, context);
 
 		contexts.push(context);
 		currentContext = context;
 	}
 
-
 	private void onContent(XMLStreamReader2 xmlStreamReader) throws Exception {
 		String content = xmlStreamReader.getText().trim();
 		if (!content.isEmpty()) {
 			currentContext.value = content;
+			stop = notify(currentContext.tag, content);
 		}
 	}
 
@@ -138,20 +174,20 @@ public class WoodStoxParsedParserImpl implements XMLParser<Parsed> {
 
 		String currentTagName = xmlStreamReader.getName().getLocalPart();
 
-		contexts.pop(); //remove current
-		Context context = contexts.peek();
+		contexts.removeFirst(); //remove current
+		Context context = contexts.peekFirst();
 		if (context != null) {
 
 			if (context.isList) {
 
-				//check if element gonna insert is same time of pervious one
-				String key = ((Map.Entry)((Map)context.list.get(0)).entrySet().iterator().next()).getKey().toString();
+				//check if element gonna insert is the same type of previous one
+				String key = ((Map.Entry) ((Map) context.list.get(0)).entrySet().iterator().next()).getKey().toString();
 				if (key.equals(currentTagName)) {
 					Map<String, Object> element = new HashMap<>();
 					element.put(currentTagName, currentContext.getContent());
 					context.list.add(element);
 				}
-				else { //if not move current list to a tag element
+				else { //if it isn't move current list to a tag element. This happens when there are 2 or mores lists unwrapped
 					context.data.put(key, context.list);
 
 					//add new element
@@ -162,33 +198,71 @@ public class WoodStoxParsedParserImpl implements XMLParser<Parsed> {
 
 				Object previous = context.data.get(currentTagName);
 				if (previous != null) {
-
-					context.isList = true;
-					//remove previous element before convert it to a list
-					context.data.remove(currentTagName);
-
-					context.list = new ArrayList();
-					Map<String, Object> element = new HashMap<>();
-					element.put(currentTagName, previous);
-					context.list.add(element);
-					Map<String, Object> element2 = new HashMap<>();
-					element2.put(currentTagName, currentContext.getContent());
-					context.list.add(element2);
-
-
+					convertToList(currentTagName, context, previous, currentContext.getContent());
 				}
 				else {
 					context.data.put(currentContext.tag, currentContext.getContent());
 				}
 			}
-			currentContext = context;
-		}
 
+			currentContext = context;
+
+			stop = notify(currentTagName, currentContext.getContent());
+		}
+	}
+
+	/**
+	 * Converts data in a context to a list of data in same context
+	 *
+	 * @param currentTagName
+	 * @param context
+	 * @param previous
+	 * @param content
+	 */
+	private void convertToList(String currentTagName, Context context, Object previous, Object content) {
+
+		context.isList = true;
+
+		//remove previous element before convert it to a list
+		context.data.remove(currentTagName);
+
+		context.list = new ArrayList();
+		Map<String, Object> element = new HashMap<>();
+		element.put(currentTagName, previous);
+		context.list.add(element);
+		Map<String, Object> element2 = new HashMap<>();
+		element2.put(currentTagName, content);
+		context.list.add(element2);
 	}
 
 	public void register(String tag, TagListener listener) {
-
+		if (this.listeners == null) {
+			this.listeners = new HashMap<>();
+		}
+		listeners.put(tag, listener);
 	}
+
+	/**
+	 * Notify to a TagListener(if registered) when tag is closed
+	 *
+	 * @param tag
+	 * @param value
+	 *
+	 * @return
+	 */
+	private boolean notify(String tag, Object value) {
+
+		if (listeners == null) {
+			return false;
+		}
+
+		TagListener listener = listeners.get(tag);
+		if (listener != null) {
+			return listener.notify(tag, value);
+		}
+		return false; //to continue
+	}
+
 
 	private void setAttributes(XMLStreamReader2 xmlStreamReader, Context context) {
 		int attributeCount = xmlStreamReader.getAttributeCount();
@@ -201,75 +275,35 @@ public class WoodStoxParsedParserImpl implements XMLParser<Parsed> {
 	}
 
 	private class Context {
+
 		protected String tag;
 		protected boolean isList = false;
 		protected String value;
 		protected List list;
 		protected Map<String, Object> data;
-/*
-		public Object getContent() {
-			if (value != null) {
-				return value;
-			}
-			if (data != null && !data.isEmpty()) {
-				return data;
-			}
-			return list;
+
+		public Context(String tag) {
+			this.tag = tag;
+			this.data = new HashMap<>();
 		}
-*/
+
 		public Object getContent() {
 			if (value != null) {
 				return value;
 			}
 			if (!data.isEmpty()) {
 
-				if (list== null){
+				if (list == null) {
 					return data;
 				}
 				else {
-					String key = ((Map.Entry)((Map)currentContext.list.get(0)).entrySet().iterator().next()).getKey().toString();
-					data.put(key,list);
+					String key = ((Map.Entry) ((Map) currentContext.list.get(0)).entrySet().iterator().next()).getKey().toString();
+					data.put(key, list);
 					list = null;
 					return data;
 				}
-
-				//return data;
 			}
 			return list;
 		}
-
-
-
-/*
-		public Object getContent() {
-
-			if (value != null) {
-				return value;
-			}
-
-			//only map set
-			if (data != null && value == null && (list == null || list.isEmpty())){
-				return data;
-			}
-
-			//only list set
-			if(list != null && data == null){
-				return list;
-			}
-
-			//map and list are set
-			if(list != null && !list.isEmpty() && data != null && !data.isEmpty()){
-				Map<String, Object> p = new HashMap<>();
-				String key = ((Map.Entry)((Map)currentContext.list.get(0)).entrySet().iterator().next()).getKey().toString();
-				data.put(key, list);
-				p.put(tag, data);
-				return p;
-			}
-
-			return value;
-
-		}
-*/
 	}
-
 }

@@ -69,11 +69,8 @@ public class Parsed extends XMLElement {
 				}
 			}
 		}
-
 		return null;
 	}
-
-
 
 	public class Result {
 
@@ -113,12 +110,6 @@ public class Parsed extends XMLElement {
 		public Object value(){
 			return content;
 		}
-
-		public boolean isParsed(){
-			return this.content instanceof Map;
-		}
-
-
 
 
 	}

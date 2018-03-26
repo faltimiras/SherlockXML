@@ -10,7 +10,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-public class XMLAnnotationsTest {
+public class AnnotationsTest {
 
 	@Test
 	public void xmlAnnotationTest() throws Exception {
