@@ -56,7 +56,7 @@ public class BasicTest {
 
 		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl();
 		Parsed o = parser.parse("asdfasdfasdfasdf");
-		assertNull(o.data);
+		assertNull(o.get("").value());
 	}
 
 	@Test
@@ -65,7 +65,6 @@ public class BasicTest {
 		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl();
 		Parsed o = parser.parse("");
 
-		assertNull(o.data);
+		assertNull(o.get("").value());
 	}
-
 }

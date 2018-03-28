@@ -154,7 +154,6 @@ public class WoodStoxObjParserImpl<T extends XMLElement> implements XMLParser<T>
 						if (!((ListContext) currentContext).hasWrapper) {
 							apply(currentTagName);
 						}
-
 					}
 				}
 			}
@@ -195,10 +194,8 @@ public class WoodStoxObjParserImpl<T extends XMLElement> implements XMLParser<T>
 			if (currentContext == null) { //Object to parse is not the most outer element
 				return;
 			}
-
 			currentField = classIntrospector.getField(currentContext.object.getClass(), currentTagName);
 		}
-
 
 		if (currentField == null) {
 			atFirstElement(xmlStreamReader, currentTagName);
@@ -216,10 +213,8 @@ public class WoodStoxObjParserImpl<T extends XMLElement> implements XMLParser<T>
 
 				//when is not a primitive list and is not wrapped (current tag and current list class are not the same. first list object context must be created
 				if (!context.isPrimitive && !context.hasWrapper) {
-
 					createCurrentContext(currentTagName, classIntrospector.getInstance(((ListContext) currentContext).clazz));
 					setAttributes(xmlStreamReader, currentContext.object);
-
 				}
 			}
 			//if field it is an object, create the context with a new instantiation of his class

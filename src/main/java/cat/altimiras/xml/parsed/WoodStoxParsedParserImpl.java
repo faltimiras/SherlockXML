@@ -43,7 +43,6 @@ public class WoodStoxParsedParserImpl implements XMLParser<Parsed> {
 		xmlInputFactory.setProperty(XMLInputFactory.IS_COALESCING, true);
 	}
 
-
 	public Parsed parse(String xml) throws InvalidXMLFormatException, CharacterCodingException {
 		if (xml == null) {
 			throw new NullPointerException();
@@ -128,7 +127,7 @@ public class WoodStoxParsedParserImpl implements XMLParser<Parsed> {
 	private Parsed createParsed() {
 		Map<String, Object> p = new HashMap<>();
 		p.put(currentContext.tag, currentContext.getContent());
-		return new Parsed(currentContext.tag, p);
+		return new Parsed(p);
 	}
 
 	private void flushIncomplete() {
@@ -181,10 +180,9 @@ public class WoodStoxParsedParserImpl implements XMLParser<Parsed> {
 			if (context.isList) {
 
 				//check if element gonna insert is the same type of previous one
-				String key = ((Map.Entry) ((Map) context.list.get(0)).entrySet().iterator().next()).getKey().toString();
+				String key = context.getFirstElementName();
 				if (key.equals(currentTagName)) {
-					Map<String, Object> element = new HashMap<>();
-					element.put(currentTagName, currentContext.getContent());
+					Element element = new Element(currentTagName, currentContext.getContent());
 					context.list.add(element);
 				}
 				else { //if it isn't move current list to a tag element. This happens when there are 2 or mores lists unwrapped
@@ -227,11 +225,9 @@ public class WoodStoxParsedParserImpl implements XMLParser<Parsed> {
 		context.data.remove(currentTagName);
 
 		context.list = new ArrayList();
-		Map<String, Object> element = new HashMap<>();
-		element.put(currentTagName, previous);
+		Element element = new Element(currentTagName, previous);
 		context.list.add(element);
-		Map<String, Object> element2 = new HashMap<>();
-		element2.put(currentTagName, content);
+		Element element2 = new Element(currentTagName, content);
 		context.list.add(element2);
 	}
 
@@ -263,7 +259,6 @@ public class WoodStoxParsedParserImpl implements XMLParser<Parsed> {
 		return false; //to continue
 	}
 
-
 	private void setAttributes(XMLStreamReader2 xmlStreamReader, Context context) {
 		int attributeCount = xmlStreamReader.getAttributeCount();
 
@@ -277,14 +272,18 @@ public class WoodStoxParsedParserImpl implements XMLParser<Parsed> {
 	private class Context {
 
 		protected String tag;
-		protected boolean isList = false;
+
 		protected String value;
-		protected List list;
-		protected Map<String, Object> data;
+
+		protected boolean isList = false;
+		protected List<Element> list;
+
+		protected Element data;
+
 
 		public Context(String tag) {
 			this.tag = tag;
-			this.data = new HashMap<>();
+			this.data = new Element(tag);
 		}
 
 		public Object getContent() {
@@ -297,13 +296,33 @@ public class WoodStoxParsedParserImpl implements XMLParser<Parsed> {
 					return data;
 				}
 				else {
-					String key = ((Map.Entry) ((Map) currentContext.list.get(0)).entrySet().iterator().next()).getKey().toString();
-					data.put(key, list);
-					list = null;
-					return data;
+					Map copy = new HashMap(data);
+					copy.put(list.get(0).name, list);
+					return copy;
+
 				}
 			}
 			return list;
 		}
+
+		public String getFirstElementName(){
+			return list== null ? null : list.get(0).name;
+		}
+	}
+
+	private class Element extends HashMap<String, Object> {
+
+		private String name;
+
+		private Element(String name){
+			super();
+			this.name = name;
+		}
+
+		private Element(String name, Object value) {
+			this.name = name;
+			put(name, value);
+		}
+
 	}
 }

@@ -4,6 +4,8 @@ package cat.altimiras.xml.performance;
 import cat.altimiras.xml.obj.ClassIntrospector;
 import cat.altimiras.xml.obj.WoodStoxObjParserImpl;
 import cat.altimiras.xml.XMLParser;
+import cat.altimiras.xml.parsed.Parsed;
+import cat.altimiras.xml.parsed.WoodStoxParsedParserImpl;
 import cat.altimiras.xml.pojo.ListTestObj;
 import org.apache.commons.io.IOUtils;
 import org.junit.Ignore;
@@ -30,6 +32,24 @@ public class PseudoPerformanceComparator {
 			ListTestObj o = parser.parse(xml);
 
 			//assertEquals(2394, o.getList().size());
+		}
+		long end = System.currentTimeMillis();
+
+		System.out.println("Diff:" + (end - ini));
+
+	}
+
+	public void parseParsedBigList() throws Exception {
+
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/performance/bigListTest.xml"), "UTF-8");
+
+		long ini = System.currentTimeMillis();
+		WoodStoxParsedParserImpl parser =  new WoodStoxParsedParserImpl();
+		for (int i = 0; i < LOOPS; i++) {
+			Parsed o = parser.parse(xml);
+
+			//assertEquals(2394, o.getList().size());
+
 		}
 		long end = System.currentTimeMillis();
 
@@ -84,6 +104,16 @@ public class PseudoPerformanceComparator {
 
 		for (int i = 0; i < 10; i++) {
 			parseBigList();
+		}
+	}
+
+	@Test
+	public void tenTimesParsed() throws Exception {
+
+		//Thread.sleep(20000);
+
+		for (int i = 0; i < 10; i++) {
+			parseParsedBigList();
 		}
 	}
 }
