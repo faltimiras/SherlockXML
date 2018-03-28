@@ -16,21 +16,21 @@ Build simply and fast by default, no annotation, no magic... just convert and XM
 
 - XML to flexible class called Parsed: No need for any Java class predefined before. Parse XML and query for data in a kind of super-simplified XPath query. 
 
-#Corrupted/incomplete or partially XMLs
+# Corrupted/incomplete or partially XMLs
 
 XML is not valid or is a part of it. Java class will be filled with all data available until corruption
 
-#Stop parsing when...
+# Stop parsing when...
 
 Register a listener to a specific tag and stop parsing at any time. 
 For instance, you have data you need, Stop parsing process and don't waste time parsing useless data, make no sense!
 Don't waste time parsing huge XML if you only need a little part of it.
 
-#Example
+# Example
 
 extremely simple, just this...
 
-##XML to predefined Java class
+## XML to predefined Java class
 
 ```
 XMLFactory.init(ComplexObj.class);
@@ -42,11 +42,11 @@ ComplexObj o = parser.parse(xml);
 XMLFactory.init() initialize factory with all objects that will support. Do it on application start. It preprocess classes to be faster then.
 XMLFactory.getParse() must be called every time a new xml has to be parsed. DO NOT reuse.
 
-###Known limitations
+### Known limitations
 Do not support tag names collisions. ns:tagA and ns1:tagA is the same for this parser and it expects for a class called tagA.
 
 
-##XML to Parsed
+## XML to Parsed
 
 ```
 XMLParser<Parsed> parser = XMLFactory.getParser();
@@ -59,7 +59,7 @@ Just get a parser instance without arguments.
 
 After parse the xml you get an instance of Parsed where you can ask for values.
  
-###Parsed
+### Parsed
  
 Class with some sugar to ask for data.
 
