@@ -400,9 +400,11 @@ public class WoodStoxObjParserImpl<T extends XMLElement> implements XMLParser<T>
 
 		while (!contexts.isEmpty()) {
 			Context current = contexts.pollFirst();
-			Field field = classIntrospector.getField(current.object.getClass(), nested.tag);
-			setToObj(current.object, field, nested.object);
-			nested = current;
+			if(current != null && nested != null){
+				Field field = classIntrospector.getField(current.object.getClass(), nested.tag);
+				setToObj(current.object, field, nested.object);
+				nested = current;
+			}
 		}
 
 		obj.markAsIncomplete();
