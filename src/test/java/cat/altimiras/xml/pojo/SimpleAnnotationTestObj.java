@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "wrapper")
-public class SimpleAnnotationTestObj extends XMLElement{
+public class SimpleAnnotationTestObj extends XMLElement {
 
 	private String field;
 

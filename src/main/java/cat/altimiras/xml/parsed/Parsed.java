@@ -57,7 +57,7 @@ public class Parsed extends XMLElement {
 		if (parts[0].isEmpty() && parts.length > 1) {
 			start = 1;
 		}
-		return new Result( getRec(data, parts, start));
+		return new Result(getRec(data, parts, start));
 	}
 
 	private Object getRec(Map<String, Object> p, String[] path, int pos) {

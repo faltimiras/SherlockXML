@@ -12,7 +12,6 @@ import java.util.NoSuchElementException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class ParsedTest {
@@ -90,7 +89,7 @@ public class ParsedTest {
 	}
 
 	@Test(expected = Exception.class)
-	public void asParsedList() throws Exception{
+	public void asParsedList() throws Exception {
 		Map<String, Object> e1 = new HashMap<>(1);
 		e1.put("key", "111");
 
@@ -106,7 +105,7 @@ public class ParsedTest {
 	}
 
 	@Test
-	public void parsedIterator() throws Exception{
+	public void parsedIterator() throws Exception {
 
 		Map<String, Object> e1 = new HashMap<>(1);
 		e1.put("key", "111");
@@ -130,7 +129,7 @@ public class ParsedTest {
 	}
 
 	@Test(expected = NoSuchElementException.class)
-	public void emptyIterator() throws Exception{
+	public void emptyIterator() throws Exception {
 
 		Map<String, Object> content = new HashMap<>();
 		content.put("list", new ArrayList<>());

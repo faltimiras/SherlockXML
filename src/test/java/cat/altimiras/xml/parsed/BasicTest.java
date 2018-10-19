@@ -37,7 +37,6 @@ public class BasicTest {
 	}
 
 
-
 	@Test
 	public void xmlSimpleInlineTest() throws Exception {
 

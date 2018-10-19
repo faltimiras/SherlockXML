@@ -26,8 +26,8 @@ public class AttributesTest {
 		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl();
 		Parsed o = parser.parse(xml);
 
-		assertEquals("11=1",  o.get("/SimpleTestObj/element1").value());
-		assertEquals("222",  o.get("/SimpleTestObj/element2").value());
+		assertEquals("11=1", o.get("/SimpleTestObj/element1").value());
+		assertEquals("222", o.get("/SimpleTestObj/element2").value());
 	}
 
 	@Test
@@ -40,7 +40,7 @@ public class AttributesTest {
 		Parsed o = parser.parse(xml);
 
 		assertEquals("111", o.get("Nested3TestObj/simpleTestObj1/element1").value());
-		assertEquals("title",o.get("Nested3TestObj/title").value());
+		assertEquals("title", o.get("Nested3TestObj/title").value());
 		assertEquals("222", o.get("Nested3TestObj/nestedTestObj/simpleTestObj/element1").value());
 	}
 

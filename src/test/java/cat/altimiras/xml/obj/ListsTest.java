@@ -129,7 +129,7 @@ public class ListsTest {
 
 		ListPrimitivesObj o = parser.parse(xml);
 
-		assertEquals(new Integer(8),o.getValues().get(0));
+		assertEquals(new Integer(8), o.getValues().get(0));
 		assertEquals(new Integer(9), o.getValues().get(1));
 		assertFalse(o.isIncomplete());
 	}
@@ -145,7 +145,7 @@ public class ListsTest {
 		Nested7TestObj o = parser.parse(xml);
 
 		assertEquals("hola", o.getField());
-		assertEquals(new Integer(8),o.getValues().get(0));
+		assertEquals(new Integer(8), o.getValues().get(0));
 		assertEquals(new Integer(9), o.getValues().get(1));
 		assertEquals(new Integer(1), o.getAaa().getValues().get(0));
 		assertEquals(new Integer(2), o.getAaa().getValues().get(1));
@@ -164,7 +164,7 @@ public class ListsTest {
 
 		ListPrimitivesObj o = parser.parse(xml);
 
-		assertEquals(new Integer(8),o.getValues().get(0));
+		assertEquals(new Integer(8), o.getValues().get(0));
 		assertEquals(new Integer(9), o.getValues().get(1));
 		assertFalse(o.isIncomplete());
 	}
@@ -180,7 +180,7 @@ public class ListsTest {
 		Nested7TestObj o = parser.parse(xml);
 
 		assertEquals("hola", o.getField());
-		assertEquals(new Integer(8),o.getValues().get(0));
+		assertEquals(new Integer(8), o.getValues().get(0));
 		assertEquals(new Integer(9), o.getValues().get(1));
 		assertEquals(new Integer(1), o.getAaa().getValues().get(0));
 		assertEquals(new Integer(2), o.getAaa().getValues().get(1));

@@ -16,11 +16,11 @@ public interface XMLParser<T extends XMLElement> {
 	 *
 	 * @throws Exception
 	 */
-	T parse(String xml) throws InvalidXMLFormatException,CharacterCodingException;
+	T parse(String xml) throws InvalidXMLFormatException, CharacterCodingException;
 
-	T parse(String xml, Charset charset) throws InvalidXMLFormatException,CharacterCodingException;
+	T parse(String xml, Charset charset) throws InvalidXMLFormatException, CharacterCodingException;
 
-	T parse(byte[] xml) throws InvalidXMLFormatException,CharacterCodingException;
+	T parse(byte[] xml) throws InvalidXMLFormatException, CharacterCodingException;
 
 	/**
 	 * Register a TagListener to xml tag

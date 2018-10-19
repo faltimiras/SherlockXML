@@ -57,14 +57,17 @@ public class WoodStoxObjParserImpl<T extends XMLElement> implements XMLParser<T>
 
 	private boolean stop = false;
 
-
-	public WoodStoxObjParserImpl(Class<T> typeArgumentClass, ClassIntrospector<T> classIntrospector) throws IllegalAccessException, InstantiationException {
+	public WoodStoxObjParserImpl(Class<T> typeArgumentClass, ClassIntrospector<T> classIntrospector, boolean validationEnabled) throws IllegalAccessException, InstantiationException {
 		this.classIntrospector = classIntrospector;
 
 		obj = typeArgumentClass.newInstance();
 		objHashCode = classIntrospector.getClassHashCode(typeArgumentClass);
 		xmlInputFactory.setProperty(XMLInputFactory.IS_COALESCING, true);
+		xmlInputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, validationEnabled);
+	}
 
+	public WoodStoxObjParserImpl(Class<T> typeArgumentClass, ClassIntrospector<T> classIntrospector) throws IllegalAccessException, InstantiationException {
+		this(typeArgumentClass, classIntrospector, false);
 	}
 
 	@Override
