@@ -1,9 +1,9 @@
 package cat.altimiras.xml.performance;
 
 
+import cat.altimiras.xml.XMLParser;
 import cat.altimiras.xml.obj.ClassIntrospector;
 import cat.altimiras.xml.obj.WoodStoxObjParserImpl;
-import cat.altimiras.xml.XMLParser;
 import cat.altimiras.xml.parsed.Parsed;
 import cat.altimiras.xml.parsed.WoodStoxParsedParserImpl;
 import cat.altimiras.xml.pojo.ListTestObj;
@@ -44,7 +44,7 @@ public class PseudoPerformanceComparator {
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/performance/bigListTest.xml"), "UTF-8");
 
 		long ini = System.currentTimeMillis();
-		WoodStoxParsedParserImpl parser =  new WoodStoxParsedParserImpl();
+		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl();
 		for (int i = 0; i < LOOPS; i++) {
 			Parsed o = parser.parse(xml);
 

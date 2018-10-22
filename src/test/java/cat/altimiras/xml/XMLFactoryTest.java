@@ -55,13 +55,13 @@ public class XMLFactoryTest {
 	@Test
 	public void objParseractory() throws Exception {
 		XMLFactory.init(SimpleTestObj.class);
-		XMLParser parser =XMLFactory.getParser(SimpleTestObj.class);
+		XMLParser parser = XMLFactory.getParser(SimpleTestObj.class);
 		assertTrue(parser instanceof WoodStoxObjParserImpl);
 	}
 
 	@Test
 	public void parsedParseractory() throws Exception {
-		XMLParser parser =XMLFactory.getParser();
+		XMLParser parser = XMLFactory.getParser();
 		assertTrue(parser instanceof WoodStoxParsedParserImpl);
 	}
 

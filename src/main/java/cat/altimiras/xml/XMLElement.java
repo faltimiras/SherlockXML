@@ -6,6 +6,7 @@ public abstract class XMLElement implements Cloneable {
 
 	/**
 	 * Object parsed has not been totally parsed due to xml is not totally completed.
+	 *
 	 * @return
 	 */
 	public boolean isIncomplete() {

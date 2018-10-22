@@ -37,10 +37,14 @@ public class WoodStoxParsedParserImpl implements XMLParser<Parsed> {
 
 	private boolean stop = false;
 
-	public WoodStoxParsedParserImpl() {
-
+	public WoodStoxParsedParserImpl(boolean validationEnabled) {
 		xmlInputFactory = (XMLInputFactory2) XMLInputFactory.newInstance();
 		xmlInputFactory.setProperty(XMLInputFactory.IS_COALESCING, true);
+		xmlInputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, validationEnabled);
+	}
+
+	public WoodStoxParsedParserImpl() {
+		this(false);
 	}
 
 	public Parsed parse(String xml) throws InvalidXMLFormatException, CharacterCodingException {
@@ -305,8 +309,8 @@ public class WoodStoxParsedParserImpl implements XMLParser<Parsed> {
 			return list;
 		}
 
-		public String getFirstElementName(){
-			return list== null ? null : list.get(0).name;
+		public String getFirstElementName() {
+			return list == null ? null : list.get(0).name;
 		}
 	}
 
@@ -314,7 +318,7 @@ public class WoodStoxParsedParserImpl implements XMLParser<Parsed> {
 
 		private String name;
 
-		private Element(String name){
+		private Element(String name) {
 			super();
 			this.name = name;
 		}

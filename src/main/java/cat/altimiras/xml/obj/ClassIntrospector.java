@@ -73,11 +73,12 @@ public class ClassIntrospector<T> {
 	}
 
 	public int getClassHashCode(Class clazz) {
-		XmlRootElement root = (XmlRootElement)clazz.getAnnotation(XmlRootElement.class);
+		XmlRootElement root = (XmlRootElement) clazz.getAnnotation(XmlRootElement.class);
 		int hash;
 		if (root == null) {
 			hash = clazz.getSimpleName().hashCode();
-		} else {
+		}
+		else {
 			hash = root.name().hashCode();
 		}
 		return hash;
@@ -95,7 +96,7 @@ public class ClassIntrospector<T> {
 		else {
 
 			Integer hash = getClassHashCode(clazz);
-			XMLElement element  = (XMLElement) Class.forName(clazz.getName()).newInstance();
+			XMLElement element = (XMLElement) Class.forName(clazz.getName()).newInstance();
 			instancesByClass.put(clazz.hashCode(), element);
 			instancesByName.put(hash, element);
 
@@ -104,9 +105,10 @@ public class ClassIntrospector<T> {
 
 				javax.xml.bind.annotation.XmlElement fieldAnnotation = field.getAnnotation(XmlElement.class);
 				String fieldName;
-				if (fieldAnnotation ==  null) {
+				if (fieldAnnotation == null) {
 					fieldName = field.getName();
-				} else {
+				}
+				else {
 					fieldName = fieldAnnotation.name();
 				}
 
@@ -119,7 +121,7 @@ public class ClassIntrospector<T> {
 				}
 				else if (field.getType().isAssignableFrom(List.class)) {
 					fields.put(mergeHashCodes(fieldName, clazz), field);
-					if(! isPrimitive((Class) ((ParameterizedTypeImpl) field.getAnnotatedType().getType()).getActualTypeArguments()[0])) {
+					if (!isPrimitive((Class) ((ParameterizedTypeImpl) field.getAnnotatedType().getType()).getActualTypeArguments()[0])) {
 						introspect((Class) ((ParameterizedTypeImpl) field.getAnnotatedType().getType()).getActualTypeArguments()[0]);
 					}
 				}
@@ -136,7 +138,7 @@ public class ClassIntrospector<T> {
 		return (((long) a.hashCode()) << 32) | (b.hashCode() & 0xffffffffL);
 	}
 
-	public static boolean isPrimitive(Class type){
+	public static boolean isPrimitive(Class type) {
 		return type.isAssignableFrom(String.class)
 				|| type.isAssignableFrom(Integer.class)
 				|| type.isAssignableFrom(Integer.TYPE)
@@ -150,7 +152,7 @@ public class ClassIntrospector<T> {
 				|| type.isAssignableFrom(Boolean.TYPE);
 	}
 
-	public static boolean isList(Class type){
+	public static boolean isList(Class type) {
 		return type.isAssignableFrom(ArrayList.class);
 	}
 }

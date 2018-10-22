@@ -35,9 +35,9 @@ public class XMLFactory {
 	 *
 	 * @throws Exception
 	 */
-	public static XMLParser getParser(Class c) throws Exception {
+	public static XMLParser getParser(Class c, boolean validationEnabled) throws Exception {
 
-		if (c == null){
+		if (c == null) {
 			throw new IllegalArgumentException("Class can not be null");
 		}
 
@@ -45,11 +45,19 @@ public class XMLFactory {
 		if (classIntrospector == null) {
 			throw new IllegalArgumentException("XMLFactory has not been properly initialzed. Class:" + c.getCanonicalName() + ". Check init method");
 		}
-		return new WoodStoxObjParserImpl(c, classIntrospector);
+		return new WoodStoxObjParserImpl(c, classIntrospector, validationEnabled);
 	}
 
-	public static XMLParser<Parsed> getParser(){
+	public static XMLParser getParser(Class c) throws Exception {
+		return getParser(c, false);
+	}
+
+	public static XMLParser<Parsed> getParser() {
 		return new WoodStoxParsedParserImpl();
+	}
+
+	public static XMLParser<Parsed> getParser(boolean validationEnabled) {
+		return new WoodStoxParsedParserImpl(validationEnabled);
 	}
 
 	static void reset() {
