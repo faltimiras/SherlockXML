@@ -19,9 +19,9 @@ public class XMLFactory {
 		}
 
 		for (Class c : classes) {
-			if (classesIntrospector.get(c.getSimpleName()) == null) {
+			if (classesIntrospector.get(c.getCanonicalName()) == null) {
 				ClassIntrospector classIntrospector = new ClassIntrospector(c);
-				classesIntrospector.put(c.getSimpleName(), classIntrospector);
+				classesIntrospector.put(c.getCanonicalName(), classIntrospector);
 			}
 		}
 	}
@@ -41,9 +41,9 @@ public class XMLFactory {
 			throw new IllegalArgumentException("Class can not be null");
 		}
 
-		ClassIntrospector classIntrospector = classesIntrospector.get(c.getSimpleName());
+		ClassIntrospector classIntrospector = classesIntrospector.get(c.getCanonicalName());
 		if (classIntrospector == null) {
-			throw new IllegalArgumentException("XMLFactory has not been properly initialzed. Class:" + c.getSimpleName() + ". Check init method");
+			throw new IllegalArgumentException("XMLFactory has not been properly initialzed. Class:" + c.getCanonicalName() + ". Check init method");
 		}
 		return new WoodStoxObjParserImpl(c, classIntrospector, validationEnabled);
 	}
