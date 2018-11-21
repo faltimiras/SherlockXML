@@ -277,12 +277,23 @@ public class WoodStoxObjParserImpl<T extends XMLElement> implements XMLParser<T>
 					Field f = classIntrospector.getField(parent.object.getClass(), currentTagName);
 
 					if (f != null) {
-						setToObj(parent.object, f, currentContext.object);
+
+						//check if current tag field exist, if exist there is another list without wrapper
+						Field nextField = classIntrospector.getField(parent.object.getClass(), currentContext.tag);
+						if (nextField != null){
+							setToObj(parent.object, nextField, currentContext.object);
+						}
+						else {
+							setToObj(parent.object, f, currentContext.object);
+						}
+
+
 						stop = notify(currentTagName, currentContext.object);
 						currentContext = parent;
 						currentField = classIntrospector.getField(currentContext.object.getClass(), currentTagName);
 						return;
 					}
+
 
 				}
 				contexts.push(backup); //if all checks has failed and the field is not on the parent, restore previous state
@@ -291,7 +302,6 @@ public class WoodStoxObjParserImpl<T extends XMLElement> implements XMLParser<T>
 			o = classIntrospector.getInstance(((ListContext) currentContext).clazz);
 		}
 		else
-
 		{
 			o = obj;
 		}

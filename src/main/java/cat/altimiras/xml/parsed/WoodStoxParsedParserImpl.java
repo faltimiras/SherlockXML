@@ -49,14 +49,14 @@ public class WoodStoxParsedParserImpl implements XMLParser<Parsed> {
 
 	public Parsed parse(String xml) throws InvalidXMLFormatException, CharacterCodingException {
 		if (xml == null) {
-			throw new NullPointerException();
+			throw new NullPointerException("xml can not be null");
 		}
 		return parse(xml, Charset.forName("UTF-8"));
 	}
 
 	public Parsed parse(String xml, Charset charset) throws InvalidXMLFormatException, CharacterCodingException {
 		if (xml == null) {
-			throw new NullPointerException();
+			throw new NullPointerException("xml can not be null");
 		}
 		return parse(xml.getBytes(charset));
 	}
@@ -64,7 +64,7 @@ public class WoodStoxParsedParserImpl implements XMLParser<Parsed> {
 	public Parsed parse(byte[] xml) throws InvalidXMLFormatException, CharacterCodingException {
 
 		if (xml == null) {
-			throw new NullPointerException();
+			throw new NullPointerException("xml can not be null");
 		}
 
 		//cleans if had been a previous usage of this class
@@ -176,6 +176,7 @@ public class WoodStoxParsedParserImpl implements XMLParser<Parsed> {
 	private void onCloseElement(XMLStreamReader2 xmlStreamReader) throws Exception {
 
 		String currentTagName = xmlStreamReader.getName().getLocalPart();
+
 
 		contexts.removeFirst(); //remove current
 		Context context = contexts.peekFirst();

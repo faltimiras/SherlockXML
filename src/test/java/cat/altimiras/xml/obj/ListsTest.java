@@ -6,8 +6,10 @@ import cat.altimiras.xml.pojo.ListTestObj;
 import cat.altimiras.xml.pojo.ListTestObj2;
 import cat.altimiras.xml.pojo.Nested4TestObj;
 import cat.altimiras.xml.pojo.Nested5TestObj;
+import cat.altimiras.xml.pojo.Nested6TestObj;
 import cat.altimiras.xml.pojo.Nested7TestObj;
 import cat.altimiras.xml.pojo.Nested8TestObj;
+import cat.altimiras.xml.pojo.Nested9TestObj;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
@@ -250,6 +252,30 @@ public class ListsTest {
 		assertEquals("555", o.getList().get(1).getList().get(1).getTitle());
 		assertEquals("666", o.getList().get(1).getList().get(2).getTitle());
 		assertEquals(2, o.getList().size());
+		assertFalse(o.isIncomplete());
+	}
+
+
+	@Test
+	public void xmlNoWrapperConsecutiveLists() throws Exception {
+
+		ClassIntrospector ci = new ClassIntrospector(Nested9TestObj.class);
+
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listsNoWrapperConsecutive.xml"), "UTF-8");
+		XMLParser<Nested9TestObj> parser = new WoodStoxObjParserImpl<>(Nested9TestObj.class, ci);
+
+		Nested9TestObj o = parser.parse(xml);
+
+		assertEquals(2, o.getSimpleTestObj().size());
+		assertEquals("11", o.getSimpleTestObj().get(0).getElement1());
+		assertNull( o.getSimpleTestObj().get(0).getElement2());
+		assertNull( o.getSimpleTestObj().get(1).getElement1());
+		assertEquals("22", o.getSimpleTestObj().get(1).getElement2());
+
+		assertEquals(2, o.getSimple2TestObj().size());
+		assertEquals("33", o.getSimple2TestObj().get(0).getElement());
+		assertEquals("44", o.getSimple2TestObj().get(1).getElement());
+
 		assertFalse(o.isIncomplete());
 	}
 

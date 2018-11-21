@@ -211,5 +211,21 @@ public class ListsTest {
 		assertEquals("555", o.get("wrapperWeDontWant/Nested8TestObj/list").asList().get(1).get("Nested6TestObj/Nested5TestObj").asList().get(1).get("Nested5TestObj/title").value());
 		assertEquals("666", o.get("wrapperWeDontWant/Nested8TestObj/list").asList().get(1).get("Nested6TestObj/Nested5TestObj").asList().get(2).get("Nested5TestObj/title").value());
 	}
+
+	@Test
+	public void xmlNoWrapperConsecutiveLists() throws Exception {
+
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listsNoWrapperConsecutive.xml"), "UTF-8");
+
+		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl();
+
+		Parsed o = parser.parse(xml);
+
+		assertEquals("11", o.get("Nested9TestObj/SimpleTestObj").asList().get(0).get("SimpleTestObj/element1").value());
+		assertEquals("22", o.get("Nested9TestObj/SimpleTestObj").asList().get(1).get("SimpleTestObj/element2").value());
+		assertEquals("33", o.get("Nested9TestObj/Simple2TestObj").asList().get(0).get("Simple2TestObj/element").value());
+		assertEquals("44", o.get("Nested9TestObj/Simple2TestObj").asList().get(1).get("Simple2TestObj/element").value());
+
+	}
 }
 
