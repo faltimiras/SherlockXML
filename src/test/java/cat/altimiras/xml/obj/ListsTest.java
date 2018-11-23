@@ -1,9 +1,15 @@
 package cat.altimiras.xml.obj;
 
 import cat.altimiras.xml.XMLParser;
-import cat.altimiras.xml.pojo.*;
-import datumize.ddc.whl.pojo.rq.availability.envelope;
-import datumize.ddc.whl.pojo.rq.availability.query;
+import cat.altimiras.xml.pojo.ListPrimitivesObj;
+import cat.altimiras.xml.pojo.ListTestObj;
+import cat.altimiras.xml.pojo.ListTestObj2;
+import cat.altimiras.xml.pojo.Nested10TestObj;
+import cat.altimiras.xml.pojo.Nested4TestObj;
+import cat.altimiras.xml.pojo.Nested5TestObj;
+import cat.altimiras.xml.pojo.Nested7TestObj;
+import cat.altimiras.xml.pojo.Nested8TestObj;
+import cat.altimiras.xml.pojo.Nested9TestObj;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
@@ -261,8 +267,8 @@ public class ListsTest {
 
 		assertEquals(2, o.getSimpleTestObj().size());
 		assertEquals("11", o.getSimpleTestObj().get(0).getElement1());
-		assertNull( o.getSimpleTestObj().get(0).getElement2());
-		assertNull( o.getSimpleTestObj().get(1).getElement1());
+		assertNull(o.getSimpleTestObj().get(0).getElement2());
+		assertNull(o.getSimpleTestObj().get(1).getElement1());
 		assertEquals("22", o.getSimpleTestObj().get(1).getElement2());
 
 		assertEquals(2, o.getSimple2TestObj().size());
@@ -299,8 +305,8 @@ public class ListsTest {
 
 		assertEquals(2, o.getNested9TestObj().getSimpleTestObj().size());
 		assertEquals("11", o.getNested9TestObj().getSimpleTestObj().get(0).getElement1());
-		assertNull( o.getNested9TestObj().getSimpleTestObj().get(0).getElement2());
-		assertNull( o.getNested9TestObj().getSimpleTestObj().get(1).getElement1());
+		assertNull(o.getNested9TestObj().getSimpleTestObj().get(0).getElement2());
+		assertNull(o.getNested9TestObj().getSimpleTestObj().get(1).getElement1());
 		assertEquals("22", o.getNested9TestObj().getSimpleTestObj().get(1).getElement2());
 
 		assertEquals(2, o.getNested9TestObj().getSimple2TestObj().size());
