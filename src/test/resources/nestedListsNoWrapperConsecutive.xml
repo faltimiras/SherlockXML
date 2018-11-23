@@ -1,5 +1,6 @@
-
-    <Nested9TestObj>
+<Nested10TestObj>
+    <lolo>i dont care</lolo>
+    <nested9TestObj>
         <field>asa</field>
         <SimpleTestObj element1="11"/>
         <SimpleTestObj element2="22"/>
@@ -7,4 +8,5 @@
         <Simple2TestObj element="33"/>
         <Simple2TestObj element="44"/>
 
-    </Nested9TestObj>
+    </nested9TestObj>
+</Nested10TestObj>

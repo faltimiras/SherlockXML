@@ -1,9 +1,8 @@
 
     <Nested9TestObj>
-        <field>asa</field>
+        <idontwantthis code="0"></idontwantthis>
         <SimpleTestObj element1="11"/>
         <SimpleTestObj element2="22"/>
-        <idontwantthis code="0"/>
         <Simple2TestObj element="33"/>
         <Simple2TestObj element="44"/>
 

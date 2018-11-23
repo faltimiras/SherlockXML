@@ -1,15 +1,9 @@
 package cat.altimiras.xml.obj;
 
 import cat.altimiras.xml.XMLParser;
-import cat.altimiras.xml.pojo.ListPrimitivesObj;
-import cat.altimiras.xml.pojo.ListTestObj;
-import cat.altimiras.xml.pojo.ListTestObj2;
-import cat.altimiras.xml.pojo.Nested4TestObj;
-import cat.altimiras.xml.pojo.Nested5TestObj;
-import cat.altimiras.xml.pojo.Nested6TestObj;
-import cat.altimiras.xml.pojo.Nested7TestObj;
-import cat.altimiras.xml.pojo.Nested8TestObj;
-import cat.altimiras.xml.pojo.Nested9TestObj;
+import cat.altimiras.xml.pojo.*;
+import datumize.ddc.whl.pojo.rq.availability.envelope;
+import datumize.ddc.whl.pojo.rq.availability.query;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
@@ -256,12 +250,11 @@ public class ListsTest {
 	}
 
 
-	@Test
-	public void xmlNoWrapperConsecutiveLists() throws Exception {
+	public void xmlNoWrapperConsecutiveLists(String file) throws Exception {
 
 		ClassIntrospector ci = new ClassIntrospector(Nested9TestObj.class);
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listsNoWrapperConsecutive.xml"), "UTF-8");
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream(file), "UTF-8");
 		XMLParser<Nested9TestObj> parser = new WoodStoxObjParserImpl<>(Nested9TestObj.class, ci);
 
 		Nested9TestObj o = parser.parse(xml);
@@ -279,5 +272,43 @@ public class ListsTest {
 		assertFalse(o.isIncomplete());
 	}
 
+	@Test
+	public void xmlNoWrapperConsecutiveLists1() throws Exception {
+		xmlNoWrapperConsecutiveLists("/listsNoWrapperConsecutive.xml");
+	}
 
+	@Test
+	public void xmlNoWrapperConsecutiveLists2() throws Exception {
+		xmlNoWrapperConsecutiveLists("/listsNoWrapperConsecutive2.xml");
+	}
+
+	@Test
+	public void xmlNoWrapperConsecutiveLists3() throws Exception {
+		xmlNoWrapperConsecutiveLists("/listsNoWrapperConsecutive3.xml");
+	}
+
+	@Test
+	public void xmlNestedNoWrapperConsecutiveLists() throws Exception {
+
+		ClassIntrospector ci = new ClassIntrospector(Nested10TestObj.class);
+
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nestedListsNoWrapperConsecutive.xml"), "UTF-8");
+		XMLParser<Nested10TestObj> parser = new WoodStoxObjParserImpl<>(Nested10TestObj.class, ci);
+
+		Nested10TestObj o = parser.parse(xml);
+
+		assertEquals(2, o.getNested9TestObj().getSimpleTestObj().size());
+		assertEquals("11", o.getNested9TestObj().getSimpleTestObj().get(0).getElement1());
+		assertNull( o.getNested9TestObj().getSimpleTestObj().get(0).getElement2());
+		assertNull( o.getNested9TestObj().getSimpleTestObj().get(1).getElement1());
+		assertEquals("22", o.getNested9TestObj().getSimpleTestObj().get(1).getElement2());
+
+		assertEquals(2, o.getNested9TestObj().getSimple2TestObj().size());
+		assertEquals("33", o.getNested9TestObj().getSimple2TestObj().get(0).getElement());
+		assertEquals("44", o.getNested9TestObj().getSimple2TestObj().get(1).getElement());
+
+		assertNull(o.getNested6TestObj());
+
+		assertFalse(o.isIncomplete());
+	}
 }

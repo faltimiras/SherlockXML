@@ -192,7 +192,7 @@ public class WoodStoxParsedParserImpl implements XMLParser<Parsed> {
 				}
 				else { //if it isn't move current list to a tag element. This happens when there are 2 or mores lists unwrapped
 					context.data.put(key, context.list);
-
+					context.isList = false;
 					//add new element
 					context.data.put(currentContext.tag, currentContext.getContent());
 				}

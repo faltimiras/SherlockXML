@@ -1,10 +1,11 @@
-
+<lalal>
     <Nested9TestObj>
         <field>asa</field>
         <SimpleTestObj element1="11"/>
         <SimpleTestObj element2="22"/>
-        <idontwantthis code="0"/>
         <Simple2TestObj element="33"/>
         <Simple2TestObj element="44"/>
+        <idontwantthis aaa = "dsfasdf"/>
 
     </Nested9TestObj>
+</lalal>

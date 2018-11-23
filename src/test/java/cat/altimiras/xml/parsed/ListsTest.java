@@ -225,7 +225,22 @@ public class ListsTest {
 		assertEquals("22", o.get("Nested9TestObj/SimpleTestObj").asList().get(1).get("SimpleTestObj/element2").value());
 		assertEquals("33", o.get("Nested9TestObj/Simple2TestObj").asList().get(0).get("Simple2TestObj/element").value());
 		assertEquals("44", o.get("Nested9TestObj/Simple2TestObj").asList().get(1).get("Simple2TestObj/element").value());
-
 	}
+
+	@Test
+	public void xmlNestedNoWrapperConsecutiveLists() throws Exception {
+
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nestedListsNoWrapperConsecutive.xml"), "UTF-8");
+
+		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl();
+
+		Parsed o = parser.parse(xml);
+
+		assertEquals("11", o.get("Nested10TestObj/nested9TestObj/SimpleTestObj").asList().get(0).get("SimpleTestObj/element1").value());
+		assertEquals("22", o.get("Nested10TestObj/nested9TestObj/SimpleTestObj").asList().get(1).get("SimpleTestObj/element2").value());
+		assertEquals("33", o.get("Nested10TestObj/nested9TestObj/Simple2TestObj").asList().get(0).get("Simple2TestObj/element").value());
+		assertEquals("44", o.get("Nested10TestObj/nested9TestObj/Simple2TestObj").asList().get(1).get("Simple2TestObj/element").value());
+	}
+
 }
 

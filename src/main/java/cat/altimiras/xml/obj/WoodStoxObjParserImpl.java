@@ -57,6 +57,8 @@ public class WoodStoxObjParserImpl<T extends XMLElement> implements XMLParser<T>
 
 	private boolean stop = false;
 
+	private boolean ignore = false;
+
 	public WoodStoxObjParserImpl(Class<T> typeArgumentClass, ClassIntrospector<T> classIntrospector, boolean validationEnabled) throws IllegalAccessException, InstantiationException {
 		this.classIntrospector = classIntrospector;
 
@@ -154,11 +156,12 @@ public class WoodStoxObjParserImpl<T extends XMLElement> implements XMLParser<T>
 					}
 					else {
 						//when it is a list of obj. Current tag (closing one) is not the closing list tag, so obj context must be removed.
-						if (!((ListContext) currentContext).hasWrapper) {
+						if (!((ListContext) currentContext).hasWrapper && !ignore) {
 							apply(currentTagName);
 						}
 					}
 				}
+				ignore = false;
 			}
 			apply(currentTagName);
 		}
@@ -280,7 +283,7 @@ public class WoodStoxObjParserImpl<T extends XMLElement> implements XMLParser<T>
 
 						//check if current tag field exist, if exist there is another list without wrapper
 						Field nextField = classIntrospector.getField(parent.object.getClass(), currentContext.tag);
-						if (nextField != null){
+						if (nextField != null) {
 							setToObj(parent.object, nextField, currentContext.object);
 						}
 						else {
@@ -293,22 +296,25 @@ public class WoodStoxObjParserImpl<T extends XMLElement> implements XMLParser<T>
 						currentField = classIntrospector.getField(currentContext.object.getClass(), currentTagName);
 						return;
 					}
-
-
 				}
+
 				contexts.push(backup); //if all checks has failed and the field is not on the parent, restore previous state
+
+				//just stops processing if field (tag) is not contained on the parent.
+				if (!((ListContext)backup).hasWrapper && !backup.tag.equals(currentTagName)){
+					ignore = true;
+					return;
+				}
 			}
 
 			o = classIntrospector.getInstance(((ListContext) currentContext).clazz);
 		}
-		else
-		{
+		else {
 			o = obj;
 		}
 
 		//create new context
 		createCurrentContext(currentTagName, o);
-
 		setAttributes(xmlStreamReader, o);
 
 		simpleElement = false;
@@ -413,7 +419,7 @@ public class WoodStoxObjParserImpl<T extends XMLElement> implements XMLParser<T>
 
 		while (!contexts.isEmpty()) {
 			Context current = contexts.pollFirst();
-			if(current != null && nested != null){
+			if (current != null && nested != null) {
 				Field field = classIntrospector.getField(current.object.getClass(), nested.tag);
 				setToObj(current.object, field, nested.object);
 				nested = current;
