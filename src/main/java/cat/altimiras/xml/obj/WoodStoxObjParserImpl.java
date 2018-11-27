@@ -35,7 +35,7 @@ public class WoodStoxObjParserImpl<T extends XMLElement> implements XMLParser<T>
 	/**
 	 * Java object that is building from xml parsed.
 	 */
-	final private T obj;
+	private T obj;
 
 	/**
 	 * Contains field definitions and instances to populate fast objects
@@ -59,10 +59,13 @@ public class WoodStoxObjParserImpl<T extends XMLElement> implements XMLParser<T>
 
 	private boolean ignore = false;
 
+	final private Class<T> typeArgumentClass;
+
 	public WoodStoxObjParserImpl(Class<T> typeArgumentClass, ClassIntrospector<T> classIntrospector, boolean validationEnabled) throws IllegalAccessException, InstantiationException {
 		this.classIntrospector = classIntrospector;
 
-		obj = typeArgumentClass.newInstance();
+		this.typeArgumentClass = typeArgumentClass;
+		//obj = typeArgumentClass.newInstance();
 		objHashCode = classIntrospector.getClassHashCode(typeArgumentClass);
 		xmlInputFactory.setProperty(XMLInputFactory.IS_COALESCING, true);
 		xmlInputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, validationEnabled);
@@ -101,10 +104,14 @@ public class WoodStoxObjParserImpl<T extends XMLElement> implements XMLParser<T>
 		XMLStreamReader2 xmlStreamReader;
 
 		try {
+			this.obj = typeArgumentClass.newInstance();
 			xmlStreamReader = (XMLStreamReader2) xmlInputFactory.createXMLStreamReader(xmlInputStream);
 		}
 		catch (XMLStreamException e) {
 			throw new CharacterCodingException();
+		}
+		catch (Exception e){
+			throw new  RuntimeException("Impossible to initialize obj");
 		}
 
 		try {
@@ -125,9 +132,11 @@ public class WoodStoxObjParserImpl<T extends XMLElement> implements XMLParser<T>
 						break;
 				}
 			}
+			return obj;
 		}
 		catch (XMLStreamException e) {
 			flushIncomplete();
+			return obj;
 		}
 		catch (NullPointerException e) {
 			throw e;
@@ -135,7 +144,16 @@ public class WoodStoxObjParserImpl<T extends XMLElement> implements XMLParser<T>
 		catch (RuntimeException | IllegalAccessException | ClassNotFoundException e) {
 			throw new InvalidXMLFormatException("Impossible to parse XML. Msg:" + e.getMessage());
 		}
-		return obj;
+		finally {
+			//reset state
+			this.contexts.clear();
+			this.currentContext = null;
+			this.currentField = null;
+			this.stop = false;
+			this.ignore = false;
+			this.simpleElement = false;
+		}
+
 	}
 
 	private void onCloseElement(XMLStreamReader2 xmlStreamReader) {
@@ -301,7 +319,7 @@ public class WoodStoxObjParserImpl<T extends XMLElement> implements XMLParser<T>
 				contexts.push(backup); //if all checks has failed and the field is not on the parent, restore previous state
 
 				//just stops processing if field (tag) is not contained on the parent.
-				if (!((ListContext)backup).hasWrapper && !backup.tag.equals(currentTagName)){
+				if (!((ListContext) backup).hasWrapper && !backup.tag.equals(currentTagName)) {
 					ignore = true;
 					return;
 				}

@@ -4,6 +4,7 @@ package cat.altimiras.xml.performance;
 import cat.altimiras.xml.XMLParser;
 import cat.altimiras.xml.obj.ClassIntrospector;
 import cat.altimiras.xml.obj.WoodStoxObjParserImpl;
+import cat.altimiras.xml.obj.WoodStoxObjParserImpl2;
 import cat.altimiras.xml.parsed.Parsed;
 import cat.altimiras.xml.parsed.WoodStoxParsedParserImpl;
 import cat.altimiras.xml.pojo.ListTestObj;
@@ -19,7 +20,7 @@ public class PseudoPerformanceComparator {
 	private static final int LOOPS = 1000;
 
 	//THIS IS NOT A REAL PERFORMANCE TEST!!
-	//@Test
+	@Test
 	public void parseBigList() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/performance/bigListTest.xml"), "UTF-8");
@@ -31,7 +32,7 @@ public class PseudoPerformanceComparator {
 		for (int i = 0; i < LOOPS; i++) {
 			ListTestObj o = parser.parse(xml);
 
-			//assertEquals(2394, o.getList().size());
+			assertEquals(2394, o.getList().size());
 		}
 		long end = System.currentTimeMillis();
 
@@ -78,7 +79,7 @@ public class PseudoPerformanceComparator {
 	}
 
 	//THIS IS NOT A REAL PERFORMANCE TEST!!
-	//@Test
+	@Test
 	public void parseBigListAttIgnore() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/performance/bigListAttTest.xml"), "UTF-8");

@@ -1,6 +1,5 @@
 <pp:Nested6TestObj xmlns:pp="http://www.asdfasdf.com">
     <title>lolo</title>
-    <list>
         <pp:Nested5TestObj>
             <po:list xmlns:po="http://www.asdfasdf.com">
                 <po:simpleTestObj1 element1="111"/>

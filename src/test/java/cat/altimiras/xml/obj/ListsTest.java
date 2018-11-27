@@ -30,9 +30,17 @@ public class ListsTest {
 
 		ListTestObj o = parser.parse(xml);
 
+		assertEquals(2, o.getList().size());
 		assertEquals("111", o.getList().get(0).getElement1().trim());
 		assertEquals("111", o.getList().get(1).getElement1().trim());
 		assertFalse(o.isIncomplete());
+	}
+
+	@Test
+	public void noState() throws Exception {
+		for(int i = 0 ; i < 5; i++ ){
+			xmlListTest();
+		}
 	}
 
 	@Test

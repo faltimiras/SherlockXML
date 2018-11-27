@@ -1,3 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <!DOCTYPE spec PUBLIC "-//W3C//DTD Specification V2.1//EN" "http://this.do.not.exist.for.sure">
-<SimpleTestObj element1="111"><element2>222</element2></SimpleTestObj>
+<SimpleTestObj element1="111">
+    <element2>222</element2>
+</SimpleTestObj>

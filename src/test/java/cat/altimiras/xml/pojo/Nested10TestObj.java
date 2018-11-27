@@ -3,8 +3,6 @@ package cat.altimiras.xml.pojo;
 
 import cat.altimiras.xml.XMLElement;
 
-import java.util.List;
-
 public class Nested10TestObj extends XMLElement {
 
 	private Nested6TestObj nested6TestObj;

@@ -1,6 +1,6 @@
 <wrapperWeDontWant>
     <lolo></lolo>
-    <ListTestObj aa ="bbbb">
+    <ListTestObj aa="bbbb">
         <list>
             <SimpleTestObj noway="lala">
                 <element1>

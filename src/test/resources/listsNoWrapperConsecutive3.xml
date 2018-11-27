@@ -5,7 +5,7 @@
         <SimpleTestObj element2="22"/>
         <Simple2TestObj element="33"/>
         <Simple2TestObj element="44"/>
-        <idontwantthis aaa = "dsfasdf"/>
+        <idontwantthis aaa="dsfasdf"/>
 
     </Nested9TestObj>
 </lalal>

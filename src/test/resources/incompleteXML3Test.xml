@@ -1,7 +1,7 @@
 <Nested3TestObj>
     <simpleTestObj1>
-        <element1>
-            111
+    <element1>
+    111
     <title>title</title>
     <nestedTestObj>
         <simpleTestObj>
