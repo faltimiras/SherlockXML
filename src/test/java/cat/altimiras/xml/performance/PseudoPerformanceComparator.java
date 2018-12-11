@@ -3,8 +3,10 @@ package cat.altimiras.xml.performance;
 
 import cat.altimiras.xml.XMLParser;
 import cat.altimiras.xml.obj.ClassIntrospector;
+import cat.altimiras.xml.obj.ContextFactory;
 import cat.altimiras.xml.obj.WoodStoxObjParserImpl;
 import cat.altimiras.xml.obj.WoodStoxObjParserImpl2;
+import cat.altimiras.xml.obj.WoodStoxObjParserImpl3;
 import cat.altimiras.xml.parsed.Parsed;
 import cat.altimiras.xml.parsed.WoodStoxParsedParserImpl;
 import cat.altimiras.xml.pojo.ListTestObj;
@@ -37,6 +39,17 @@ public class PseudoPerformanceComparator {
 		long end = System.currentTimeMillis();
 
 		System.out.println("Diff:" + (end - ini));
+
+	}
+
+	@Test
+	public void tenTimes() throws Exception {
+
+		//Thread.sleep(20000);
+
+		for (int i = 0; i < 10; i++) {
+			parseBigList();
+		}
 
 	}
 
@@ -98,15 +111,7 @@ public class PseudoPerformanceComparator {
 		System.out.println("Diff:" + (end - ini));
 	}
 
-	@Test
-	public void tenTimes() throws Exception {
 
-		//Thread.sleep(20000);
-
-		for (int i = 0; i < 10; i++) {
-			parseBigList();
-		}
-	}
 
 	@Test
 	public void tenTimesParsed() throws Exception {

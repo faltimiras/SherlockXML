@@ -26,6 +26,8 @@ class Context {
 
 	protected Type type;
 
+	protected boolean primitive = false;
+
 	/**
 	 * Creation of most outsiding element
 	 *
@@ -73,7 +75,6 @@ class Context {
 			}
 		}
 
-
 		contexts.addFirst(this);
 	}
 
@@ -84,20 +85,27 @@ class Context {
 
 		setToObj(field, content);
 		//stop = notify(field.getName(), content);
-
 		return stop;
 	}
 
 	public Context close(XMLStreamReader2 xmlStreamReader) {
-		contexts.pollFirst();
-		if (!contexts.isEmpty()) {
-			Context parent = contexts.peek();
-			Field f = classIntrospector.getField((Class) parent.type, tag);
-			parent.setToObj(f, this.object);
-			//stop = notify(tag, currentContext.object);
-			return parent;
+
+		if (primitive) {
+			primitive = false;
+
+		}
+		else {
+			contexts.pollFirst();
+			if (!contexts.isEmpty()) {
+				Context parent = contexts.peek();
+				Field f = classIntrospector.getField((Class) parent.type, tag);
+				parent.setToObj(f, this.object);
+				//stop = notify(tag, currentContext.object);
+				return parent;
+			}
 		}
 		return this;
+
 	}
 
 	protected void setAttributes(XMLStreamReader2 xmlStreamReader) {

@@ -165,7 +165,7 @@ public class WoodStoxObjParserImpl2<T extends XMLElement> implements XMLParser<T
 			int eventType = xmlStreamReader.next();
 			switch (eventType) {
 				case XMLEvent.START_ELEMENT:
-					currentContext = ContextFactory.get(xmlStreamReader, classIntrospector, contexts);
+					currentContext = ContextFactory2.get(xmlStreamReader, classIntrospector, contexts);
 					break;
 				case XMLEvent.CHARACTERS:
 					String content = xmlStreamReader.getText().trim();

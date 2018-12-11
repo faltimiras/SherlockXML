@@ -27,7 +27,7 @@ class ListPrimitiveContext extends Context {
 			parent.setToObj(f, this.object);
 			//stop = notify(tag, currentContext.object);
 
-			if (tag.equals(parent.tag)) { //
+			if (tag.hashCode()==parent.tagHash) { //
 				return parent.close(xmlStreamReader);
 			}
 

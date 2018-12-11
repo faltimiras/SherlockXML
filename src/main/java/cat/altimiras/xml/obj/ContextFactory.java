@@ -11,51 +11,6 @@ import java.util.List;
 
 
 public class ContextFactory {
-/*
-	public static ArrayDeque<PrimitiveContext> primitiveContextsPool = new ArrayDeque<>(100);
-
-
-	public static PrimitiveContext getPr(XMLStreamReader2 xmlStreamReader, ClassIntrospector classIntrospector, ArrayDeque<Context> contexts, Field field, Type type){
-		if (primitiveContextsPool.isEmpty()){
-			return new PrimitiveContext(xmlStreamReader, classIntrospector, contexts, field, type);
-		}
-		else {
-			PrimitiveContext primitiveContext = primitiveContextsPool.getFirst();
-			primitiveContext.tag = xmlStreamReader.getName().getLocalPart();
-			primitiveContext.tagHash = primitiveContext.tag.hashCode();
-			primitiveContext.classIntrospector = classIntrospector;
-			primitiveContext.contexts = contexts;
-			primitiveContext.type = type;
-			primitiveContext.field = field;
-
-			if (type != null) {
-				//create the object. If it is a primitive, not neede. on setContent() sets the value
-				if (ClassIntrospector.isPrimitive((Class) type)) {
-					primitiveContext.object = null;
-				}
-				else {
-					primitiveContext.object = classIntrospector.getInstance(type);
-					primitiveContext.setAttributes(xmlStreamReader);
-				}
-			}
-
-
-			contexts.addFirst(primitiveContext);
-
-			return primitiveContext;
-
-
-		}
-	}
-
-
-	public static void release(PrimitiveContext primitiveContext) {
-
-		primitiveContextsPool.add(primitiveContext);
-	}
-
-*/
-
 
 	private ContextFactory() {
 	}
@@ -77,7 +32,8 @@ public class ContextFactory {
 				return getContext(xmlStreamReader, classIntrospector, contexts, field);
 			}
 
-			return new PrimitiveContext(xmlStreamReader, classIntrospector, contexts, null, currentContext.type);
+			currentContext.primitive = true;
+			return currentContext;//new PrimitiveContext(xmlStreamReader, classIntrospector, contexts, null, currentContext.type);
 		}
 
 
@@ -141,27 +97,26 @@ public class ContextFactory {
 	}
 
 	private static Context getListContext(XMLStreamReader2 xmlStreamReader, ClassIntrospector classIntrospector, ArrayDeque<Context> contexts, Field field, Type type) {
-
-		Class clazz = (Class) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
-
 		if (ClassIntrospector.isPrimitive((Class) type)) {
 			return new ListPrimitiveContext(xmlStreamReader, classIntrospector, contexts, (Class) type);
 		}
 
-		ListContext context = new ListContext(xmlStreamReader, classIntrospector, contexts, clazz);
+		ListContext context = new ListContext(xmlStreamReader, classIntrospector, contexts,  (Class)type);
 
 		if (context.hasWrapper) {
 			return context;
 		}
 		else {
-			return getContext(xmlStreamReader, classIntrospector, contexts, field, clazz);
+			return getContext(xmlStreamReader, classIntrospector, contexts, field, type);
 		}
 	}
 
 	private static Context getContext(XMLStreamReader2 xmlStreamReader, ClassIntrospector classIntrospector, ArrayDeque<Context> contexts, Field field, Type type) {
 
 		if (ClassIntrospector.isPrimitive((Class) type)) {
-			return new PrimitiveContext(xmlStreamReader, classIntrospector, contexts, field, type);
+			contexts.peekFirst().field = field;
+			contexts.peekFirst().primitive = true;
+			return contexts.peekFirst();
 		}
 		else {
 			return new Context(xmlStreamReader, classIntrospector, contexts, field, type);
