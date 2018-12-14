@@ -1,5 +1,5 @@
 <lalal>
-    <Nested9TestObj>
+    <Nested9TestObj >
         <field>asa</field>
         <SimpleTestObj element1="11"/>
         <SimpleTestObj element2="22"/>

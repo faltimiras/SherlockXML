@@ -275,6 +275,7 @@ public class ListsTest {
 		assertEquals("33", o.getSimple2TestObj().get(0).getElement());
 		assertEquals("44", o.getSimple2TestObj().get(1).getElement());
 
+		assertEquals("asa", o.getField());
 		assertFalse(o.isIncomplete());
 	}
 
@@ -303,6 +304,7 @@ public class ListsTest {
 
 		Nested10TestObj o = parser.parse(xml);
 
+		assertEquals("asa", o.getNested9TestObj().getField());
 		assertEquals(2, o.getNested9TestObj().getSimpleTestObj().size());
 		assertEquals("11", o.getNested9TestObj().getSimpleTestObj().get(0).getElement1());
 		assertNull(o.getNested9TestObj().getSimpleTestObj().get(0).getElement2());
@@ -317,4 +319,23 @@ public class ListsTest {
 
 		assertFalse(o.isIncomplete());
 	}
+
+	@Test
+	public void endList() throws Exception {
+
+		ClassIntrospector ci = new ClassIntrospector(Nested9TestObj.class);
+
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/endList.xml"), "UTF-8");
+		XMLParser<Nested9TestObj> parser = new WoodStoxObjParserImpl<>(Nested9TestObj.class, ci);
+
+		Nested9TestObj o = parser.parse(xml);
+
+		assertEquals(2, o.getSimpleTestObj().size());
+		assertEquals("11", o.getSimpleTestObj().get(0).getElement1());
+		assertEquals("22", o.getSimpleTestObj().get(1).getElement2());
+		assertNull(o.getSimple2TestObj());
+
+		assertFalse(o.isIncomplete());
+	}
+
 }

@@ -187,7 +187,7 @@ public class WoodStoxObjParserImpl<T extends XMLElement> implements XMLParser<T>
 			stop = notify(currentField.getName(), content);
 		}
 		else if (currentContext instanceof WoodStoxObjParserImpl.ListContext) {
-			if (!content.trim().isEmpty()) {
+			if (((ListContext) currentContext).isPrimitive && !content.trim().isEmpty()) {
 				setToObj(currentContext.object, currentField, convertTo(((ListContext) currentContext).clazz, content));
 			}
 		}

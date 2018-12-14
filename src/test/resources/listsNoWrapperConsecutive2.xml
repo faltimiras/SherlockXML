@@ -1,9 +1,9 @@
 
-    <Nested9TestObj>
+    <Nested9TestObj >
         <idontwantthis code="0"></idontwantthis>
         <SimpleTestObj element1="11"/>
         <SimpleTestObj element2="22"/>
         <Simple2TestObj element="33"/>
         <Simple2TestObj element="44"/>
-
+        <field>asa</field>
     </Nested9TestObj>

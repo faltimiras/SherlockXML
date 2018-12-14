@@ -1,9 +1,14 @@
 package cat.altimiras.xml.parsed;
 
+import cat.altimiras.xml.XMLParser;
+import cat.altimiras.xml.obj.ClassIntrospector;
+import cat.altimiras.xml.obj.WoodStoxObjParserImpl;
+import cat.altimiras.xml.pojo.Nested9TestObj;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -240,6 +245,20 @@ public class ListsTest {
 		assertEquals("22", o.get("Nested10TestObj/nested9TestObj/SimpleTestObj").asList().get(1).get("SimpleTestObj/element2").value());
 		assertEquals("33", o.get("Nested10TestObj/nested9TestObj/Simple2TestObj").asList().get(0).get("Simple2TestObj/element").value());
 		assertEquals("44", o.get("Nested10TestObj/nested9TestObj/Simple2TestObj").asList().get(1).get("Simple2TestObj/element").value());
+	}
+
+	@Test
+	public void endList() throws Exception {
+
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/endList.xml"), "UTF-8");
+		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl();
+
+		Parsed o = parser.parse(xml);
+
+		assertEquals(2, o.get("lalal/Nested9TestObj/SimpleTestObj").asList().size());
+		assertEquals("11", o.get("lalal/Nested9TestObj/SimpleTestObj").asList().get(0).get("SimpleTestObj/element1").value());
+		assertEquals("22", o.get("lalal/Nested9TestObj/SimpleTestObj").asList().get(1).get("SimpleTestObj/element2").value());
+		assertFalse(o.isIncomplete());
 	}
 
 }
