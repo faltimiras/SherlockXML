@@ -5,7 +5,10 @@ import cat.altimiras.xml.pojo.Nested3TestObj;
 import cat.altimiras.xml.pojo.Nested5TestObj;
 import cat.altimiras.xml.pojo.SimpleTestObj;
 import org.apache.commons.io.IOUtils;
+import org.codehaus.stax2.XMLInputFactory2;
 import org.junit.Test;
+
+import javax.xml.stream.XMLInputFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -13,13 +16,15 @@ import static org.junit.Assert.assertTrue;
 
 public class NamespaceTest {
 
+	private XMLInputFactory2 xmlInputFactory = (XMLInputFactory2) XMLInputFactory.newInstance();
+
 	@Test
 	public void xmlNamespaceSimpleTest() throws Exception {
 
 		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/simpleNamespaceTest.xml"), "UTF-8");
-		XMLParser<SimpleTestObj> parser = new WoodStoxObjParserImpl<>(SimpleTestObj.class, ci);
+		XMLParser<SimpleTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, SimpleTestObj.class, ci);
 
 		SimpleTestObj o = parser.parse(xml);
 
@@ -34,7 +39,7 @@ public class NamespaceTest {
 		ClassIntrospector ci = new ClassIntrospector(Nested3TestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/attributesNamespaceTest.xml"), "UTF-8");
-		XMLParser<Nested3TestObj> parser = new WoodStoxObjParserImpl<>(Nested3TestObj.class, ci);
+		XMLParser<Nested3TestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, Nested3TestObj.class, ci);
 
 		Nested3TestObj o = parser.parse(xml);
 
@@ -50,7 +55,7 @@ public class NamespaceTest {
 		ClassIntrospector ci = new ClassIntrospector(Nested5TestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listNestedselfClosedNamespaceTest.xml"), "UTF-8");
-		XMLParser<Nested5TestObj> parser = new WoodStoxObjParserImpl<>(Nested5TestObj.class, ci);
+		XMLParser<Nested5TestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, Nested5TestObj.class, ci);
 
 		Nested5TestObj o = parser.parse(xml);
 
@@ -69,7 +74,7 @@ public class NamespaceTest {
 		ClassIntrospector ci = new ClassIntrospector(Nested5TestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/namespacesComplexTest.xml"), "UTF-8");
-		XMLParser<Nested5TestObj> parser = new WoodStoxObjParserImpl<>(Nested5TestObj.class, ci);
+		XMLParser<Nested5TestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, Nested5TestObj.class, ci);
 
 		Nested5TestObj o = parser.parse(xml);
 

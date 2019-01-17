@@ -4,11 +4,13 @@ import cat.altimiras.xml.obj.WoodStoxObjParserImpl;
 import cat.altimiras.xml.parsed.WoodStoxParsedParserImpl;
 import cat.altimiras.xml.pojo.Nested2TestObj;
 import cat.altimiras.xml.pojo.SimpleTestObj;
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 public class XMLFactoryTest {
 
@@ -65,4 +67,19 @@ public class XMLFactoryTest {
 		assertTrue(parser instanceof WoodStoxParsedParserImpl);
 	}
 
+	@Test
+	public void modesOverwrite() throws Exception {
+		XMLFactory.init(SimpleTestObj.class);
+		XMLFactory.configure(XMLFactory.MODE.PERFORMANCE, XMLFactory.MODE.CDATA_SUPPORT);
+
+
+		XMLParser<SimpleTestObj> parser = XMLFactory.getParser(SimpleTestObj.class);
+
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/CDATATest.xml"), "UTF-8");
+
+		SimpleTestObj o = parser.parse(xml);
+
+		assertEquals("lolo <lo>A\n         </lo> lolo", o.getElement1().trim());
+		assertEquals("222", o.getElement2().trim());
+	}
 }

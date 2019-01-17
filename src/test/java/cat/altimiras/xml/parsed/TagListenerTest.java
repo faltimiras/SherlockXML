@@ -2,7 +2,10 @@ package cat.altimiras.xml.parsed;
 
 import cat.altimiras.xml.TagListener;
 import org.apache.commons.io.IOUtils;
+import org.codehaus.stax2.XMLInputFactory2;
 import org.junit.Test;
+
+import javax.xml.stream.XMLInputFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -16,11 +19,13 @@ import static org.mockito.Mockito.when;
 
 public class TagListenerTest {
 
+	private XMLInputFactory2 xmlInputFactory = (XMLInputFactory2) XMLInputFactory.newInstance();
+
 	@Test
 	public void listenerStringTest() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/simpleTest.xml"), "UTF-8");
-		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl();
+		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl(xmlInputFactory); 
 
 		TagListener stringListener = mock(TagListener.class);
 		when(stringListener.notify("element1", "111")).thenReturn(false);
@@ -36,7 +41,7 @@ public class TagListenerTest {
 	public void listenerObjectTest() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nested2Test.xml"), "UTF-8");
-		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl();
+		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl(xmlInputFactory); 
 
 		TagListener objListener = mock(TagListener.class);
 		when(objListener.notify(eq("simpleTestObj1"), any())).thenReturn(false);
@@ -52,7 +57,7 @@ public class TagListenerTest {
 	public void listenerNotPresentTest() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nested2Test.xml"), "UTF-8");
-		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl();
+		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl(xmlInputFactory); 
 
 		TagListener objListener = mock(TagListener.class);
 		when(objListener.notify(eq("tagNotFound"), any())).thenReturn(false);
@@ -68,7 +73,7 @@ public class TagListenerTest {
 	public void listenerStopTest() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nested2Test.xml"), "UTF-8");
-		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl();
+		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl(xmlInputFactory); 
 
 		TagListener objListener = mock(TagListener.class);
 		when(objListener.notify(eq("simpleTestObj1"), any())).thenReturn(true);

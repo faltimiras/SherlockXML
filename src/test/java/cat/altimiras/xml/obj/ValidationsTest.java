@@ -3,7 +3,10 @@ package cat.altimiras.xml.obj;
 import cat.altimiras.xml.XMLParser;
 import cat.altimiras.xml.pojo.SimpleTestObj;
 import org.apache.commons.io.IOUtils;
+import org.codehaus.stax2.XMLInputFactory2;
 import org.junit.Test;
+
+import javax.xml.stream.XMLInputFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -18,10 +21,14 @@ public class ValidationsTest {
 	@Test
 	public void noValidatesDTD() throws Exception {
 
+		XMLInputFactory2 xmlInputFactory = (XMLInputFactory2) XMLInputFactory.newInstance();
+		xmlInputFactory.setProperty(XMLInputFactory.IS_COALESCING, true);
+		xmlInputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+
 		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/withDTDNoExist.xml"), "UTF-8");
-		XMLParser<SimpleTestObj> parser = new WoodStoxObjParserImpl<>(SimpleTestObj.class, ci, false);
+		XMLParser<SimpleTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, SimpleTestObj.class, ci);
 
 		SimpleTestObj o = parser.parse(xml);
 
@@ -37,10 +44,14 @@ public class ValidationsTest {
 	@Test
 	public void validatesDTD() throws Exception {
 
+		XMLInputFactory2 xmlInputFactory = (XMLInputFactory2) XMLInputFactory.newInstance();
+		xmlInputFactory.setProperty(XMLInputFactory.IS_COALESCING, true);
+		xmlInputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, true);
+
 		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/withDTDNoExist.xml"), "UTF-8");
-		XMLParser<SimpleTestObj> parser = new WoodStoxObjParserImpl<>(SimpleTestObj.class, ci, true);
+		XMLParser<SimpleTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, SimpleTestObj.class, ci);
 
 		SimpleTestObj o = parser.parse(xml);
 

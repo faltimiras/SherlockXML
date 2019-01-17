@@ -1,18 +1,23 @@
 package cat.altimiras.xml.parsed;
 
 import org.apache.commons.io.IOUtils;
+import org.codehaus.stax2.XMLInputFactory2;
 import org.junit.Test;
+
+import javax.xml.stream.XMLInputFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class IncompleteTest {
 
+	private XMLInputFactory2 xmlInputFactory = (XMLInputFactory2) XMLInputFactory.newInstance();
+
 	@Test
 	public void xmlIncompleteTest() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/incompleteXMLTest.xml"), "UTF-8");
-		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl();
+		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl(xmlInputFactory); 
 
 		Parsed o = parser.parse(xml);
 
@@ -24,7 +29,7 @@ public class IncompleteTest {
 	public void xmlIncomplete2Test() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/incompleteXML2Test.xml"), "UTF-8");
-		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl();
+		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl(xmlInputFactory); 
 
 		Parsed o = parser.parse(xml);
 
@@ -38,7 +43,7 @@ public class IncompleteTest {
 	public void xmlIncompleteListTest() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/incompleteListXMLTest.xml"), "UTF-8");
-		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl();
+		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl(xmlInputFactory); 
 
 		Parsed o = parser.parse(xml);
 
@@ -50,7 +55,7 @@ public class IncompleteTest {
 	public void xmlIncompleteList2Test() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/incompleteListXML2Test.xml"), "UTF-8");
-		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl();
+		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl(xmlInputFactory); 
 
 		Parsed o = parser.parse(xml);
 

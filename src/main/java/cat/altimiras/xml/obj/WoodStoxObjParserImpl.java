@@ -7,7 +7,6 @@ import cat.altimiras.xml.exceptions.InvalidXMLFormatException;
 import org.codehaus.stax2.XMLInputFactory2;
 import org.codehaus.stax2.XMLStreamReader2;
 
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 import java.io.ByteArrayInputStream;
@@ -25,7 +24,7 @@ import java.util.Map;
 
 public class WoodStoxObjParserImpl<T extends XMLElement> implements XMLParser<T> {
 
-	private XMLInputFactory2 xmlInputFactory = (XMLInputFactory2) XMLInputFactory.newInstance();
+	final private XMLInputFactory2 xmlInputFactory;
 
 	/**
 	 * Listeners for tags. Notified every time a tag is totally processed (on close </..> tag)
@@ -59,17 +58,12 @@ public class WoodStoxObjParserImpl<T extends XMLElement> implements XMLParser<T>
 
 	private boolean ignore = false;
 
-	public WoodStoxObjParserImpl(Class<T> typeArgumentClass, ClassIntrospector<T> classIntrospector, boolean validationEnabled) throws IllegalAccessException, InstantiationException {
+	public WoodStoxObjParserImpl(XMLInputFactory2 xmlInputFactory, Class<T> typeArgumentClass, ClassIntrospector<T> classIntrospector) throws IllegalAccessException, InstantiationException {
 		this.classIntrospector = classIntrospector;
 
-		obj = typeArgumentClass.newInstance();
-		objHashCode = classIntrospector.getClassHashCode(typeArgumentClass);
-		xmlInputFactory.setProperty(XMLInputFactory.IS_COALESCING, true);
-		xmlInputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, validationEnabled);
-	}
-
-	public WoodStoxObjParserImpl(Class<T> typeArgumentClass, ClassIntrospector<T> classIntrospector) throws IllegalAccessException, InstantiationException {
-		this(typeArgumentClass, classIntrospector, false);
+		this.obj = typeArgumentClass.newInstance();
+		this.objHashCode = classIntrospector.getClassHashCode(typeArgumentClass);
+		this.xmlInputFactory = xmlInputFactory;
 	}
 
 	@Override
@@ -134,6 +128,15 @@ public class WoodStoxObjParserImpl<T extends XMLElement> implements XMLParser<T>
 		}
 		catch (RuntimeException | IllegalAccessException | ClassNotFoundException e) {
 			throw new InvalidXMLFormatException("Impossible to parse XML. Msg:" + e.getMessage());
+		}
+		finally {
+			try {
+				xmlInputStream.close();
+				xmlStreamReader.close();
+			}
+			catch (Exception e) {
+				//nothing to do
+			}
 		}
 		return obj;
 	}
@@ -301,7 +304,7 @@ public class WoodStoxObjParserImpl<T extends XMLElement> implements XMLParser<T>
 				contexts.push(backup); //if all checks has failed and the field is not on the parent, restore previous state
 
 				//just stops processing if field (tag) is not contained on the parent.
-				if (!((ListContext)backup).hasWrapper && !backup.tag.equals(currentTagName)){
+				if (!((ListContext) backup).hasWrapper && !backup.tag.equals(currentTagName)) {
 					ignore = true;
 					return;
 				}

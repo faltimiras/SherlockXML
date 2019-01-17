@@ -6,13 +6,17 @@ import cat.altimiras.xml.pojo.NestedTestObj;
 import cat.altimiras.xml.pojo.NotXMLElement;
 import cat.altimiras.xml.pojo.SimpleAnnotationTestObj;
 import cat.altimiras.xml.pojo.SimpleTestObj;
+import org.codehaus.stax2.XMLInputFactory2;
 import org.junit.Test;
 
+import javax.xml.stream.XMLInputFactory;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
 public class ClassIntrospectorTest {
+
+	private XMLInputFactory2 xmlInputFactory = (XMLInputFactory2) XMLInputFactory.newInstance();
 
 	@Test
 	public void testIntrospectionSimple() throws Exception {

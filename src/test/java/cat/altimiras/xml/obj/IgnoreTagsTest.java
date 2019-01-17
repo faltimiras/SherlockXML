@@ -4,11 +4,16 @@ import cat.altimiras.xml.XMLParser;
 import cat.altimiras.xml.pojo.Nested4TestObj;
 import cat.altimiras.xml.pojo.SimpleTestObj;
 import org.apache.commons.io.IOUtils;
+import org.codehaus.stax2.XMLInputFactory2;
 import org.junit.Test;
+
+import javax.xml.stream.XMLInputFactory;
 
 import static org.junit.Assert.assertEquals;
 
 public class IgnoreTagsTest {
+
+	private XMLInputFactory2 xmlInputFactory = (XMLInputFactory2) XMLInputFactory.newInstance();
 
 	@Test
 	public void xmlIgnoreTest() throws Exception {
@@ -16,7 +21,7 @@ public class IgnoreTagsTest {
 		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/ignoreTagsTest.xml"), "UTF-8");
-		XMLParser<SimpleTestObj> parser = new WoodStoxObjParserImpl<>(SimpleTestObj.class, ci);
+		XMLParser<SimpleTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, SimpleTestObj.class, ci);
 
 		SimpleTestObj o = parser.parse(xml);
 
@@ -35,7 +40,7 @@ public class IgnoreTagsTest {
 		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/ignoreTags2Test.xml"), "UTF-8");
-		XMLParser<SimpleTestObj> parser = new WoodStoxObjParserImpl<>(SimpleTestObj.class, ci);
+		XMLParser<SimpleTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, SimpleTestObj.class, ci);
 
 		SimpleTestObj o = parser.parse(xml);
 
@@ -49,7 +54,7 @@ public class IgnoreTagsTest {
 		ClassIntrospector ci = new ClassIntrospector(Nested4TestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/ignoreSelfClosedTagTest.xml"), "UTF-8");
-		XMLParser<Nested4TestObj> parser = new WoodStoxObjParserImpl<>(Nested4TestObj.class, ci);
+		XMLParser<Nested4TestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, Nested4TestObj.class, ci);
 
 		Nested4TestObj o = parser.parse(xml);
 
@@ -64,7 +69,7 @@ public class IgnoreTagsTest {
 		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/ignoreBeginningTest.xml"), "UTF-8");
-		XMLParser<SimpleTestObj> parser = new WoodStoxObjParserImpl<>(SimpleTestObj.class, ci);
+		XMLParser<SimpleTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, SimpleTestObj.class, ci);
 
 		SimpleTestObj o = parser.parse(xml);
 

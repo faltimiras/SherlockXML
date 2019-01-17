@@ -1,8 +1,10 @@
 package cat.altimiras.xml.parsed;
 
 import org.apache.commons.io.IOUtils;
+import org.codehaus.stax2.XMLInputFactory2;
 import org.junit.Test;
 
+import javax.xml.stream.XMLInputFactory;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 
@@ -10,11 +12,13 @@ import static org.junit.Assert.assertEquals;
 
 public class CharsetTest {
 
+	private XMLInputFactory2 xmlInputFactory = (XMLInputFactory2) XMLInputFactory.newInstance();
+
 	@Test
 	public void xmlSimpleUtf16Test() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/utf16Test.xml"), "UTF-16");
-		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl();
+		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl(xmlInputFactory); 
 
 		Parsed o = parser.parse(xml, Charset.forName("UTF-16"));
 
@@ -26,7 +30,7 @@ public class CharsetTest {
 	public void xmlSimpleUtf16ErrorTest() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/utf16Test.xml"), "UTF-16");
-		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl();
+		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl(xmlInputFactory); 
 
 		parser.parse(xml);
 

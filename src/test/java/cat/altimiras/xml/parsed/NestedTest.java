@@ -1,18 +1,23 @@
 package cat.altimiras.xml.parsed;
 
 import org.apache.commons.io.IOUtils;
+import org.codehaus.stax2.XMLInputFactory2;
 import org.junit.Test;
+
+import javax.xml.stream.XMLInputFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 public class NestedTest {
 
+	private XMLInputFactory2 xmlInputFactory = (XMLInputFactory2) XMLInputFactory.newInstance();
+
 	@Test
 	public void xmlNestedTest() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nestedTest.xml"), "UTF-8");
-		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl();
+		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl(xmlInputFactory); 
 
 		Parsed o = parser.parse(xml);
 
@@ -27,7 +32,7 @@ public class NestedTest {
 	public void xmlNested2Test() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nested2Test.xml"), "UTF-8");
-		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl();
+		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl(xmlInputFactory); 
 
 		Parsed o = parser.parse(xml);
 
@@ -40,7 +45,7 @@ public class NestedTest {
 	public void xmlNested3Test() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nested3Test.xml"), "UTF-8");
-		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl();
+		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl(xmlInputFactory); 
 		Parsed o = parser.parse(xml);
 
 		assertEquals("111", o.get("Nested3TestObj/simpleTestObj1/element1").value());
@@ -52,7 +57,7 @@ public class NestedTest {
 	public void xmlNestedLoopTest() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nestedLoopTest.xml"), "UTF-8");
-		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl();
+		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl(xmlInputFactory); 
 
 		Parsed o = parser.parse(xml);
 

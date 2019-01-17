@@ -6,7 +6,10 @@ import cat.altimiras.xml.pojo.Nested3TestObj;
 import cat.altimiras.xml.pojo.NestedLoopTestObj;
 import cat.altimiras.xml.pojo.NestedTestObj;
 import org.apache.commons.io.IOUtils;
+import org.codehaus.stax2.XMLInputFactory2;
 import org.junit.Test;
+
+import javax.xml.stream.XMLInputFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -14,13 +17,15 @@ import static org.junit.Assert.assertNull;
 
 public class NestedTest {
 
+	private XMLInputFactory2 xmlInputFactory = (XMLInputFactory2) XMLInputFactory.newInstance();
+
 	@Test
 	public void xmlNestedTest() throws Exception {
 
 		ClassIntrospector ci = new ClassIntrospector(NestedTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nestedTest.xml"), "UTF-8");
-		XMLParser<NestedTestObj> parser = new WoodStoxObjParserImpl<>(NestedTestObj.class, ci);
+		XMLParser<NestedTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, NestedTestObj.class, ci);
 
 		NestedTestObj o = parser.parse(xml);
 
@@ -36,7 +41,7 @@ public class NestedTest {
 		ClassIntrospector ci = new ClassIntrospector(Nested2TestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nested2Test.xml"), "UTF-8");
-		XMLParser<Nested2TestObj> parser = new WoodStoxObjParserImpl<>(Nested2TestObj.class, ci);
+		XMLParser<Nested2TestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, Nested2TestObj.class, ci);
 
 		Nested2TestObj o = parser.parse(xml);
 
@@ -52,7 +57,7 @@ public class NestedTest {
 		ClassIntrospector ci = new ClassIntrospector(Nested3TestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nested3Test.xml"), "UTF-8");
-		XMLParser<Nested3TestObj> parser = new WoodStoxObjParserImpl<>(Nested3TestObj.class, ci);
+		XMLParser<Nested3TestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, Nested3TestObj.class, ci);
 
 		Nested3TestObj o = parser.parse(xml);
 
@@ -68,7 +73,7 @@ public class NestedTest {
 		ClassIntrospector ci = new ClassIntrospector(NestedLoopTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nestedLoopTest.xml"), "UTF-8");
-		XMLParser<NestedLoopTestObj> parser = new WoodStoxObjParserImpl<>(NestedLoopTestObj.class, ci);
+		XMLParser<NestedLoopTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, NestedLoopTestObj.class, ci);
 
 		NestedLoopTestObj o = parser.parse(xml);
 

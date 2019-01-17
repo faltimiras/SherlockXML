@@ -6,7 +6,6 @@ import cat.altimiras.xml.exceptions.InvalidXMLFormatException;
 import org.codehaus.stax2.XMLInputFactory2;
 import org.codehaus.stax2.XMLStreamReader2;
 
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 import java.io.ByteArrayInputStream;
@@ -37,14 +36,8 @@ public class WoodStoxParsedParserImpl implements XMLParser<Parsed> {
 
 	private boolean stop = false;
 
-	public WoodStoxParsedParserImpl(boolean validationEnabled) {
-		xmlInputFactory = (XMLInputFactory2) XMLInputFactory.newInstance();
-		xmlInputFactory.setProperty(XMLInputFactory.IS_COALESCING, true);
-		xmlInputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, validationEnabled);
-	}
-
-	public WoodStoxParsedParserImpl() {
-		this(false);
+	public WoodStoxParsedParserImpl(XMLInputFactory2 xmlInputFactory) {
+		this.xmlInputFactory = xmlInputFactory;
 	}
 
 	public Parsed parse(String xml) throws InvalidXMLFormatException, CharacterCodingException {
@@ -119,6 +112,15 @@ public class WoodStoxParsedParserImpl implements XMLParser<Parsed> {
 		}
 		catch (Exception e) {
 			throw new InvalidXMLFormatException("Impossible to parse XML. Msg:" + e.getMessage());
+		}
+		finally {
+			try {
+				xmlInputStream.close();
+				xmlStreamReader.close();
+			}
+			catch (Exception e) {
+				//nothing to do
+			}
 		}
 
 		if (currentContext == null || currentContext.data == null) {

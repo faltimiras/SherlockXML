@@ -1,24 +1,29 @@
 package cat.altimiras.xml.parsed;
 
 import org.apache.commons.io.IOUtils;
+import org.codehaus.stax2.XMLInputFactory2;
 import org.junit.Test;
+
+import javax.xml.stream.XMLInputFactory;
 
 import static junit.framework.TestCase.assertNull;
 import static org.junit.Assert.assertEquals;
 
 public class BasicTest {
 
+	private XMLInputFactory2 xmlInputFactory = (XMLInputFactory2) XMLInputFactory.newInstance();
+
 	@Test(expected = NullPointerException.class)
 	public void invalidNullStrInputTest() throws Exception {
 
-		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl();
+		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl(xmlInputFactory); 
 		parser.parse((String) null);
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void invalidNullByteInputTest() throws Exception {
 
-		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl();
+		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl(xmlInputFactory); 
 		byte[] nullArray = null;
 		parser.parse(nullArray);
 	}
@@ -28,7 +33,7 @@ public class BasicTest {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/simpleTest.xml"), "UTF-8");
 
-		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl();
+		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl(xmlInputFactory); 
 
 		Parsed o = parser.parse(xml);
 
@@ -42,7 +47,7 @@ public class BasicTest {
 
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/simpleInlineTest.xml"), "UTF-8");
-		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl();
+		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl(xmlInputFactory); 
 
 		Parsed o = parser.parse(xml);
 
@@ -53,7 +58,7 @@ public class BasicTest {
 	@Test
 	public void invalidInputTest() throws Exception {
 
-		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl();
+		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl(xmlInputFactory); 
 		Parsed o = parser.parse("asdfasdfasdfasdf");
 		assertNull(o.get("").value());
 	}
@@ -61,7 +66,7 @@ public class BasicTest {
 	@Test
 	public void invalidEmptyInputTest() throws Exception {
 
-		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl();
+		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl(xmlInputFactory); 
 		Parsed o = parser.parse("");
 
 		assertNull(o.get("").value());

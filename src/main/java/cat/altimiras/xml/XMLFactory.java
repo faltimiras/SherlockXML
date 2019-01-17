@@ -4,13 +4,42 @@ import cat.altimiras.xml.obj.ClassIntrospector;
 import cat.altimiras.xml.obj.WoodStoxObjParserImpl;
 import cat.altimiras.xml.parsed.Parsed;
 import cat.altimiras.xml.parsed.WoodStoxParsedParserImpl;
+import org.codehaus.stax2.XMLInputFactory2;
 
+import javax.xml.stream.XMLInputFactory;
 import java.util.HashMap;
 import java.util.Map;
 
 public class XMLFactory {
 
 	private static Map<String, ClassIntrospector> classesIntrospector = new HashMap<>();
+
+	private static XMLInputFactory2 xmlInputFactory = (XMLInputFactory2) XMLInputFactory.newInstance();
+
+	public enum MODE {
+		PERFORMANCE {
+			public void apply(XMLInputFactory2 xmlInputFactory) {
+				xmlInputFactory.setProperty(XMLInputFactory.IS_COALESCING, false);
+				xmlInputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+				xmlInputFactory.setProperty(XMLInputFactory2.P_REPORT_PROLOG_WHITESPACE, false);
+				xmlInputFactory.setProperty(XMLInputFactory2.P_PRESERVE_LOCATION, false);
+				xmlInputFactory.setProperty(XMLInputFactory2.P_INTERN_NAMES, true);
+				xmlInputFactory.setProperty(XMLInputFactory2.P_INTERN_NS_URIS, true);
+				xmlInputFactory.setProperty(XMLInputFactory2.P_LAZY_PARSING, true);
+			}
+		},
+		CDATA_SUPPORT {
+			public void apply(XMLInputFactory2 xmlInputFactory) {
+				xmlInputFactory.setProperty(XMLInputFactory.IS_COALESCING, true);
+			}
+		}, DTD_VALIDATION {
+			public void apply(XMLInputFactory2 xmlInputFactory) {
+				xmlInputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, true);
+			}
+		};
+
+		public abstract void apply(XMLInputFactory2 xmlInputFactory);
+	}
 
 	public static void init(Class... classes) throws Exception {
 
@@ -24,7 +53,17 @@ public class XMLFactory {
 				classesIntrospector.put(c.getCanonicalName(), classIntrospector);
 			}
 		}
+
+		configure(MODE.PERFORMANCE, MODE.CDATA_SUPPORT);
+
 	}
+
+	public static void configure(MODE... modes) {
+		for (MODE mode : modes) {
+			mode.apply(xmlInputFactory);
+		}
+	}
+
 
 	/**
 	 * Get a parser for class c, with user defined buffer size
@@ -35,7 +74,7 @@ public class XMLFactory {
 	 *
 	 * @throws Exception
 	 */
-	public static XMLParser getParser(Class c, boolean validationEnabled) throws Exception {
+	public static XMLParser getParser(Class c) throws Exception {
 
 		if (c == null) {
 			throw new IllegalArgumentException("Class can not be null");
@@ -45,20 +84,13 @@ public class XMLFactory {
 		if (classIntrospector == null) {
 			throw new IllegalArgumentException("XMLFactory has not been properly initialzed. Class:" + c.getCanonicalName() + ". Check init method");
 		}
-		return new WoodStoxObjParserImpl(c, classIntrospector, validationEnabled);
-	}
-
-	public static XMLParser getParser(Class c) throws Exception {
-		return getParser(c, false);
+		return new WoodStoxObjParserImpl(xmlInputFactory, c, classIntrospector);
 	}
 
 	public static XMLParser<Parsed> getParser() {
-		return new WoodStoxParsedParserImpl();
+		return new WoodStoxParsedParserImpl(xmlInputFactory);
 	}
 
-	public static XMLParser<Parsed> getParser(boolean validationEnabled) {
-		return new WoodStoxParsedParserImpl(validationEnabled);
-	}
 
 	static void reset() {
 		classesIntrospector.clear();

@@ -3,11 +3,16 @@ package cat.altimiras.xml.obj;
 import cat.altimiras.xml.XMLParser;
 import cat.altimiras.xml.pojo.TypeTestObj;
 import org.apache.commons.io.IOUtils;
+import org.codehaus.stax2.XMLInputFactory2;
 import org.junit.Test;
+
+import javax.xml.stream.XMLInputFactory;
 
 import static org.junit.Assert.assertEquals;
 
 public class TypesTest {
+
+	private XMLInputFactory2 xmlInputFactory = (XMLInputFactory2) XMLInputFactory.newInstance();
 
 	@Test
 	public void xmlTypeTest() throws Exception {
@@ -15,7 +20,7 @@ public class TypesTest {
 		ClassIntrospector ci = new ClassIntrospector(TypeTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/typeTest.xml"), "UTF-8");
-		XMLParser<TypeTestObj> parser = new WoodStoxObjParserImpl<>(TypeTestObj.class, ci);
+		XMLParser<TypeTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, TypeTestObj.class, ci);
 
 		TypeTestObj o = parser.parse(xml);
 

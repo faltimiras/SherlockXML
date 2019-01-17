@@ -5,12 +5,17 @@ import cat.altimiras.xml.XMLParser;
 import cat.altimiras.xml.pojo.NestedAnnotationTestObj;
 import cat.altimiras.xml.pojo.SimpleAnnotationTestObj;
 import org.apache.commons.io.IOUtils;
+import org.codehaus.stax2.XMLInputFactory2;
 import org.junit.Test;
+
+import javax.xml.stream.XMLInputFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 public class AnnotationsTest {
+
+	private XMLInputFactory2 xmlInputFactory = (XMLInputFactory2) XMLInputFactory.newInstance();
 
 	@Test
 	public void xmlAnnotationTest() throws Exception {
@@ -18,7 +23,7 @@ public class AnnotationsTest {
 		ClassIntrospector ci = new ClassIntrospector(SimpleAnnotationTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/simpleAnnotationTest.xml"), "UTF-8");
-		XMLParser<SimpleAnnotationTestObj> parser = new WoodStoxObjParserImpl<>(SimpleAnnotationTestObj.class, ci);
+		XMLParser<SimpleAnnotationTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, SimpleAnnotationTestObj.class, ci);
 
 		SimpleAnnotationTestObj o = parser.parse(xml);
 
@@ -33,7 +38,7 @@ public class AnnotationsTest {
 		ClassIntrospector ci = new ClassIntrospector(NestedAnnotationTestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nestedAnnotationTest.xml"), "UTF-8");
-		XMLParser<NestedAnnotationTestObj> parser = new WoodStoxObjParserImpl<>(NestedAnnotationTestObj.class, ci);
+		XMLParser<NestedAnnotationTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, NestedAnnotationTestObj.class, ci);
 
 		NestedAnnotationTestObj o = parser.parse(xml);
 
