@@ -1,0 +1,7 @@
+<lalal>
+    <Nested9TestObj>
+        <SimpleTestObj element1="11"/>
+        <SimpleTestObj element2="22"/>
+        <field2>lolo</field2>
+    </Nested9TestObj>
+</lalal>
