@@ -1,5 +1,6 @@
 package cat.altimiras.xml.parsed;
 
+import cat.altimiras.Truffle;
 import cat.altimiras.xml.TagListener;
 import cat.altimiras.xml.XMLParser;
 import cat.altimiras.xml.exceptions.InvalidXMLFormatException;
@@ -18,7 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class WoodStoxParsedParserImpl implements XMLParser<Parsed> {
+public class WoodStoxTruffleParserImpl implements XMLParser<Truffle> {
 
 	private final XMLInputFactory2 xmlInputFactory;
 
@@ -36,25 +37,25 @@ public class WoodStoxParsedParserImpl implements XMLParser<Parsed> {
 
 	private boolean stop = false;
 
-	public WoodStoxParsedParserImpl(XMLInputFactory2 xmlInputFactory) {
+	public WoodStoxTruffleParserImpl(XMLInputFactory2 xmlInputFactory) {
 		this.xmlInputFactory = xmlInputFactory;
 	}
 
-	public Parsed parse(String xml) throws InvalidXMLFormatException, CharacterCodingException {
+	public Truffle parse(String xml) throws InvalidXMLFormatException, CharacterCodingException {
 		if (xml == null) {
 			throw new NullPointerException("xml can not be null");
 		}
 		return parse(xml, Charset.forName("UTF-8"));
 	}
 
-	public Parsed parse(String xml, Charset charset) throws InvalidXMLFormatException, CharacterCodingException {
+	public Truffle parse(String xml, Charset charset) throws InvalidXMLFormatException, CharacterCodingException {
 		if (xml == null) {
 			throw new NullPointerException("xml can not be null");
 		}
 		return parse(xml.getBytes(charset));
 	}
 
-	public Parsed parse(byte[] xml) throws InvalidXMLFormatException, CharacterCodingException {
+	public Truffle parse(byte[] xml) throws InvalidXMLFormatException, CharacterCodingException {
 
 		if (xml == null) {
 			throw new NullPointerException("xml can not be null");
@@ -98,11 +99,12 @@ public class WoodStoxParsedParserImpl implements XMLParser<Parsed> {
 			flushIncomplete();
 
 			if (currentContext == null) {
-				return new Parsed();
+				return new Truffle();
 			}
 			else {
-				Parsed parsed = createParsed();
-				parsed.markAsIncomplete();
+				Truffle parsed = createParsed();
+				parsed.setMetadata("INCOMPLETE", true);
+				//parsed.markAsIncomplete();
 				return parsed;
 			}
 
@@ -124,16 +126,16 @@ public class WoodStoxParsedParserImpl implements XMLParser<Parsed> {
 		}
 
 		if (currentContext == null || currentContext.data == null) {
-			return new Parsed();
+			return new Truffle();
 		}
 
 		return createParsed();
 	}
 
-	private Parsed createParsed() {
+	private Truffle createParsed() {
 		Map<String, Object> p = new HashMap<>();
 		p.put(currentContext.tag, currentContext.getContent());
-		return new Parsed(p);
+		return new Truffle(p);
 	}
 
 	private void flushIncomplete() {

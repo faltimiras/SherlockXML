@@ -1,5 +1,6 @@
 package cat.altimiras.xml.parsed;
 
+import cat.altimiras.Truffle;
 import cat.altimiras.xml.TagListener;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.stax2.XMLInputFactory2;
@@ -25,7 +26,7 @@ public class TagListenerTest {
 	public void listenerStringTest() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/simpleTest.xml"), "UTF-8");
-		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl(xmlInputFactory); 
+		WoodStoxTruffleParserImpl parser = new WoodStoxTruffleParserImpl(xmlInputFactory);
 
 		TagListener stringListener = mock(TagListener.class);
 		when(stringListener.notify("element1", "111")).thenReturn(false);
@@ -41,7 +42,7 @@ public class TagListenerTest {
 	public void listenerObjectTest() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nested2Test.xml"), "UTF-8");
-		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl(xmlInputFactory); 
+		WoodStoxTruffleParserImpl parser = new WoodStoxTruffleParserImpl(xmlInputFactory);
 
 		TagListener objListener = mock(TagListener.class);
 		when(objListener.notify(eq("simpleTestObj1"), any())).thenReturn(false);
@@ -57,7 +58,7 @@ public class TagListenerTest {
 	public void listenerNotPresentTest() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nested2Test.xml"), "UTF-8");
-		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl(xmlInputFactory); 
+		WoodStoxTruffleParserImpl parser = new WoodStoxTruffleParserImpl(xmlInputFactory);
 
 		TagListener objListener = mock(TagListener.class);
 		when(objListener.notify(eq("tagNotFound"), any())).thenReturn(false);
@@ -73,7 +74,7 @@ public class TagListenerTest {
 	public void listenerStopTest() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nested2Test.xml"), "UTF-8");
-		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl(xmlInputFactory); 
+		WoodStoxTruffleParserImpl parser = new WoodStoxTruffleParserImpl(xmlInputFactory);
 
 		TagListener objListener = mock(TagListener.class);
 		when(objListener.notify(eq("simpleTestObj1"), any())).thenReturn(true);
@@ -81,7 +82,7 @@ public class TagListenerTest {
 		//register listener
 		parser.register("simpleTestObj1", objListener);
 
-		Parsed o = parser.parse(xml);
+		Truffle o = parser.parse(xml);
 
 		verify(objListener, times(1)).notify(eq("simpleTestObj1"), any());
 		assertNull(o.get("Nested2TestObj/simpleTestObj1/title").value());

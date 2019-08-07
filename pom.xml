@@ -6,20 +6,25 @@
 
     <groupId>cat.altimiras</groupId>
     <artifactId>sherlockXML</artifactId>
-    <version>2.1.0</version>
+    <version>3.0.0</version>
 
     <dependencies>
 
         <dependency>
             <groupId>com.fasterxml.woodstox</groupId>
             <artifactId>woodstox-core</artifactId>
-            <version>5.2.0</version>
+            <version>5.3.0</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.woodstox</groupId>
             <artifactId>stax2-api</artifactId>
-            <version>4.1</version>
+            <version>4.2</version>
         </dependency>
+		<dependency>
+			<groupId>cat.altimiras</groupId>
+			<artifactId>Truffle</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 
 
         <dependency>

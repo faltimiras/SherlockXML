@@ -1,8 +1,7 @@
 package cat.altimiras.xml.parsed;
 
+import cat.altimiras.Truffle;
 import cat.altimiras.xml.XMLParser;
-import cat.altimiras.xml.obj.ClassIntrospector;
-import cat.altimiras.xml.pojo.SimpleTestObj;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.stax2.XMLInputFactory2;
 import org.junit.Test;
@@ -27,9 +26,9 @@ public class ValidationsTest {
 		xmlInputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/withDTDNoExist.xml"), "UTF-8");
-		XMLParser<Parsed> parser = new WoodStoxParsedParserImpl(xmlInputFactory);
+		XMLParser<Truffle> parser = new WoodStoxTruffleParserImpl(xmlInputFactory);
 
-		Parsed o = parser.parse(xml);
+		Truffle o = parser.parse(xml);
 
 		assertEquals("111", o.get("SimpleTestObj/element1").value());
 		assertEquals("222", o.get("SimpleTestObj/element2").value());
@@ -49,9 +48,9 @@ public class ValidationsTest {
 
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/withDTDNoExist.xml"), "UTF-8");
-		XMLParser<Parsed> parser = new WoodStoxParsedParserImpl(xmlInputFactory);
+		XMLParser<Truffle> parser = new WoodStoxTruffleParserImpl(xmlInputFactory);
 
-		Parsed o = parser.parse(xml);
+		Truffle o = parser.parse(xml);
 
 		assertNull(o.get("SimpleTestObj/element1").value());
 		assertNull(o.get("SimpleTestObj/element2").value());

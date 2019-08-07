@@ -1,5 +1,6 @@
 package cat.altimiras.xml.parsed;
 
+import cat.altimiras.Truffle;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.stax2.XMLInputFactory2;
 import org.junit.Test;
@@ -17,9 +18,9 @@ public class NestedTest {
 	public void xmlNestedTest() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nestedTest.xml"), "UTF-8");
-		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl(xmlInputFactory); 
+		WoodStoxTruffleParserImpl parser = new WoodStoxTruffleParserImpl(xmlInputFactory);
 
-		Parsed o = parser.parse(xml);
+		Truffle o = parser.parse(xml);
 
 		assertEquals("title", o.get("NestedTestObj/title").value());
 		assertEquals("111", o.get("NestedTestObj/simpleTestObj/element1").value());
@@ -32,9 +33,9 @@ public class NestedTest {
 	public void xmlNested2Test() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nested2Test.xml"), "UTF-8");
-		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl(xmlInputFactory); 
+		WoodStoxTruffleParserImpl parser = new WoodStoxTruffleParserImpl(xmlInputFactory);
 
-		Parsed o = parser.parse(xml);
+		Truffle o = parser.parse(xml);
 
 		assertEquals("111", o.get("Nested2TestObj/simpleTestObj1/element1").value());
 		assertEquals("222", o.get("Nested2TestObj/simpleTestObj2/element2").value());
@@ -45,8 +46,8 @@ public class NestedTest {
 	public void xmlNested3Test() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nested3Test.xml"), "UTF-8");
-		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl(xmlInputFactory); 
-		Parsed o = parser.parse(xml);
+		WoodStoxTruffleParserImpl parser = new WoodStoxTruffleParserImpl(xmlInputFactory);
+		Truffle o = parser.parse(xml);
 
 		assertEquals("111", o.get("Nested3TestObj/simpleTestObj1/element1").value());
 		assertEquals("222", o.get("Nested3TestObj/nestedTestObj/simpleTestObj/element1").value());
@@ -57,9 +58,9 @@ public class NestedTest {
 	public void xmlNestedLoopTest() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nestedLoopTest.xml"), "UTF-8");
-		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl(xmlInputFactory); 
+		WoodStoxTruffleParserImpl parser = new WoodStoxTruffleParserImpl(xmlInputFactory);
 
-		Parsed o = parser.parse(xml);
+		Truffle o = parser.parse(xml);
 
 		assertEquals("1", o.get("NestedLoopTestObj/num").value());
 		assertEquals("2", o.get("NestedLoopTestObj/nestedLoopTestObj/num").value());

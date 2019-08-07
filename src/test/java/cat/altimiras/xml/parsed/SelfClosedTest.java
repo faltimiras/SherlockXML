@@ -1,5 +1,6 @@
 package cat.altimiras.xml.parsed;
 
+import cat.altimiras.Truffle;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.stax2.XMLInputFactory2;
 import org.junit.Test;
@@ -17,9 +18,9 @@ public class SelfClosedTest {
 
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/selfClosedTest.xml"), "UTF-8");
-		WoodStoxParsedParserImpl parser = new WoodStoxParsedParserImpl(xmlInputFactory); 
+		WoodStoxTruffleParserImpl parser = new WoodStoxTruffleParserImpl(xmlInputFactory);
 
-		Parsed o = parser.parse(xml);
+		Truffle o = parser.parse(xml);
 
 		assertEquals("title", o.get("/Nested2TestObj/title").value());
 		assertEquals("111", o.get("/Nested2TestObj/simpleTestObj1/element1").value());

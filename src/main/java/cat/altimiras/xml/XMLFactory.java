@@ -1,9 +1,9 @@
 package cat.altimiras.xml;
 
+import cat.altimiras.Truffle;
 import cat.altimiras.xml.obj.ClassIntrospector;
 import cat.altimiras.xml.obj.WoodStoxObjParserImpl;
-import cat.altimiras.xml.parsed.Parsed;
-import cat.altimiras.xml.parsed.WoodStoxParsedParserImpl;
+import cat.altimiras.xml.parsed.WoodStoxTruffleParserImpl;
 import org.codehaus.stax2.XMLInputFactory2;
 
 import javax.xml.stream.XMLInputFactory;
@@ -87,8 +87,8 @@ public class XMLFactory {
 		return new WoodStoxObjParserImpl(xmlInputFactory, c, classIntrospector);
 	}
 
-	public static XMLParser<Parsed> getParser() {
-		return new WoodStoxParsedParserImpl(xmlInputFactory);
+	public static XMLParser<Truffle> getParser() {
+		return new WoodStoxTruffleParserImpl(xmlInputFactory);
 	}
 
 
