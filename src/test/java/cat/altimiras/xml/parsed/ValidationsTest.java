@@ -1,6 +1,6 @@
 package cat.altimiras.xml.parsed;
 
-import cat.altimiras.Truffle;
+import cat.altimiras.matrioshka.Matrioshka;
 import cat.altimiras.xml.XMLParser;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.stax2.XMLInputFactory2;
@@ -26,9 +26,9 @@ public class ValidationsTest {
 		xmlInputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/withDTDNoExist.xml"), "UTF-8");
-		XMLParser<Truffle> parser = new WoodStoxTruffleParserImpl(xmlInputFactory);
+		XMLParser<Matrioshka> parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
 
-		Truffle o = parser.parse(xml);
+		Matrioshka o = parser.parse(xml);
 
 		assertEquals("111", o.get("SimpleTestObj/element1").value());
 		assertEquals("222", o.get("SimpleTestObj/element2").value());
@@ -48,9 +48,9 @@ public class ValidationsTest {
 
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/withDTDNoExist.xml"), "UTF-8");
-		XMLParser<Truffle> parser = new WoodStoxTruffleParserImpl(xmlInputFactory);
+		XMLParser<Matrioshka> parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
 
-		Truffle o = parser.parse(xml);
+		Matrioshka o = parser.parse(xml);
 
 		assertNull(o.get("SimpleTestObj/element1").value());
 		assertNull(o.get("SimpleTestObj/element2").value());

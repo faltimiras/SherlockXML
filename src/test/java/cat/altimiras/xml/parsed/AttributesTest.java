@@ -1,6 +1,6 @@
 package cat.altimiras.xml.parsed;
 
-import cat.altimiras.Truffle;
+import cat.altimiras.matrioshka.Matrioshka;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.stax2.XMLInputFactory2;
 import org.junit.Test;
@@ -18,9 +18,9 @@ public class AttributesTest {
 
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/simpleAttributeTest.xml"), "UTF-8");
-		WoodStoxTruffleParserImpl parser = new WoodStoxTruffleParserImpl(xmlInputFactory);
+		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
 
-		Truffle o = parser.parse(xml);
+		Matrioshka o = parser.parse(xml);
 
 		assertEquals("111", o.get("/SimpleTestObj/element1").value());
 	}
@@ -29,8 +29,8 @@ public class AttributesTest {
 	public void xmlAttributesTest() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/attributesTest.xml"), "UTF-8");
-		WoodStoxTruffleParserImpl parser = new WoodStoxTruffleParserImpl(xmlInputFactory);
-		Truffle o = parser.parse(xml);
+		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
+		Matrioshka o = parser.parse(xml);
 
 		assertEquals("11=1", o.get("/SimpleTestObj/element1").value());
 		assertEquals("222", o.get("/SimpleTestObj/element2").value());
@@ -41,9 +41,9 @@ public class AttributesTest {
 
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/attributes2Test.xml"), "UTF-8");
-		WoodStoxTruffleParserImpl parser = new WoodStoxTruffleParserImpl(xmlInputFactory);
+		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
 
-		Truffle o = parser.parse(xml);
+		Matrioshka o = parser.parse(xml);
 
 		assertEquals("111", o.get("Nested3TestObj/simpleTestObj1/element1").value());
 		assertEquals("title", o.get("Nested3TestObj/title").value());

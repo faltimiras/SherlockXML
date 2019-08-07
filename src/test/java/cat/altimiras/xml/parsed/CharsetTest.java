@@ -1,6 +1,6 @@
 package cat.altimiras.xml.parsed;
 
-import cat.altimiras.Truffle;
+import cat.altimiras.matrioshka.Matrioshka;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.stax2.XMLInputFactory2;
 import org.junit.Test;
@@ -19,9 +19,9 @@ public class CharsetTest {
 	public void xmlSimpleUtf16Test() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/utf16Test.xml"), "UTF-16");
-		WoodStoxTruffleParserImpl parser = new WoodStoxTruffleParserImpl(xmlInputFactory);
+		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
 
-		Truffle o = parser.parse(xml, Charset.forName("UTF-16"));
+		Matrioshka o = parser.parse(xml, Charset.forName("UTF-16"));
 
 		assertEquals("111", o.get("SimpleTestObj", "element1").value());
 		assertEquals("222", o.get("SimpleTestObj", "element2").value());
@@ -31,7 +31,7 @@ public class CharsetTest {
 	public void xmlSimpleUtf16ErrorTest() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/utf16Test.xml"), "UTF-16");
-		WoodStoxTruffleParserImpl parser = new WoodStoxTruffleParserImpl(xmlInputFactory);
+		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
 
 		parser.parse(xml);
 

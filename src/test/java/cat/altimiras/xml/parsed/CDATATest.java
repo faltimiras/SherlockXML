@@ -1,7 +1,7 @@
 package cat.altimiras.xml.parsed;
 
 
-import cat.altimiras.Truffle;
+import cat.altimiras.matrioshka.Matrioshka;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.stax2.XMLInputFactory2;
 import org.junit.Test;
@@ -20,9 +20,9 @@ public class CDATATest {
 
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/CDATATest.xml"), "UTF-8");
-		WoodStoxTruffleParserImpl parser = new WoodStoxTruffleParserImpl(xmlInputFactory);
+		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
 
-		Truffle o = parser.parse(xml);
+		Matrioshka o = parser.parse(xml);
 
 		assertEquals("lolo <lo>A\n         </lo> lolo", o.get("/SimpleTestObj/element1").value());
 		assertEquals("222", o.get("/SimpleTestObj/element2").value());

@@ -1,6 +1,6 @@
 package cat.altimiras.xml.parsed;
 
-import cat.altimiras.Truffle;
+import cat.altimiras.matrioshka.Matrioshka;
 import cat.altimiras.xml.TagListener;
 import cat.altimiras.xml.XMLParser;
 import cat.altimiras.xml.exceptions.InvalidXMLFormatException;
@@ -19,7 +19,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class WoodStoxTruffleParserImpl implements XMLParser<Truffle> {
+public class WoodStoxMatrioshkaParserImpl implements XMLParser<Matrioshka> {
+
+	public final static String INCOMPLETE = "INCOMPLETE";
 
 	private final XMLInputFactory2 xmlInputFactory;
 
@@ -37,25 +39,25 @@ public class WoodStoxTruffleParserImpl implements XMLParser<Truffle> {
 
 	private boolean stop = false;
 
-	public WoodStoxTruffleParserImpl(XMLInputFactory2 xmlInputFactory) {
+	public WoodStoxMatrioshkaParserImpl(XMLInputFactory2 xmlInputFactory) {
 		this.xmlInputFactory = xmlInputFactory;
 	}
 
-	public Truffle parse(String xml) throws InvalidXMLFormatException, CharacterCodingException {
+	public Matrioshka parse(String xml) throws InvalidXMLFormatException, CharacterCodingException {
 		if (xml == null) {
 			throw new NullPointerException("xml can not be null");
 		}
 		return parse(xml, Charset.forName("UTF-8"));
 	}
 
-	public Truffle parse(String xml, Charset charset) throws InvalidXMLFormatException, CharacterCodingException {
+	public Matrioshka parse(String xml, Charset charset) throws InvalidXMLFormatException, CharacterCodingException {
 		if (xml == null) {
 			throw new NullPointerException("xml can not be null");
 		}
 		return parse(xml.getBytes(charset));
 	}
 
-	public Truffle parse(byte[] xml) throws InvalidXMLFormatException, CharacterCodingException {
+	public Matrioshka parse(byte[] xml) throws InvalidXMLFormatException, CharacterCodingException {
 
 		if (xml == null) {
 			throw new NullPointerException("xml can not be null");
@@ -99,12 +101,11 @@ public class WoodStoxTruffleParserImpl implements XMLParser<Truffle> {
 			flushIncomplete();
 
 			if (currentContext == null) {
-				return new Truffle();
+				return new Matrioshka();
 			}
 			else {
-				Truffle parsed = createParsed();
-				parsed.setMetadata("INCOMPLETE", true);
-				//parsed.markAsIncomplete();
+				Matrioshka parsed = createMatrioshka();
+				parsed.setMetadata(INCOMPLETE, true);
 				return parsed;
 			}
 
@@ -126,16 +127,16 @@ public class WoodStoxTruffleParserImpl implements XMLParser<Truffle> {
 		}
 
 		if (currentContext == null || currentContext.data == null) {
-			return new Truffle();
+			return new Matrioshka();
 		}
 
-		return createParsed();
+		return createMatrioshka();
 	}
 
-	private Truffle createParsed() {
+	private Matrioshka createMatrioshka() {
 		Map<String, Object> p = new HashMap<>();
 		p.put(currentContext.tag, currentContext.getContent());
-		return new Truffle(p);
+		return new Matrioshka(p);
 	}
 
 	private void flushIncomplete() {

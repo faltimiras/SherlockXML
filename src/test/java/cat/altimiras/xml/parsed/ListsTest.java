@@ -1,6 +1,6 @@
 package cat.altimiras.xml.parsed;
 
-import cat.altimiras.Truffle;
+import cat.altimiras.matrioshka.Matrioshka;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.stax2.XMLInputFactory2;
 import org.junit.Test;
@@ -8,7 +8,6 @@ import org.junit.Test;
 import javax.xml.stream.XMLInputFactory;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -20,9 +19,9 @@ public class ListsTest {
 	public void xmlListTest() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listTest.xml"), "UTF-8");
-		WoodStoxTruffleParserImpl parser = new WoodStoxTruffleParserImpl(xmlInputFactory);
+		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
 
-		Truffle o = parser.parse(xml);
+		Matrioshka o = parser.parse(xml);
 
 		assertEquals(2, o.get("wrapperWeDontWant/ListTestObj/list").asList().size());
 		assertEquals("111", o.get("wrapperWeDontWant/ListTestObj/list").asList().get(0).get("/SimpleTestObj/element1").value());
@@ -33,9 +32,9 @@ public class ListsTest {
 	public void xmlList2Test() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/list2Test.xml"), "UTF-8");
-		WoodStoxTruffleParserImpl parser = new WoodStoxTruffleParserImpl(xmlInputFactory);
+		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
 
-		Truffle o = parser.parse(xml);
+		Matrioshka o = parser.parse(xml);
 
 		assertEquals(3, o.get("ListTestObj/list").asList().size());
 		assertEquals("111", o.get("/ListTestObj/list").asList().get(0).get("/SimpleTestObj/element1").value());
@@ -48,9 +47,9 @@ public class ListsTest {
 	public void xmlListNestedTest() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listNestedTest.xml"), "UTF-8");
-		WoodStoxTruffleParserImpl parser = new WoodStoxTruffleParserImpl(xmlInputFactory);
+		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
 
-		Truffle o = parser.parse(xml);
+		Matrioshka o = parser.parse(xml);
 
 		assertEquals(1, o.get("Nested4TestObj/simpleElements").asList().size());
 		assertEquals("111", o.get("/Nested4TestObj/simpleElements").asList().get(0).get("/SimpleTestObj/element1").value());
@@ -62,9 +61,9 @@ public class ListsTest {
 	public void xmlListNestedSelfClosedTest() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listNestedselfClosedTest.xml"), "UTF-8");
-		WoodStoxTruffleParserImpl parser = new WoodStoxTruffleParserImpl(xmlInputFactory);
+		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
 
-		Truffle o = parser.parse(xml);
+		Matrioshka o = parser.parse(xml);
 
 		assertEquals(4, o.get("Nested5TestObj/list").asList().size());
 		assertEquals("111", o.get("/Nested5TestObj/list").asList().get(0).get("/simpleTestObj1/element1").value());
@@ -79,9 +78,9 @@ public class ListsTest {
 	public void xmlListSelfClosedTest() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listSelfClosedTest.xml"), "UTF-8");
-		WoodStoxTruffleParserImpl parser = new WoodStoxTruffleParserImpl(xmlInputFactory);
+		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
 
-		Truffle o = parser.parse(xml);
+		Matrioshka o = parser.parse(xml);
 
 		assertEquals(3, o.get("/ListTestObj/list").asList().size());
 		assertEquals("111", o.get("/ListTestObj/list").asList().get(0).get("/SimpleTestObj/element1").value());
@@ -96,9 +95,9 @@ public class ListsTest {
 	public void xmlEmptyListTest() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/emptyListTest.xml"), "UTF-8");
-		WoodStoxTruffleParserImpl parser = new WoodStoxTruffleParserImpl(xmlInputFactory);
+		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
 
-		Truffle o = parser.parse(xml);
+		Matrioshka o = parser.parse(xml);
 
 		assertTrue(o.get("ListTestObj/list").asList().isEmpty());
 	}
@@ -107,9 +106,9 @@ public class ListsTest {
 	public void xmlListPrimitivesTest() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listPrimitives.xml"), "UTF-8");
-		WoodStoxTruffleParserImpl parser = new WoodStoxTruffleParserImpl(xmlInputFactory);
+		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
 
-		Truffle o = parser.parse(xml);
+		Matrioshka o = parser.parse(xml);
 
 		assertEquals("8", o.get("ListPrimitivesObj/values").asList().get(0).get("val").value());
 		assertEquals("9", o.get("ListPrimitivesObj/values").asList().get(1).get("val").value());
@@ -119,9 +118,9 @@ public class ListsTest {
 	public void xmlListPrimitives2Test() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listPrimitives2.xml"), "UTF-8");
-		WoodStoxTruffleParserImpl parser = new WoodStoxTruffleParserImpl(xmlInputFactory);
+		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
 
-		Truffle o = parser.parse(xml);
+		Matrioshka o = parser.parse(xml);
 
 		assertEquals("hola", o.get("Nested7TestObj/field").value());
 		assertEquals("8", o.get("Nested7TestObj/Values").asList().get(0).get("val").value());
@@ -136,9 +135,9 @@ public class ListsTest {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listPrimitivesNoWrapper.xml"), "UTF-8");
 
-		WoodStoxTruffleParserImpl parser = new WoodStoxTruffleParserImpl(xmlInputFactory);
+		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
 
-		Truffle o = parser.parse(xml);
+		Matrioshka o = parser.parse(xml);
 
 		assertEquals("8", o.get("ListPrimitivesObj").asList().get(0).get("values").value());
 		assertEquals("9", o.get("ListPrimitivesObj").asList().get(1).get("values").value());
@@ -148,9 +147,9 @@ public class ListsTest {
 	public void xmlListPrimitives2NoWrapperTest() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listPrimitives2NoWrapper.xml"), "UTF-8");
-		WoodStoxTruffleParserImpl parser = new WoodStoxTruffleParserImpl(xmlInputFactory);
+		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
 
-		Truffle o = parser.parse(xml);
+		Matrioshka o = parser.parse(xml);
 
 		assertEquals("hola", o.get("Nested7TestObj/field").value());
 		assertEquals("8", o.get("Nested7TestObj/Values").asList().get(0).get("Values").value());
@@ -164,9 +163,9 @@ public class ListsTest {
 	public void xmlListNoWrapperWithAttributesTest() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listNoWrapperWithAttributes.xml"), "UTF-8");
-		WoodStoxTruffleParserImpl parser = new WoodStoxTruffleParserImpl(xmlInputFactory);
+		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
 
-		Truffle o = parser.parse(xml);
+		Matrioshka o = parser.parse(xml);
 
 		assertEquals("lolo", o.get("ListTestObj2/field").value());
 		assertEquals(3, o.get("ListTestObj2/SimpleTestObj").asList().size());
@@ -182,9 +181,9 @@ public class ListsTest {
 	public void xmlListNoWrapperWithAttributesTest2() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listNoWrapperWithAttributes2.xml"), "UTF-8");
-		WoodStoxTruffleParserImpl parser = new WoodStoxTruffleParserImpl(xmlInputFactory);
+		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
 
-		Truffle o = parser.parse(xml);
+		Matrioshka o = parser.parse(xml);
 
 		assertEquals("lolo", o.get("ListTestObj2/field").value());
 		assertEquals(3, o.get("ListTestObj2/SimpleTestObj").asList().size());
@@ -201,9 +200,9 @@ public class ListsTest {
 	public void xmlListNoWrapper() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listNoWrapper.xml"), "UTF-8");
-		WoodStoxTruffleParserImpl parser = new WoodStoxTruffleParserImpl(xmlInputFactory);
+		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
 
-		Truffle o = parser.parse(xml);
+		Matrioshka o = parser.parse(xml);
 
 		assertEquals("field", o.get("wrapperWeDontWant/Nested8TestObj/field").value());
 		assertEquals(2, o.get("wrapperWeDontWant/Nested8TestObj/list").asList().size());
@@ -224,9 +223,9 @@ public class ListsTest {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listsNoWrapperConsecutive.xml"), "UTF-8");
 
-		WoodStoxTruffleParserImpl parser = new WoodStoxTruffleParserImpl(xmlInputFactory);
+		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
 
-		Truffle o = parser.parse(xml);
+		Matrioshka o = parser.parse(xml);
 
 		assertEquals("11", o.get("Nested9TestObj/SimpleTestObj").asList().get(0).get("SimpleTestObj/element1").value());
 		assertEquals("22", o.get("Nested9TestObj/SimpleTestObj").asList().get(1).get("SimpleTestObj/element2").value());
@@ -239,9 +238,9 @@ public class ListsTest {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nestedListsNoWrapperConsecutive.xml"), "UTF-8");
 
-		WoodStoxTruffleParserImpl parser = new WoodStoxTruffleParserImpl(xmlInputFactory);
+		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
 
-		Truffle o = parser.parse(xml);
+		Matrioshka o = parser.parse(xml);
 
 		assertEquals("11", o.get("Nested10TestObj/nested9TestObj/SimpleTestObj").asList().get(0).get("SimpleTestObj/element1").value());
 		assertEquals("22", o.get("Nested10TestObj/nested9TestObj/SimpleTestObj").asList().get(1).get("SimpleTestObj/element2").value());
@@ -253,9 +252,9 @@ public class ListsTest {
 	public void endList() throws Exception {
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/endList.xml"), "UTF-8");
-		WoodStoxTruffleParserImpl parser = new WoodStoxTruffleParserImpl(xmlInputFactory);
+		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
 
-		Truffle o = parser.parse(xml);
+		Matrioshka o = parser.parse(xml);
 
 		assertEquals(2, o.get("lalal/Nested9TestObj/SimpleTestObj").asList().size());
 		assertEquals("11", o.get("lalal/Nested9TestObj/SimpleTestObj").asList().get(0).get("SimpleTestObj/element1").value());

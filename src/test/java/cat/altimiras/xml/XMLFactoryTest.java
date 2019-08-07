@@ -1,7 +1,7 @@
 package cat.altimiras.xml;
 
 import cat.altimiras.xml.obj.WoodStoxObjParserImpl;
-import cat.altimiras.xml.parsed.WoodStoxTruffleParserImpl;
+import cat.altimiras.xml.parsed.WoodStoxMatrioshkaParserImpl;
 import cat.altimiras.xml.pojo.Nested2TestObj;
 import cat.altimiras.xml.pojo.SimpleTestObj;
 import org.apache.commons.io.IOUtils;
@@ -64,7 +64,7 @@ public class XMLFactoryTest {
 	@Test
 	public void parsedParseractory() throws Exception {
 		XMLParser parser = XMLFactory.getParser();
-		assertTrue(parser instanceof WoodStoxTruffleParserImpl);
+		assertTrue(parser instanceof WoodStoxMatrioshkaParserImpl);
 	}
 
 	@Test

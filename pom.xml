@@ -22,7 +22,7 @@
         </dependency>
 		<dependency>
 			<groupId>cat.altimiras</groupId>
-			<artifactId>Truffle</artifactId>
+			<artifactId>matrioshka</artifactId>
 			<version>1.0.0</version>
 		</dependency>
 
