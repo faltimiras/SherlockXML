@@ -1,6 +1,6 @@
-package cat.altimiras.xml.parsed;
+package cat.altimiras.xml.matryoshka;
 
-import cat.altimiras.matrioshka.Matrioshka;
+import cat.altimiras.matryoshka.Matryoshka;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.stax2.XMLInputFactory2;
 import org.junit.Test;
@@ -17,10 +17,10 @@ public class NestedTest {
 	@Test
 	public void xmlNestedTest() throws Exception {
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nestedTest.xml"), "UTF-8");
-		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/nestedTest.xml"), "UTF-8");
+		WoodStoxMatryoshkaParserImpl parser = new WoodStoxMatryoshkaParserImpl(xmlInputFactory);
 
-		Matrioshka o = parser.parse(xml);
+		Matryoshka o = parser.parse(xml);
 
 		assertEquals("title", o.get("NestedTestObj/title").value());
 		assertEquals("111", o.get("NestedTestObj/simpleTestObj/element1").value());
@@ -32,10 +32,10 @@ public class NestedTest {
 	@Test
 	public void xmlNested2Test() throws Exception {
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nested2Test.xml"), "UTF-8");
-		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/nested2Test.xml"), "UTF-8");
+		WoodStoxMatryoshkaParserImpl parser = new WoodStoxMatryoshkaParserImpl(xmlInputFactory);
 
-		Matrioshka o = parser.parse(xml);
+		Matryoshka o = parser.parse(xml);
 
 		assertEquals("111", o.get("Nested2TestObj/simpleTestObj1/element1").value());
 		assertEquals("222", o.get("Nested2TestObj/simpleTestObj2/element2").value());
@@ -45,9 +45,9 @@ public class NestedTest {
 	@Test
 	public void xmlNested3Test() throws Exception {
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nested3Test.xml"), "UTF-8");
-		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
-		Matrioshka o = parser.parse(xml);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/nested3Test.xml"), "UTF-8");
+		WoodStoxMatryoshkaParserImpl parser = new WoodStoxMatryoshkaParserImpl(xmlInputFactory);
+		Matryoshka o = parser.parse(xml);
 
 		assertEquals("111", o.get("Nested3TestObj/simpleTestObj1/element1").value());
 		assertEquals("222", o.get("Nested3TestObj/nestedTestObj/simpleTestObj/element1").value());
@@ -57,10 +57,10 @@ public class NestedTest {
 	@Test
 	public void xmlNestedLoopTest() throws Exception {
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nestedLoopTest.xml"), "UTF-8");
-		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/nestedLoopTest.xml"), "UTF-8");
+		WoodStoxMatryoshkaParserImpl parser = new WoodStoxMatryoshkaParserImpl(xmlInputFactory);
 
-		Matrioshka o = parser.parse(xml);
+		Matryoshka o = parser.parse(xml);
 
 		assertEquals("1", o.get("NestedLoopTestObj/num").value());
 		assertEquals("2", o.get("NestedLoopTestObj/nestedLoopTestObj/num").value());

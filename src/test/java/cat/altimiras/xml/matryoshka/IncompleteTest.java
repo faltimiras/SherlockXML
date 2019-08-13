@@ -1,6 +1,6 @@
-package cat.altimiras.xml.parsed;
+package cat.altimiras.xml.matryoshka;
 
-import cat.altimiras.matrioshka.Matrioshka;
+import cat.altimiras.matryoshka.Matryoshka;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.stax2.XMLInputFactory2;
 import org.junit.Test;
@@ -17,10 +17,10 @@ public class IncompleteTest {
 	@Test
 	public void xmlIncompleteTest() throws Exception {
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/incompleteXMLTest.xml"), "UTF-8");
-		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/incompleteXMLTest.xml"), "UTF-8");
+		WoodStoxMatryoshkaParserImpl parser = new WoodStoxMatryoshkaParserImpl(xmlInputFactory);
 
-		Matrioshka o = parser.parse(xml);
+		Matryoshka o = parser.parse(xml);
 
 		assertEquals("111", o.get("Nested3TestObj/simpleTestObj1/element1").value());
 		assertTrue((Boolean) o.getMetadata("INCOMPLETE"));
@@ -29,10 +29,10 @@ public class IncompleteTest {
 	@Test
 	public void xmlIncomplete2Test() throws Exception {
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/incompleteXML2Test.xml"), "UTF-8");
-		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/incompleteXML2Test.xml"), "UTF-8");
+		WoodStoxMatryoshkaParserImpl parser = new WoodStoxMatryoshkaParserImpl(xmlInputFactory);
 
-		Matrioshka o = parser.parse(xml);
+		Matryoshka o = parser.parse(xml);
 
 		assertEquals("title", o.get("Nested3TestObj/title").value());
 		assertEquals("111", o.get("Nested3TestObj/simpleTestObj1/element1").value());
@@ -43,10 +43,10 @@ public class IncompleteTest {
 	@Test
 	public void xmlIncompleteListTest() throws Exception {
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/incompleteListXMLTest.xml"), "UTF-8");
-		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/incompleteListXMLTest.xml"), "UTF-8");
+		WoodStoxMatryoshkaParserImpl parser = new WoodStoxMatryoshkaParserImpl(xmlInputFactory);
 
-		Matrioshka o = parser.parse(xml);
+		Matryoshka o = parser.parse(xml);
 
 		assertEquals("111", o.get("ListTestObj/list").asList().get(0).get("SimpleTestObj/element1").value());
 		assertTrue((Boolean) o.getMetadata("INCOMPLETE"));
@@ -55,10 +55,10 @@ public class IncompleteTest {
 	@Test
 	public void xmlIncompleteList2Test() throws Exception {
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/incompleteListXML2Test.xml"), "UTF-8");
-		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/incompleteListXML2Test.xml"), "UTF-8");
+		WoodStoxMatryoshkaParserImpl parser = new WoodStoxMatryoshkaParserImpl(xmlInputFactory);
 
-		Matrioshka o = parser.parse(xml);
+		Matryoshka o = parser.parse(xml);
 
 		assertEquals("lolo", o.get("Nested6TestObj/title").value());
 		assertEquals(2, o.get("Nested6TestObj/list").asList().size());

@@ -1,6 +1,6 @@
-package cat.altimiras.xml.parsed;
+package cat.altimiras.xml.matryoshka;
 
-import cat.altimiras.matrioshka.Matrioshka;
+import cat.altimiras.matryoshka.Matryoshka;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.stax2.XMLInputFactory2;
 import org.junit.Test;
@@ -17,10 +17,10 @@ public class SelfClosedTest {
 	public void xmlSelfClosedTest() throws Exception {
 
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/selfClosedTest.xml"), "UTF-8");
-		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/selfClosedTest.xml"), "UTF-8");
+		WoodStoxMatryoshkaParserImpl parser = new WoodStoxMatryoshkaParserImpl(xmlInputFactory);
 
-		Matrioshka o = parser.parse(xml);
+		Matryoshka o = parser.parse(xml);
 
 		assertEquals("title", o.get("/Nested2TestObj/title").value());
 		assertEquals("111", o.get("/Nested2TestObj/simpleTestObj1/element1").value());

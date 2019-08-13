@@ -1,7 +1,9 @@
 package cat.altimiras.xml.exceptions;
 
 
-public class InvalidXMLFormatException extends Exception {
+import java.io.IOException;
+
+public class InvalidXMLFormatException extends IOException {
 	public InvalidXMLFormatException(String msg) {
 		super(msg);
 	}

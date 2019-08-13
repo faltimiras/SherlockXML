@@ -1,7 +1,7 @@
 package cat.altimiras.xml.obj;
 
 
-import cat.altimiras.xml.XMLParser;
+import cat.altimiras.Parser;
 import cat.altimiras.xml.pojo.NestedAnnotationTestObj;
 import cat.altimiras.xml.pojo.SimpleAnnotationTestObj;
 import org.apache.commons.io.IOUtils;
@@ -22,8 +22,8 @@ public class AnnotationsTest {
 
 		ClassIntrospector ci = new ClassIntrospector(SimpleAnnotationTestObj.class);
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/simpleAnnotationTest.xml"), "UTF-8");
-		XMLParser<SimpleAnnotationTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, SimpleAnnotationTestObj.class, ci);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/simpleAnnotationTest.xml"), "UTF-8");
+		Parser<SimpleAnnotationTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, SimpleAnnotationTestObj.class, ci);
 
 		SimpleAnnotationTestObj o = parser.parse(xml);
 
@@ -37,8 +37,8 @@ public class AnnotationsTest {
 
 		ClassIntrospector ci = new ClassIntrospector(NestedAnnotationTestObj.class);
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nestedAnnotationTest.xml"), "UTF-8");
-		XMLParser<NestedAnnotationTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, NestedAnnotationTestObj.class, ci);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/nestedAnnotationTest.xml"), "UTF-8");
+		Parser<NestedAnnotationTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, NestedAnnotationTestObj.class, ci);
 
 		NestedAnnotationTestObj o = parser.parse(xml);
 

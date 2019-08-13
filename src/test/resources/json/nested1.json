@@ -1,0 +1,15 @@
+{
+  "key" : "value",
+  "nested1" : {
+     "n1" : "lolo",
+     "n2" : 55
+  },
+  "key2" : "123",
+  "nested2" : {
+     "n1" : "lolo",
+     "n2" : 66
+  },
+  "nested3" : {
+    "a" : "b"
+  }
+}

@@ -1,8 +1,8 @@
 package cat.altimiras.xml.obj;
 
-import cat.altimiras.xml.TagListener;
+import cat.altimiras.Parser;
+import cat.altimiras.TagListener;
 import cat.altimiras.xml.XMLElement;
-import cat.altimiras.xml.XMLParser;
 import cat.altimiras.xml.exceptions.InvalidXMLFormatException;
 import org.codehaus.stax2.XMLInputFactory2;
 import org.codehaus.stax2.XMLStreamReader2;
@@ -18,42 +18,28 @@ import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class WoodStoxObjParserImpl<T extends XMLElement> implements XMLParser<T> {
+public class WoodStoxObjParserImpl<T extends XMLElement> extends Parser<T> {
 
 	final private XMLInputFactory2 xmlInputFactory;
-
 	/**
-	 * Listeners for tags. Notified every time a tag is totally processed (on close </..> tag)
-	 */
-	private Map<String, TagListener> listeners = null;
-
-	/**
-	 * Java object that is building from xml parsed.
+	 * Java object that is building from xml matryoshka.
 	 */
 	final private T obj;
-
 	/**
 	 * Contains field definitions and instances to populate fast objects
 	 */
 	final private ClassIntrospector<T> classIntrospector;
-
-	private Context currentContext;
-
 	/**
 	 * Stack with tags opened and still not closed
 	 */
 	final private ArrayDeque<Context> contexts = new ArrayDeque<>();
-
-	private boolean simpleElement = false; //inside simple element: int, float ...
-
-	private Field currentField = null;
-
 	final private int objHashCode;
 
+	private Context currentContext;
+	private boolean simpleElement = false; //inside simple element: int, float ...
+	private Field currentField = null;
 	private boolean stop = false;
 
 	private boolean ignore = false;
@@ -96,8 +82,7 @@ public class WoodStoxObjParserImpl<T extends XMLElement> implements XMLParser<T>
 
 		try {
 			xmlStreamReader = (XMLStreamReader2) xmlInputFactory.createXMLStreamReader(xmlInputStream);
-		}
-		catch (XMLStreamException e) {
+		} catch (XMLStreamException e) {
 			throw new CharacterCodingException();
 		}
 
@@ -119,27 +104,23 @@ public class WoodStoxObjParserImpl<T extends XMLElement> implements XMLParser<T>
 						break;
 				}
 			}
-		}
-		catch (XMLStreamException e) {
+		} catch (XMLStreamException e) {
 			flushIncomplete();
-		}
-		catch (NullPointerException e) {
+		} catch (NullPointerException e) {
 			throw e;
-		}
-		catch (RuntimeException | IllegalAccessException | ClassNotFoundException e) {
+		} catch (RuntimeException | IllegalAccessException | ClassNotFoundException e) {
 			throw new InvalidXMLFormatException("Impossible to parse XML. Msg:" + e.getMessage());
-		}
-		finally {
+		} finally {
 			try {
 				xmlInputStream.close();
 				xmlStreamReader.close();
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				//nothing to do
 			}
 		}
 		return obj;
 	}
+
 
 	private void onCloseElement(XMLStreamReader2 xmlStreamReader) {
 		String currentTagName = xmlStreamReader.getName().getLocalPart();
@@ -147,8 +128,7 @@ public class WoodStoxObjParserImpl<T extends XMLElement> implements XMLParser<T>
 		//if it is a simple element or a list of simple elements just mark the end
 		if (simpleElement) {
 			simpleElement = false;
-		}
-		else {
+		} else {
 
 			if (currentContext instanceof WoodStoxObjParserImpl.ListContext) {
 
@@ -156,8 +136,7 @@ public class WoodStoxObjParserImpl<T extends XMLElement> implements XMLParser<T>
 					//when it is a list of primitives and  current tag(the closing one) is not the closing list tag, just ignore current closing tag.
 					if (((ListContext) currentContext).isPrimitive) {
 						return;
-					}
-					else {
+					} else {
 						//when it is a list of obj. Current tag (closing one) is not the closing list tag, so obj context must be removed.
 						if (!((ListContext) currentContext).hasWrapper && !ignore) {
 							apply(currentTagName);
@@ -188,8 +167,7 @@ public class WoodStoxObjParserImpl<T extends XMLElement> implements XMLParser<T>
 		if (simpleElement) {
 			setToObj(currentContext.object, currentField, content);
 			stop = notify(currentField.getName(), content);
-		}
-		else if (currentContext instanceof WoodStoxObjParserImpl.ListContext) {
+		} else if (currentContext instanceof WoodStoxObjParserImpl.ListContext) {
 			if (((ListContext) currentContext).isPrimitive && !content.trim().isEmpty()) {
 				setToObj(currentContext.object, currentField, convertTo(((ListContext) currentContext).clazz, content));
 			}
@@ -246,8 +224,7 @@ public class WoodStoxObjParserImpl<T extends XMLElement> implements XMLParser<T>
 		if (currentField.get(o) == null) {
 			currentList = new ArrayList<>();
 			currentField.set(o, currentList);
-		}
-		else {
+		} else {
 			currentList = (List) currentField.get(o);
 		}
 
@@ -288,8 +265,7 @@ public class WoodStoxObjParserImpl<T extends XMLElement> implements XMLParser<T>
 						Field nextField = classIntrospector.getField(parent.object.getClass(), currentContext.tag);
 						if (nextField != null) {
 							setToObj(parent.object, nextField, currentContext.object);
-						}
-						else {
+						} else {
 							setToObj(parent.object, f, currentContext.object);
 						}
 
@@ -311,8 +287,7 @@ public class WoodStoxObjParserImpl<T extends XMLElement> implements XMLParser<T>
 			}
 
 			o = classIntrospector.getInstance(((ListContext) currentContext).clazz);
-		}
-		else {
+		} else {
 			o = obj;
 		}
 
@@ -343,14 +318,6 @@ public class WoodStoxObjParserImpl<T extends XMLElement> implements XMLParser<T>
 		}
 	}
 
-	@Override
-	public void register(String tag, TagListener listener) {
-		if (this.listeners == null) {
-			this.listeners = new HashMap<>();
-		}
-		listeners.put(tag, listener);
-	}
-
 	/**
 	 * Notify to a TagListener(if registered) when tag is closed
 	 *
@@ -378,14 +345,12 @@ public class WoodStoxObjParserImpl<T extends XMLElement> implements XMLParser<T>
 		try {
 			if (obj instanceof List) {
 				((List) obj).add(value);
-			}
-			else {
+			} else {
 				if (field != null) {
 					field.set(obj, convertTo(field.getType(), value));
 				}
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			//ignore. If not exist, we just ignore it.
 		}
 	}
@@ -394,27 +359,22 @@ public class WoodStoxObjParserImpl<T extends XMLElement> implements XMLParser<T>
 
 		if (t.isAssignableFrom(String.class)) {
 			return value;
-		}
-		else if (t.isAssignableFrom(Integer.TYPE) || t.isAssignableFrom(Integer.class)) {
+		} else if (t.isAssignableFrom(Integer.TYPE) || t.isAssignableFrom(Integer.class)) {
 			return Integer.valueOf((String) value);
-		}
-		else if (t.isAssignableFrom(Long.TYPE) || t.isAssignableFrom(Long.class)) {
+		} else if (t.isAssignableFrom(Long.TYPE) || t.isAssignableFrom(Long.class)) {
 			return Long.valueOf((String) value);
-		}
-		else if (t.isAssignableFrom(Double.TYPE) || t.isAssignableFrom(Double.class)) {
+		} else if (t.isAssignableFrom(Double.TYPE) || t.isAssignableFrom(Double.class)) {
 			return Double.valueOf((String) value);
-		}
-		else if (t.isAssignableFrom(Float.TYPE) || t.isAssignableFrom(Float.class)) {
+		} else if (t.isAssignableFrom(Float.TYPE) || t.isAssignableFrom(Float.class)) {
 			return Float.valueOf((String) value);
-		}
-		else if (t.isAssignableFrom(Boolean.TYPE) || t.isAssignableFrom(Boolean.class)) {
+		} else if (t.isAssignableFrom(Boolean.TYPE) || t.isAssignableFrom(Boolean.class)) {
 			return Boolean.valueOf((String) value);
 		}
 		return value;
 	}
 
 	/**
-	 * Flush to base object parsed is on the context but it could not be flushed due to XML is not correct and some tags hasn't been closed
+	 * Flush to base object matryoshka is on the context but it could not be flushed due to XML is not correct and some tags hasn't been closed
 	 */
 	private void flushIncomplete() throws CharacterCodingException {
 

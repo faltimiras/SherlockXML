@@ -5,7 +5,7 @@ public abstract class XMLElement implements Cloneable {
 	private transient boolean incomplete = false;
 
 	/**
-	 * Object parsed has not been totally parsed due to xml is not totally completed.
+	 * Object matryoshka has not been totally matryoshka due to xml is not totally completed.
 	 *
 	 * @return
 	 */
@@ -13,12 +13,12 @@ public abstract class XMLElement implements Cloneable {
 		return incomplete;
 	}
 
-	public void markAsIncomplete() {
-		this.incomplete = true;
-	}
-
 	public void setIncomplete(boolean incomplete) {
 		this.incomplete = incomplete;
+	}
+
+	public void markAsIncomplete() {
+		this.incomplete = true;
 	}
 
 	@Override

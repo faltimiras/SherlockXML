@@ -1,7 +1,8 @@
 package cat.altimiras.xml;
 
+import cat.altimiras.Parser;
+import cat.altimiras.xml.matryoshka.WoodStoxMatryoshkaParserImpl;
 import cat.altimiras.xml.obj.WoodStoxObjParserImpl;
-import cat.altimiras.xml.parsed.WoodStoxMatrioshkaParserImpl;
 import cat.altimiras.xml.pojo.Nested2TestObj;
 import cat.altimiras.xml.pojo.SimpleTestObj;
 import org.apache.commons.io.IOUtils;
@@ -43,7 +44,7 @@ public class XMLFactoryTest {
 	@Test
 	public void initFactory() throws Exception {
 		XMLFactory.init(SimpleTestObj.class);
-		XMLParser p = XMLFactory.getParser(SimpleTestObj.class);
+		Parser p = XMLFactory.getParser(SimpleTestObj.class);
 
 		assertNotNull(p);
 	}
@@ -57,14 +58,14 @@ public class XMLFactoryTest {
 	@Test
 	public void objParseractory() throws Exception {
 		XMLFactory.init(SimpleTestObj.class);
-		XMLParser parser = XMLFactory.getParser(SimpleTestObj.class);
+		Parser parser = XMLFactory.getParser(SimpleTestObj.class);
 		assertTrue(parser instanceof WoodStoxObjParserImpl);
 	}
 
 	@Test
 	public void parsedParseractory() throws Exception {
-		XMLParser parser = XMLFactory.getParser();
-		assertTrue(parser instanceof WoodStoxMatrioshkaParserImpl);
+		Parser parser = XMLFactory.getParser();
+		assertTrue(parser instanceof WoodStoxMatryoshkaParserImpl);
 	}
 
 	@Test
@@ -73,9 +74,9 @@ public class XMLFactoryTest {
 		XMLFactory.configure(XMLFactory.MODE.PERFORMANCE, XMLFactory.MODE.CDATA_SUPPORT);
 
 
-		XMLParser<SimpleTestObj> parser = XMLFactory.getParser(SimpleTestObj.class);
+		Parser<SimpleTestObj> parser = XMLFactory.getParser(SimpleTestObj.class);
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/CDATATest.xml"), "UTF-8");
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/CDATATest.xml"), "UTF-8");
 
 		SimpleTestObj o = parser.parse(xml);
 

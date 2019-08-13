@@ -1,7 +1,7 @@
-package cat.altimiras.xml.parsed;
+package cat.altimiras.xml.matryoshka;
 
 
-import cat.altimiras.matrioshka.Matrioshka;
+import cat.altimiras.matryoshka.Matryoshka;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.stax2.XMLInputFactory2;
 import org.junit.Test;
@@ -19,10 +19,10 @@ public class CDATATest {
 		xmlInputFactory.setProperty(XMLInputFactory.IS_COALESCING, true);
 
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/CDATATest.xml"), "UTF-8");
-		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/CDATATest.xml"), "UTF-8");
+		WoodStoxMatryoshkaParserImpl parser = new WoodStoxMatryoshkaParserImpl(xmlInputFactory);
 
-		Matrioshka o = parser.parse(xml);
+		Matryoshka o = parser.parse(xml);
 
 		assertEquals("lolo <lo>A\n         </lo> lolo", o.get("/SimpleTestObj/element1").value());
 		assertEquals("222", o.get("/SimpleTestObj/element2").value());

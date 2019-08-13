@@ -1,6 +1,6 @@
 package cat.altimiras.xml.obj;
 
-import cat.altimiras.xml.XMLParser;
+import cat.altimiras.Parser;
 import cat.altimiras.xml.pojo.SimpleTestObj;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.stax2.XMLInputFactory2;
@@ -21,8 +21,8 @@ public class CharsetTest {
 
 		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/utf16Test.xml"), "UTF-16");
-		XMLParser<SimpleTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, SimpleTestObj.class, ci);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/utf16Test.xml"), "UTF-16");
+		Parser<SimpleTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, SimpleTestObj.class, ci);
 
 		SimpleTestObj o = parser.parse(xml, Charset.forName("UTF-16"));
 
@@ -35,8 +35,8 @@ public class CharsetTest {
 
 		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/utf16Test.xml"), "UTF-16");
-		XMLParser<SimpleTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, SimpleTestObj.class, ci);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/utf16Test.xml"), "UTF-16");
+		Parser<SimpleTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, SimpleTestObj.class, ci);
 
 		parser.parse(xml);
 

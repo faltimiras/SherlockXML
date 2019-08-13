@@ -1,6 +1,6 @@
 package cat.altimiras.xml.obj;
 
-import cat.altimiras.xml.XMLParser;
+import cat.altimiras.Parser;
 import cat.altimiras.xml.pojo.Nested4TestObj;
 import cat.altimiras.xml.pojo.SimpleTestObj;
 import org.apache.commons.io.IOUtils;
@@ -20,8 +20,8 @@ public class IgnoreTagsTest {
 
 		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/ignoreTagsTest.xml"), "UTF-8");
-		XMLParser<SimpleTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, SimpleTestObj.class, ci);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/ignoreTagsTest.xml"), "UTF-8");
+		Parser<SimpleTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, SimpleTestObj.class, ci);
 
 		SimpleTestObj o = parser.parse(xml);
 
@@ -39,8 +39,8 @@ public class IgnoreTagsTest {
 
 		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/ignoreTags2Test.xml"), "UTF-8");
-		XMLParser<SimpleTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, SimpleTestObj.class, ci);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/ignoreTags2Test.xml"), "UTF-8");
+		Parser<SimpleTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, SimpleTestObj.class, ci);
 
 		SimpleTestObj o = parser.parse(xml);
 
@@ -53,8 +53,8 @@ public class IgnoreTagsTest {
 
 		ClassIntrospector ci = new ClassIntrospector(Nested4TestObj.class);
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/ignoreSelfClosedTagTest.xml"), "UTF-8");
-		XMLParser<Nested4TestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, Nested4TestObj.class, ci);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/ignoreSelfClosedTagTest.xml"), "UTF-8");
+		Parser<Nested4TestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, Nested4TestObj.class, ci);
 
 		Nested4TestObj o = parser.parse(xml);
 
@@ -68,8 +68,8 @@ public class IgnoreTagsTest {
 
 		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/ignoreBeginningTest.xml"), "UTF-8");
-		XMLParser<SimpleTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, SimpleTestObj.class, ci);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/ignoreBeginningTest.xml"), "UTF-8");
+		Parser<SimpleTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, SimpleTestObj.class, ci);
 
 		SimpleTestObj o = parser.parse(xml);
 

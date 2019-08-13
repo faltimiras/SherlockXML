@@ -1,6 +1,6 @@
 package cat.altimiras.xml.obj;
 
-import cat.altimiras.xml.XMLParser;
+import cat.altimiras.Parser;
 import cat.altimiras.xml.pojo.Nested2TestObj;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.stax2.XMLInputFactory2;
@@ -20,8 +20,8 @@ public class SelfClosedTest {
 
 		ClassIntrospector ci = new ClassIntrospector(Nested2TestObj.class);
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/selfClosedTest.xml"), "UTF-8");
-		XMLParser<Nested2TestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, Nested2TestObj.class, ci);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/selfClosedTest.xml"), "UTF-8");
+		Parser<Nested2TestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, Nested2TestObj.class, ci);
 
 		Nested2TestObj o = parser.parse(xml);
 

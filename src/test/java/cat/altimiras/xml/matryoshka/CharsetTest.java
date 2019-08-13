@@ -1,6 +1,6 @@
-package cat.altimiras.xml.parsed;
+package cat.altimiras.xml.matryoshka;
 
-import cat.altimiras.matrioshka.Matrioshka;
+import cat.altimiras.matryoshka.Matryoshka;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.stax2.XMLInputFactory2;
 import org.junit.Test;
@@ -18,10 +18,10 @@ public class CharsetTest {
 	@Test
 	public void xmlSimpleUtf16Test() throws Exception {
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/utf16Test.xml"), "UTF-16");
-		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/utf16Test.xml"), "UTF-16");
+		WoodStoxMatryoshkaParserImpl parser = new WoodStoxMatryoshkaParserImpl(xmlInputFactory);
 
-		Matrioshka o = parser.parse(xml, Charset.forName("UTF-16"));
+		Matryoshka o = parser.parse(xml, Charset.forName("UTF-16"));
 
 		assertEquals("111", o.get("SimpleTestObj", "element1").value());
 		assertEquals("222", o.get("SimpleTestObj", "element2").value());
@@ -30,8 +30,8 @@ public class CharsetTest {
 	@Test(expected = CharacterCodingException.class)
 	public void xmlSimpleUtf16ErrorTest() throws Exception {
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/utf16Test.xml"), "UTF-16");
-		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/utf16Test.xml"), "UTF-16");
+		WoodStoxMatryoshkaParserImpl parser = new WoodStoxMatryoshkaParserImpl(xmlInputFactory);
 
 		parser.parse(xml);
 

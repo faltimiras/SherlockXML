@@ -1,6 +1,6 @@
 package cat.altimiras.xml.obj;
 
-import cat.altimiras.xml.XMLParser;
+import cat.altimiras.Parser;
 import cat.altimiras.xml.pojo.ListTestObj;
 import cat.altimiras.xml.pojo.Nested3TestObj;
 import cat.altimiras.xml.pojo.Nested6TestObj;
@@ -22,8 +22,8 @@ public class IncompleteTest {
 
 		ClassIntrospector ci = new ClassIntrospector(Nested3TestObj.class);
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/incompleteXMLTest.xml"), "UTF-8");
-		XMLParser<Nested3TestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, Nested3TestObj.class, ci);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/incompleteXMLTest.xml"), "UTF-8");
+		Parser<Nested3TestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, Nested3TestObj.class, ci);
 
 		Nested3TestObj o = parser.parse(xml);
 
@@ -35,8 +35,8 @@ public class IncompleteTest {
 
 		ClassIntrospector ci = new ClassIntrospector(Nested3TestObj.class);
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/incompleteXML2Test.xml"), "UTF-8");
-		XMLParser<Nested3TestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, Nested3TestObj.class, ci);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/incompleteXML2Test.xml"), "UTF-8");
+		Parser<Nested3TestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, Nested3TestObj.class, ci);
 
 		Nested3TestObj o = parser.parse(xml);
 
@@ -50,8 +50,8 @@ public class IncompleteTest {
 
 		ClassIntrospector ci = new ClassIntrospector(ListTestObj.class);
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/incompleteListXMLTest.xml"), "UTF-8");
-		XMLParser<ListTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, ListTestObj.class, ci);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/incompleteListXMLTest.xml"), "UTF-8");
+		Parser<ListTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, ListTestObj.class, ci);
 
 		ListTestObj o = parser.parse(xml);
 
@@ -64,8 +64,8 @@ public class IncompleteTest {
 
 		ClassIntrospector ci = new ClassIntrospector(Nested6TestObj.class);
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/incompleteListXML2Test.xml"), "UTF-8");
-		XMLParser<Nested6TestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, Nested6TestObj.class, ci);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/incompleteListXML2Test.xml"), "UTF-8");
+		Parser<Nested6TestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, Nested6TestObj.class, ci);
 
 		Nested6TestObj o = parser.parse(xml);
 

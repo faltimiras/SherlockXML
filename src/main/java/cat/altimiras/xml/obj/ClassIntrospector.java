@@ -24,8 +24,30 @@ public class ClassIntrospector<T> {
 		introspect(clazz);
 	}
 
+	public static boolean isPrimitive(Class type) {
+		return type.isAssignableFrom(String.class)
+				|| type.isAssignableFrom(Integer.class)
+				|| type.isAssignableFrom(Integer.TYPE)
+				|| type.isAssignableFrom(Long.class)
+				|| type.isAssignableFrom(Long.TYPE)
+				|| type.isAssignableFrom(Double.class)
+				|| type.isAssignableFrom(Double.TYPE)
+				|| type.isAssignableFrom(Float.class)
+				|| type.isAssignableFrom(Float.TYPE)
+				|| type.isAssignableFrom(Boolean.class)
+				|| type.isAssignableFrom(Boolean.TYPE);
+	}
+
+	public static boolean isList(Class type) {
+		return type.isAssignableFrom(ArrayList.class);
+	}
+
 	public Field getField(Class clazz, String fieldName) {
 		return fields.get(mergeHashCodes(fieldName, clazz));
+	}
+
+	private long mergeHashCodes(Object a, Object b) {
+		return (((long) a.hashCode()) << 32) | (b.hashCode() & 0xffffffffL);
 	}
 
 	public boolean hasField(Class clazz, String fieldName) {
@@ -45,8 +67,7 @@ public class ClassIntrospector<T> {
 			if (base != null) {
 				return (XMLElement) base.clone();
 			}
-		}
-		catch (CloneNotSupportedException e) {
+		} catch (CloneNotSupportedException e) {
 			//should never happen. Validation done on construction.
 		}
 		return null;
@@ -65,8 +86,7 @@ public class ClassIntrospector<T> {
 			if (base != null) {
 				return (XMLElement) base.clone();
 			}
-		}
-		catch (CloneNotSupportedException e) {
+		} catch (CloneNotSupportedException e) {
 			//should never happen. Validation done on construction.
 		}
 		return null;
@@ -77,8 +97,7 @@ public class ClassIntrospector<T> {
 		int hash;
 		if (root == null) {
 			hash = clazz.getSimpleName().hashCode();
-		}
-		else {
+		} else {
 			hash = root.name().hashCode();
 		}
 		return hash;
@@ -92,8 +111,7 @@ public class ClassIntrospector<T> {
 
 		if (instancesByClass.containsKey(clazz.hashCode())) {
 			return;
-		}
-		else {
+		} else {
 
 			Integer hash = getClassHashCode(clazz);
 			XMLElement element = (XMLElement) Class.forName(clazz.getName()).newInstance();
@@ -107,8 +125,7 @@ public class ClassIntrospector<T> {
 				String fieldName;
 				if (fieldAnnotation == null) {
 					fieldName = field.getName();
-				}
-				else {
+				} else {
 					fieldName = fieldAnnotation.name();
 				}
 
@@ -118,41 +135,17 @@ public class ClassIntrospector<T> {
 				//check primitives or simple objects
 				if (isPrimitive(field.getType())) {
 					fields.put(mergeHashCodes(fieldName, clazz), field);
-				}
-				else if (field.getType().isAssignableFrom(List.class)) {
+				} else if (field.getType().isAssignableFrom(List.class)) {
 					fields.put(mergeHashCodes(fieldName, clazz), field);
 					if (!isPrimitive((Class) ((ParameterizedTypeImpl) field.getAnnotatedType().getType()).getActualTypeArguments()[0])) {
 						introspect((Class) ((ParameterizedTypeImpl) field.getAnnotatedType().getType()).getActualTypeArguments()[0]);
 					}
-				}
-				else {
+				} else {
 					//recursive introspection
 					fields.put(mergeHashCodes(fieldName, clazz), field);
 					introspect(field.getType());
 				}
 			}
 		}
-	}
-
-	private long mergeHashCodes(Object a, Object b) {
-		return (((long) a.hashCode()) << 32) | (b.hashCode() & 0xffffffffL);
-	}
-
-	public static boolean isPrimitive(Class type) {
-		return type.isAssignableFrom(String.class)
-				|| type.isAssignableFrom(Integer.class)
-				|| type.isAssignableFrom(Integer.TYPE)
-				|| type.isAssignableFrom(Long.class)
-				|| type.isAssignableFrom(Long.TYPE)
-				|| type.isAssignableFrom(Double.class)
-				|| type.isAssignableFrom(Double.TYPE)
-				|| type.isAssignableFrom(Float.class)
-				|| type.isAssignableFrom(Float.TYPE)
-				|| type.isAssignableFrom(Boolean.class)
-				|| type.isAssignableFrom(Boolean.TYPE);
-	}
-
-	public static boolean isList(Class type) {
-		return type.isAssignableFrom(ArrayList.class);
 	}
 }

@@ -1,7 +1,7 @@
-package cat.altimiras.xml.parsed;
+package cat.altimiras.xml.matryoshka;
 
-import cat.altimiras.matrioshka.Matrioshka;
-import cat.altimiras.xml.TagListener;
+import cat.altimiras.TagListener;
+import cat.altimiras.matryoshka.Matryoshka;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.stax2.XMLInputFactory2;
 import org.junit.Test;
@@ -25,8 +25,8 @@ public class TagListenerTest {
 	@Test
 	public void listenerStringTest() throws Exception {
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/simpleTest.xml"), "UTF-8");
-		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/simpleTest.xml"), "UTF-8");
+		WoodStoxMatryoshkaParserImpl parser = new WoodStoxMatryoshkaParserImpl(xmlInputFactory);
 
 		TagListener stringListener = mock(TagListener.class);
 		when(stringListener.notify("element1", "111")).thenReturn(false);
@@ -41,8 +41,8 @@ public class TagListenerTest {
 	@Test
 	public void listenerObjectTest() throws Exception {
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nested2Test.xml"), "UTF-8");
-		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/nested2Test.xml"), "UTF-8");
+		WoodStoxMatryoshkaParserImpl parser = new WoodStoxMatryoshkaParserImpl(xmlInputFactory);
 
 		TagListener objListener = mock(TagListener.class);
 		when(objListener.notify(eq("simpleTestObj1"), any())).thenReturn(false);
@@ -57,8 +57,8 @@ public class TagListenerTest {
 	@Test
 	public void listenerNotPresentTest() throws Exception {
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nested2Test.xml"), "UTF-8");
-		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/nested2Test.xml"), "UTF-8");
+		WoodStoxMatryoshkaParserImpl parser = new WoodStoxMatryoshkaParserImpl(xmlInputFactory);
 
 		TagListener objListener = mock(TagListener.class);
 		when(objListener.notify(eq("tagNotFound"), any())).thenReturn(false);
@@ -73,8 +73,8 @@ public class TagListenerTest {
 	@Test
 	public void listenerStopTest() throws Exception {
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nested2Test.xml"), "UTF-8");
-		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/nested2Test.xml"), "UTF-8");
+		WoodStoxMatryoshkaParserImpl parser = new WoodStoxMatryoshkaParserImpl(xmlInputFactory);
 
 		TagListener objListener = mock(TagListener.class);
 		when(objListener.notify(eq("simpleTestObj1"), any())).thenReturn(true);
@@ -82,7 +82,7 @@ public class TagListenerTest {
 		//register listener
 		parser.register("simpleTestObj1", objListener);
 
-		Matrioshka o = parser.parse(xml);
+		Matryoshka o = parser.parse(xml);
 
 		verify(objListener, times(1)).notify(eq("simpleTestObj1"), any());
 		assertNull(o.get("Nested2TestObj/simpleTestObj1/title").value());

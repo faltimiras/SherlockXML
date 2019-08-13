@@ -1,10 +1,10 @@
 package cat.altimiras.xml.performance;
 
 
-import cat.altimiras.xml.XMLParser;
+import cat.altimiras.Parser;
+import cat.altimiras.xml.matryoshka.WoodStoxMatryoshkaParserImpl;
 import cat.altimiras.xml.obj.ClassIntrospector;
 import cat.altimiras.xml.obj.WoodStoxObjParserImpl;
-import cat.altimiras.xml.parsed.WoodStoxMatrioshkaParserImpl;
 import cat.altimiras.xml.pojo.ListTestObj;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.stax2.XMLInputFactory2;
@@ -22,42 +22,6 @@ public class PseudoPerformanceComparator {
 
 	//THIS IS NOT A REAL PERFORMANCE TEST!!
 	@Test
-	public void parseBigList() throws Exception {
-
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/performance/bigListTest.xml"), "UTF-8");
-
-		ClassIntrospector c = new ClassIntrospector(ListTestObj.class);
-
-		long ini = System.currentTimeMillis();
-		XMLParser<ListTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, ListTestObj.class, c);
-		for (int i = 0; i < LOOPS; i++) {
-			parser.parse(xml);
-		}
-		long end = System.currentTimeMillis();
-
-		System.out.println("Diff:" + (end - ini));
-
-	}
-
-	//THIS IS NOT A REAL PERFORMANCE TEST!!
-	@Test
-	public void parseParsedBigList() throws Exception {
-
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/performance/bigListTest.xml"), "UTF-8");
-
-		long ini = System.currentTimeMillis();
-		WoodStoxMatrioshkaParserImpl parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
-		for (int i = 0; i < LOOPS; i++) {
-			parser.parse(xml);
-		}
-		long end = System.currentTimeMillis();
-
-		System.out.println("Diff:" + (end - ini));
-
-	}
-
-	//THIS IS NOT A REAL PERFORMANCE TEST!!
-	@Test
 	public void parseBigListIgnore() throws Exception {
 
 		byte[] xml = IOUtils.toString(this.getClass().getResourceAsStream("/performance/bigListIgnoreTest.xml"), "UTF-8").getBytes();
@@ -65,7 +29,7 @@ public class PseudoPerformanceComparator {
 		ClassIntrospector c = new ClassIntrospector(ListTestObj.class);
 
 		long ini = System.currentTimeMillis();
-		XMLParser<ListTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, ListTestObj.class, c);
+		Parser<ListTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, ListTestObj.class, c);
 		for (int i = 0; i < LOOPS; i++) {
 			parser.parse(xml);
 		}
@@ -83,7 +47,7 @@ public class PseudoPerformanceComparator {
 		ClassIntrospector c = new ClassIntrospector(ListTestObj.class);
 
 		long ini = System.currentTimeMillis();
-		XMLParser<ListTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, ListTestObj.class, c);
+		Parser<ListTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, ListTestObj.class, c);
 		for (int i = 0; i < LOOPS; i++) {
 			parser.parse(xml);
 		}
@@ -110,6 +74,25 @@ public class PseudoPerformanceComparator {
 
 	//THIS IS NOT A REAL PERFORMANCE TEST!!
 	@Test
+	public void parseBigList() throws Exception {
+
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/performance/bigListTest.xml"), "UTF-8");
+
+		ClassIntrospector c = new ClassIntrospector(ListTestObj.class);
+
+		long ini = System.currentTimeMillis();
+		Parser<ListTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, ListTestObj.class, c);
+		for (int i = 0; i < LOOPS; i++) {
+			parser.parse(xml);
+		}
+		long end = System.currentTimeMillis();
+
+		System.out.println("Diff:" + (end - ini));
+
+	}
+
+	//THIS IS NOT A REAL PERFORMANCE TEST!!
+	@Test
 	public void tenTimesParsed() throws Exception {
 
 		xmlInputFactory.setProperty(XMLInputFactory.IS_COALESCING, false);
@@ -122,5 +105,22 @@ public class PseudoPerformanceComparator {
 		for (int i = 0; i < 10; i++) {
 			parseParsedBigList();
 		}
+	}
+
+	//THIS IS NOT A REAL PERFORMANCE TEST!!
+	@Test
+	public void parseParsedBigList() throws Exception {
+
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/performance/bigListTest.xml"), "UTF-8");
+
+		long ini = System.currentTimeMillis();
+		WoodStoxMatryoshkaParserImpl parser = new WoodStoxMatryoshkaParserImpl(xmlInputFactory);
+		for (int i = 0; i < LOOPS; i++) {
+			parser.parse(xml);
+		}
+		long end = System.currentTimeMillis();
+
+		System.out.println("Diff:" + (end - ini));
+
 	}
 }

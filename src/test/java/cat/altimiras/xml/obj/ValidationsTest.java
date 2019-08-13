@@ -1,6 +1,6 @@
 package cat.altimiras.xml.obj;
 
-import cat.altimiras.xml.XMLParser;
+import cat.altimiras.Parser;
 import cat.altimiras.xml.pojo.SimpleTestObj;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.stax2.XMLInputFactory2;
@@ -27,8 +27,8 @@ public class ValidationsTest {
 
 		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/withDTDNoExist.xml"), "UTF-8");
-		XMLParser<SimpleTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, SimpleTestObj.class, ci);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/withDTDNoExist.xml"), "UTF-8");
+		Parser<SimpleTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, SimpleTestObj.class, ci);
 
 		SimpleTestObj o = parser.parse(xml);
 
@@ -50,8 +50,8 @@ public class ValidationsTest {
 
 		ClassIntrospector ci = new ClassIntrospector(SimpleTestObj.class);
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/withDTDNoExist.xml"), "UTF-8");
-		XMLParser<SimpleTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, SimpleTestObj.class, ci);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/withDTDNoExist.xml"), "UTF-8");
+		Parser<SimpleTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, SimpleTestObj.class, ci);
 
 		SimpleTestObj o = parser.parse(xml);
 

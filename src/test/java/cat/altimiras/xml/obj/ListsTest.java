@@ -1,6 +1,6 @@
 package cat.altimiras.xml.obj;
 
-import cat.altimiras.xml.XMLParser;
+import cat.altimiras.Parser;
 import cat.altimiras.xml.pojo.ListPrimitivesObj;
 import cat.altimiras.xml.pojo.ListTestObj;
 import cat.altimiras.xml.pojo.ListTestObj2;
@@ -30,8 +30,8 @@ public class ListsTest {
 
 		ClassIntrospector ci = new ClassIntrospector(ListTestObj.class);
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listTest.xml"), "UTF-8");
-		XMLParser<ListTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, ListTestObj.class, ci);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/listTest.xml"), "UTF-8");
+		Parser<ListTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, ListTestObj.class, ci);
 
 		ListTestObj o = parser.parse(xml);
 
@@ -45,8 +45,8 @@ public class ListsTest {
 
 		ClassIntrospector ci = new ClassIntrospector(ListTestObj.class);
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/list2Test.xml"), "UTF-8");
-		XMLParser<ListTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, ListTestObj.class, ci);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/list2Test.xml"), "UTF-8");
+		Parser<ListTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, ListTestObj.class, ci);
 
 		ListTestObj o = parser.parse(xml);
 
@@ -63,8 +63,8 @@ public class ListsTest {
 
 		ClassIntrospector ci = new ClassIntrospector(Nested4TestObj.class);
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listNestedTest.xml"), "UTF-8");
-		XMLParser<Nested4TestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, Nested4TestObj.class, ci);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/listNestedTest.xml"), "UTF-8");
+		Parser<Nested4TestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, Nested4TestObj.class, ci);
 
 		Nested4TestObj o = parser.parse(xml);
 
@@ -79,8 +79,8 @@ public class ListsTest {
 
 		ClassIntrospector ci = new ClassIntrospector(Nested5TestObj.class);
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listNestedselfClosedTest.xml"), "UTF-8");
-		XMLParser<Nested5TestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, Nested5TestObj.class, ci);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/listNestedselfClosedTest.xml"), "UTF-8");
+		Parser<Nested5TestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, Nested5TestObj.class, ci);
 
 		Nested5TestObj o = parser.parse(xml);
 
@@ -98,8 +98,8 @@ public class ListsTest {
 
 		ClassIntrospector ci = new ClassIntrospector(ListTestObj.class);
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listSelfClosedTest.xml"), "UTF-8");
-		XMLParser<ListTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, ListTestObj.class, ci);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/listSelfClosedTest.xml"), "UTF-8");
+		Parser<ListTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, ListTestObj.class, ci);
 
 		ListTestObj o = parser.parse(xml);
 
@@ -117,8 +117,8 @@ public class ListsTest {
 
 		ClassIntrospector ci = new ClassIntrospector(ListTestObj.class);
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/emptyListTest.xml"), "UTF-8");
-		XMLParser<ListTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, ListTestObj.class, ci);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/emptyListTest.xml"), "UTF-8");
+		Parser<ListTestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, ListTestObj.class, ci);
 
 		ListTestObj o = parser.parse(xml);
 
@@ -131,8 +131,8 @@ public class ListsTest {
 
 		ClassIntrospector ci = new ClassIntrospector(ListPrimitivesObj.class);
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listPrimitives.xml"), "UTF-8");
-		XMLParser<ListPrimitivesObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, ListPrimitivesObj.class, ci);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/listPrimitives.xml"), "UTF-8");
+		Parser<ListPrimitivesObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, ListPrimitivesObj.class, ci);
 
 		ListPrimitivesObj o = parser.parse(xml);
 
@@ -146,8 +146,8 @@ public class ListsTest {
 
 		ClassIntrospector ci = new ClassIntrospector(Nested7TestObj.class);
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listPrimitives2.xml"), "UTF-8");
-		XMLParser<Nested7TestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, Nested7TestObj.class, ci);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/listPrimitives2.xml"), "UTF-8");
+		Parser<Nested7TestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, Nested7TestObj.class, ci);
 
 		Nested7TestObj o = parser.parse(xml);
 
@@ -165,9 +165,9 @@ public class ListsTest {
 
 		ClassIntrospector ci = new ClassIntrospector(ListPrimitivesObj.class);
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listPrimitivesNoWrapper.xml"), "UTF-8");
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/listPrimitivesNoWrapper.xml"), "UTF-8");
 
-		XMLParser<ListPrimitivesObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, ListPrimitivesObj.class, ci);
+		Parser<ListPrimitivesObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, ListPrimitivesObj.class, ci);
 
 		ListPrimitivesObj o = parser.parse(xml);
 
@@ -181,8 +181,8 @@ public class ListsTest {
 
 		ClassIntrospector ci = new ClassIntrospector(Nested7TestObj.class);
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listPrimitives2NoWrapper.xml"), "UTF-8");
-		XMLParser<Nested7TestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, Nested7TestObj.class, ci);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/listPrimitives2NoWrapper.xml"), "UTF-8");
+		Parser<Nested7TestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, Nested7TestObj.class, ci);
 
 		Nested7TestObj o = parser.parse(xml);
 
@@ -200,8 +200,8 @@ public class ListsTest {
 
 		ClassIntrospector ci = new ClassIntrospector(ListTestObj2.class);
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listNoWrapperWithAttributes.xml"), "UTF-8");
-		XMLParser<ListTestObj2> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, ListTestObj2.class, ci);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/listNoWrapperWithAttributes.xml"), "UTF-8");
+		Parser<ListTestObj2> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, ListTestObj2.class, ci);
 
 		ListTestObj2 o = parser.parse(xml);
 
@@ -221,8 +221,8 @@ public class ListsTest {
 
 		ClassIntrospector ci = new ClassIntrospector(ListTestObj2.class);
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listNoWrapperWithAttributes2.xml"), "UTF-8");
-		XMLParser<ListTestObj2> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, ListTestObj2.class, ci);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/listNoWrapperWithAttributes2.xml"), "UTF-8");
+		Parser<ListTestObj2> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, ListTestObj2.class, ci);
 
 		ListTestObj2 o = parser.parse(xml);
 
@@ -242,8 +242,8 @@ public class ListsTest {
 
 		ClassIntrospector ci = new ClassIntrospector(Nested8TestObj.class);
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/listNoWrapper.xml"), "UTF-8");
-		XMLParser<Nested8TestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, Nested8TestObj.class, ci);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/listNoWrapper.xml"), "UTF-8");
+		Parser<Nested8TestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, Nested8TestObj.class, ci);
 
 		Nested8TestObj o = parser.parse(xml);
 
@@ -260,13 +260,17 @@ public class ListsTest {
 		assertFalse(o.isIncomplete());
 	}
 
+	@Test
+	public void xmlNoWrapperConsecutiveLists1() throws Exception {
+		xmlNoWrapperConsecutiveLists("/xml/listsNoWrapperConsecutive.xml");
+	}
 
 	public void xmlNoWrapperConsecutiveLists(String file) throws Exception {
 
 		ClassIntrospector ci = new ClassIntrospector(Nested9TestObj.class);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream(file), "UTF-8");
-		XMLParser<Nested9TestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, Nested9TestObj.class, ci);
+		Parser<Nested9TestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, Nested9TestObj.class, ci);
 
 		Nested9TestObj o = parser.parse(xml);
 
@@ -285,18 +289,13 @@ public class ListsTest {
 	}
 
 	@Test
-	public void xmlNoWrapperConsecutiveLists1() throws Exception {
-		xmlNoWrapperConsecutiveLists("/listsNoWrapperConsecutive.xml");
-	}
-
-	@Test
 	public void xmlNoWrapperConsecutiveLists2() throws Exception {
-		xmlNoWrapperConsecutiveLists("/listsNoWrapperConsecutive2.xml");
+		xmlNoWrapperConsecutiveLists("/xml/listsNoWrapperConsecutive2.xml");
 	}
 
 	@Test
 	public void xmlNoWrapperConsecutiveLists3() throws Exception {
-		xmlNoWrapperConsecutiveLists("/listsNoWrapperConsecutive3.xml");
+		xmlNoWrapperConsecutiveLists("/xml/listsNoWrapperConsecutive3.xml");
 	}
 
 	@Test
@@ -304,8 +303,8 @@ public class ListsTest {
 
 		ClassIntrospector ci = new ClassIntrospector(Nested10TestObj.class);
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/nestedListsNoWrapperConsecutive.xml"), "UTF-8");
-		XMLParser<Nested10TestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, Nested10TestObj.class, ci);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/nestedListsNoWrapperConsecutive.xml"), "UTF-8");
+		Parser<Nested10TestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, Nested10TestObj.class, ci);
 
 		Nested10TestObj o = parser.parse(xml);
 
@@ -330,8 +329,8 @@ public class ListsTest {
 
 		ClassIntrospector ci = new ClassIntrospector(Nested9TestObj.class);
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/endList.xml"), "UTF-8");
-		XMLParser<Nested9TestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, Nested9TestObj.class, ci);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/endList.xml"), "UTF-8");
+		Parser<Nested9TestObj> parser = new WoodStoxObjParserImpl<>(xmlInputFactory, Nested9TestObj.class, ci);
 
 		Nested9TestObj o = parser.parse(xml);
 

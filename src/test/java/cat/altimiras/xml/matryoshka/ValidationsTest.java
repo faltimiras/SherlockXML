@@ -1,7 +1,7 @@
-package cat.altimiras.xml.parsed;
+package cat.altimiras.xml.matryoshka;
 
-import cat.altimiras.matrioshka.Matrioshka;
-import cat.altimiras.xml.XMLParser;
+import cat.altimiras.Parser;
+import cat.altimiras.matryoshka.Matryoshka;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.stax2.XMLInputFactory2;
 import org.junit.Test;
@@ -25,10 +25,10 @@ public class ValidationsTest {
 		xmlInputFactory.setProperty(XMLInputFactory.IS_COALESCING, true);
 		xmlInputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/withDTDNoExist.xml"), "UTF-8");
-		XMLParser<Matrioshka> parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/withDTDNoExist.xml"), "UTF-8");
+		Parser<Matryoshka> parser = new WoodStoxMatryoshkaParserImpl(xmlInputFactory);
 
-		Matrioshka o = parser.parse(xml);
+		Matryoshka o = parser.parse(xml);
 
 		assertEquals("111", o.get("SimpleTestObj/element1").value());
 		assertEquals("222", o.get("SimpleTestObj/element2").value());
@@ -47,10 +47,10 @@ public class ValidationsTest {
 		xmlInputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, true);
 
 
-		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/withDTDNoExist.xml"), "UTF-8");
-		XMLParser<Matrioshka> parser = new WoodStoxMatrioshkaParserImpl(xmlInputFactory);
+		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/withDTDNoExist.xml"), "UTF-8");
+		Parser<Matryoshka> parser = new WoodStoxMatryoshkaParserImpl(xmlInputFactory);
 
-		Matrioshka o = parser.parse(xml);
+		Matryoshka o = parser.parse(xml);
 
 		assertNull(o.get("SimpleTestObj/element1").value());
 		assertNull(o.get("SimpleTestObj/element2").value());
