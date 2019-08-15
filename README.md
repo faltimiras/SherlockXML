@@ -10,7 +10,7 @@ Build simply and fast by default, no annotation, no magic... just convert and XM
 2 options:
 - XML to predefined Java class: Just needs a correspondence between XML tags and a member in the Java class
 
-```
+```xml
 <example>this is an example</example> -> private String example
 ```
 
@@ -33,7 +33,7 @@ extremely simple, just this...
 
 ## XML to predefined Java class
 
-```
+```java
 XMLFactory.init(ComplexObj.class);
 
 Parser<ComplexObj> parser = XMLFactory.getParser(ComplexObj.class);
