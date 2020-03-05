@@ -58,7 +58,6 @@ public class ClassIntrospector<T> {
 	 * Get an new instance clonning the base instance created on construction time.
 	 *
 	 * @param clazz
-	 *
 	 * @return
 	 */
 	public XMLElement getInstance(Type clazz) {
@@ -77,7 +76,6 @@ public class ClassIntrospector<T> {
 	 * Get an new instance clonning the base instance created on construction time.
 	 *
 	 * @param className
-	 *
 	 * @return
 	 */
 	public XMLElement getInstance(String className) {

@@ -1,8 +1,7 @@
-package cat.altimiras.xml.matryoshka;
+package cat.altimiras.xml.map;
 
 import cat.altimiras.Parser;
 import cat.altimiras.TagListener;
-import cat.altimiras.matryoshka.Matryoshka;
 import cat.altimiras.xml.exceptions.InvalidXMLFormatException;
 import org.codehaus.stax2.XMLInputFactory2;
 import org.codehaus.stax2.XMLStreamReader2;
@@ -19,7 +18,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class WoodStoxMatryoshkaParserImpl extends Parser<Matryoshka> {
+public class WoodStoxMapParserImpl extends Parser<Map> {
+
+	private final String incompleteKeyName;
 
 	private final XMLInputFactory2 xmlInputFactory;
 	/**
@@ -33,25 +34,26 @@ public class WoodStoxMatryoshkaParserImpl extends Parser<Matryoshka> {
 	private Map<String, TagListener> listeners = null;
 	private boolean stop = false;
 
-	public WoodStoxMatryoshkaParserImpl(XMLInputFactory2 xmlInputFactory) {
+	public WoodStoxMapParserImpl(XMLInputFactory2 xmlInputFactory, String incompleteKeyName) {
 		this.xmlInputFactory = xmlInputFactory;
+		this.incompleteKeyName = incompleteKeyName;
 	}
 
-	public Matryoshka parse(String xml) throws InvalidXMLFormatException, CharacterCodingException {
+	public Map parse(String xml) throws InvalidXMLFormatException, CharacterCodingException {
 		if (xml == null) {
 			throw new NullPointerException("xml can not be null");
 		}
 		return parse(xml, Charset.forName("UTF-8"));
 	}
 
-	public Matryoshka parse(String xml, Charset charset) throws InvalidXMLFormatException, CharacterCodingException {
+	public Map parse(String xml, Charset charset) throws InvalidXMLFormatException, CharacterCodingException {
 		if (xml == null) {
 			throw new NullPointerException("xml can not be null");
 		}
 		return parse(xml.getBytes(charset));
 	}
 
-	public Matryoshka parse(byte[] xml) throws InvalidXMLFormatException, CharacterCodingException {
+	public Map parse(byte[] xml) throws InvalidXMLFormatException, CharacterCodingException {
 
 		if (xml == null) {
 			throw new NullPointerException("xml can not be null");
@@ -90,21 +92,19 @@ public class WoodStoxMatryoshkaParserImpl extends Parser<Matryoshka> {
 			}
 
 			if (currentContext == null || currentContext.data == null) {
-				return new Matryoshka();
+				return new HashMap(0);
 			}
 
-			return createMatryoshka();
+			return createMap(false);
 
 		} catch (XMLStreamException e) {
 
 			flushIncomplete();
 
 			if (currentContext == null || currentContext.data == null) {
-				return new Matryoshka();
+				return new HashMap(0);
 			} else {
-				Matryoshka matryoshka = createMatryoshka();
-				matryoshka.setMetadata(INCOMPLETE, true);
-				return matryoshka;
+				return createMap(true);
 			}
 
 		} catch (NullPointerException e) {
@@ -188,10 +188,13 @@ public class WoodStoxMatryoshkaParserImpl extends Parser<Matryoshka> {
 		}
 	}
 
-	private Matryoshka createMatryoshka() {
+	private Map createMap(boolean incomplete) {
 		Map<String, Object> p = new HashMap<>();
 		p.put(currentContext.tag, currentContext.getContent());
-		return new Matryoshka(p);
+		if (incomplete) {
+			p.put(incompleteKeyName, true);
+		}
+		return p;
 	}
 
 	private void flushIncomplete() {
@@ -229,7 +232,6 @@ public class WoodStoxMatryoshkaParserImpl extends Parser<Matryoshka> {
 	 *
 	 * @param tag
 	 * @param value
-	 *
 	 * @return
 	 */
 	private boolean notify(String tag, Object value) {

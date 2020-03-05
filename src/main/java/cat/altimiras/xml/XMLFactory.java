@@ -1,8 +1,7 @@
 package cat.altimiras.xml;
 
 import cat.altimiras.Parser;
-import cat.altimiras.matryoshka.Matryoshka;
-import cat.altimiras.xml.matryoshka.WoodStoxMatryoshkaParserImpl;
+import cat.altimiras.xml.map.WoodStoxMapParserImpl;
 import cat.altimiras.xml.obj.ClassIntrospector;
 import cat.altimiras.xml.obj.WoodStoxObjParserImpl;
 import org.codehaus.stax2.XMLInputFactory2;
@@ -12,6 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class XMLFactory {
+
+	final static public String DEFAULT_INCOMPLETE_KEY_NAME = "_is_incomplete";
 
 	private static Map<String, ClassIntrospector> classesIntrospector = new HashMap<>();
 
@@ -44,9 +45,7 @@ public class XMLFactory {
 	 * Get a parser for class c, with user defined buffer size
 	 *
 	 * @param c
-	 *
 	 * @return
-	 *
 	 * @throws Exception
 	 */
 	public static Parser getParser(Class c) throws Exception {
@@ -62,8 +61,12 @@ public class XMLFactory {
 		return new WoodStoxObjParserImpl(xmlInputFactory, c, classIntrospector);
 	}
 
-	public static Parser<Matryoshka> getParser() {
-		return new WoodStoxMatryoshkaParserImpl(xmlInputFactory);
+	public static Parser<Map> getParser(String incompleteKeyName) {
+		return new WoodStoxMapParserImpl(xmlInputFactory, incompleteKeyName);
+	}
+
+	public static Parser<Map> getParser() {
+		return new WoodStoxMapParserImpl(xmlInputFactory, DEFAULT_INCOMPLETE_KEY_NAME);
 	}
 
 	static void reset() {

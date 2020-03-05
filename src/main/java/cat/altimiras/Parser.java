@@ -18,9 +18,7 @@ public abstract class Parser<T> {
 	 * Parses a unparsed to T
 	 *
 	 * @param content
-	 *
 	 * @return
-	 *
 	 * @throws Exception
 	 */
 	public abstract T parse(String content) throws IOException;

@@ -1,7 +1,7 @@
 package cat.altimiras.xml;
 
 import cat.altimiras.Parser;
-import cat.altimiras.xml.matryoshka.WoodStoxMatryoshkaParserImpl;
+import cat.altimiras.xml.map.WoodStoxMapParserImpl;
 import cat.altimiras.xml.obj.WoodStoxObjParserImpl;
 import cat.altimiras.xml.pojo.Nested2TestObj;
 import cat.altimiras.xml.pojo.SimpleTestObj;
@@ -52,11 +52,11 @@ public class XMLFactoryTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void nullParamFactory() throws Exception {
 		XMLFactory.init(SimpleTestObj.class);
-		XMLFactory.getParser(null);
+		XMLFactory.getParser((Class) null);
 	}
 
 	@Test
-	public void objParseractory() throws Exception {
+	public void objParserFactory() throws Exception {
 		XMLFactory.init(SimpleTestObj.class);
 		Parser parser = XMLFactory.getParser(SimpleTestObj.class);
 		assertTrue(parser instanceof WoodStoxObjParserImpl);
@@ -65,7 +65,7 @@ public class XMLFactoryTest {
 	@Test
 	public void parsedParseractory() throws Exception {
 		Parser parser = XMLFactory.getParser();
-		assertTrue(parser instanceof WoodStoxMatryoshkaParserImpl);
+		assertTrue(parser instanceof WoodStoxMapParserImpl);
 	}
 
 	@Test

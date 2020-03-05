@@ -1,9 +1,12 @@
-package cat.altimiras.json.matryoshka;
+package cat.altimiras.json.map;
 
 import cat.altimiras.matryoshka.Matryoshka;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
+import java.util.Map;
+
+import static cat.altimiras.json.JSONFactory.DEFAULT_INCOMPLETE_KEY_NAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -13,7 +16,9 @@ public class NestedTest {
 	@Test
 	public void nested() throws Exception {
 
-		Matryoshka matryoshka = new JSONMatryoshkaParserImpl().parse("{ \"k\" : { \"k2\" : \"v\" }}");
+		Map result = new JSONMapParserImpl(DEFAULT_INCOMPLETE_KEY_NAME).parse("{ \"k\" : { \"k2\" : \"v\" }}");
+		Matryoshka matryoshka = new Matryoshka(result);
+
 		assertEquals("v", matryoshka.get("k/k2").value());
 		assertNull(matryoshka.get("k2").value());
 	}
@@ -21,14 +26,18 @@ public class NestedTest {
 	@Test
 	public void nested2() throws Exception {
 
-		Matryoshka matryoshka = new JSONMatryoshkaParserImpl().parse("{ \"k\" : { \"k2\" : {\"k3\" : 2 }}}");
+		Map result = new JSONMapParserImpl(DEFAULT_INCOMPLETE_KEY_NAME).parse("{ \"k\" : { \"k2\" : {\"k3\" : 2 }}}");
+		Matryoshka matryoshka = new Matryoshka(result);
+
 		assertEquals(2, matryoshka.get("k/k2/k3").value());
 	}
 
 	@Test
 	public void nestedAfter() throws Exception {
 
-		Matryoshka matryoshka = new JSONMatryoshkaParserImpl().parse("{ \"k\" : { \"k2\" : true }, \"k1\" : 99}");
+		Map result = new JSONMapParserImpl(DEFAULT_INCOMPLETE_KEY_NAME).parse("{ \"k\" : { \"k2\" : true }, \"k1\" : 99}");
+		Matryoshka matryoshka = new Matryoshka(result);
+
 		assertTrue((Boolean) matryoshka.get("k/k2").value());
 		assertNull(matryoshka.get("k2").value());
 		assertEquals(99, matryoshka.get("k1").value());
@@ -37,7 +46,9 @@ public class NestedTest {
 	@Test
 	public void nestedBefore() throws Exception {
 
-		Matryoshka matryoshka = new JSONMatryoshkaParserImpl().parse("{ \"k1\" : 99, \"k\" : { \"k2\" : true }}");
+		Map result = new JSONMapParserImpl(DEFAULT_INCOMPLETE_KEY_NAME).parse("{ \"k1\" : 99, \"k\" : { \"k2\" : true }}");
+		Matryoshka matryoshka = new Matryoshka(result);
+
 		assertTrue((Boolean) matryoshka.get("k/k2").value());
 		assertNull(matryoshka.get("k2").value());
 		assertEquals(99, matryoshka.get("k1").value());
@@ -48,7 +59,9 @@ public class NestedTest {
 
 		String json = IOUtils.toString(this.getClass().getResourceAsStream("/json/nested1.json"), "UTF-8");
 
-		Matryoshka matryoshka = new JSONMatryoshkaParserImpl().parse(json);
+		Map result = new JSONMapParserImpl(DEFAULT_INCOMPLETE_KEY_NAME).parse(json);
+		Matryoshka matryoshka = new Matryoshka(result);
+
 		assertEquals("123", matryoshka.get("key2").value());
 		assertEquals("value", matryoshka.get("key").value());
 		assertEquals("lolo", matryoshka.get("nested2/n1").value());
@@ -57,5 +70,4 @@ public class NestedTest {
 		assertEquals(55, matryoshka.get("nested1/n2").value());
 		assertEquals("b", matryoshka.get("nested3/a").value());
 	}
-
 }

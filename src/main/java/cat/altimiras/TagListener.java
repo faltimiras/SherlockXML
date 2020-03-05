@@ -8,7 +8,6 @@ public interface TagListener {
 	 *
 	 * @param tag   called
 	 * @param value
-	 *
 	 * @return true parsing must to stop otherwise continues
 	 */
 	boolean notify(String tag, Object value);

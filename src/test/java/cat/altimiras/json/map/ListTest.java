@@ -1,9 +1,12 @@
-package cat.altimiras.json.matryoshka;
+package cat.altimiras.json.map;
 
 import cat.altimiras.matryoshka.Matryoshka;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
+import java.util.Map;
+
+import static cat.altimiras.json.JSONFactory.DEFAULT_INCOMPLETE_KEY_NAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
@@ -12,7 +15,8 @@ public class ListTest {
 	@Test
 	public void simple() throws Exception {
 
-		Matryoshka matryoshka = new JSONMatryoshkaParserImpl().parse("{ \"k\" :[1,2,3] }");
+		Map result = new JSONMapParserImpl(DEFAULT_INCOMPLETE_KEY_NAME).parse("{ \"k\" :[1,2,3] }");
+		Matryoshka matryoshka = new Matryoshka(result);
 
 		assertEquals(3, matryoshka.get("k").asList().size());
 		assertEquals(1, matryoshka.get("k").asList().get(0).value());
@@ -20,11 +24,11 @@ public class ListTest {
 		assertEquals(3, matryoshka.get("k").asList().get(2).value());
 	}
 
-
 	@Test
 	public void simpleTypes() throws Exception {
 
-		Matryoshka matryoshka = new JSONMatryoshkaParserImpl().parse("{ \"k\" :[\"1\",2, false] }");
+		Map result = new JSONMapParserImpl(DEFAULT_INCOMPLETE_KEY_NAME).parse("{ \"k\" :[\"1\",2, false] }");
+		Matryoshka matryoshka = new Matryoshka(result);
 
 		assertEquals(3, matryoshka.get("k").asList().size());
 		assertEquals("1", matryoshka.get("k").asList().get(0).value());
@@ -32,11 +36,11 @@ public class ListTest {
 		assertEquals(false, matryoshka.get("k").asList().get(2).value());
 	}
 
-
 	@Test
 	public void multipleLists() throws Exception {
 
-		Matryoshka matryoshka = new JSONMatryoshkaParserImpl().parse("{ \"k\" :[1,2,3], \"k2\" :[true, false, true] }");
+		Map result = new JSONMapParserImpl(DEFAULT_INCOMPLETE_KEY_NAME).parse("{ \"k\" :[1,2,3], \"k2\" :[true, false, true] }");
+		Matryoshka matryoshka = new Matryoshka(result);
 
 		assertEquals(3, matryoshka.get("k").asList().size());
 		assertEquals(1, matryoshka.get("k").asList().get(0).value());
@@ -52,7 +56,8 @@ public class ListTest {
 	@Test
 	public void multipleListsAfter() throws Exception {
 
-		Matryoshka matryoshka = new JSONMatryoshkaParserImpl().parse("{ \"k\" :[1,2,3], \"k2\" :[true, false, true], \"k3\" : \"aaa\" }");
+		Map result = new JSONMapParserImpl(DEFAULT_INCOMPLETE_KEY_NAME).parse("{ \"k\" :[1,2,3], \"k2\" :[true, false, true], \"k3\" : \"aaa\" }");
+		Matryoshka matryoshka = new Matryoshka(result);
 
 		assertEquals(3, matryoshka.get("k").asList().size());
 		assertEquals(1, matryoshka.get("k").asList().get(0).value());
@@ -70,7 +75,8 @@ public class ListTest {
 	@Test
 	public void multipleListsBefore() throws Exception {
 
-		Matryoshka matryoshka = new JSONMatryoshkaParserImpl().parse("{ \"k3\" : \"aaa\", \"k\" :[1,2,3], \"k2\" :[true, false, true] }");
+		Map result = new JSONMapParserImpl(DEFAULT_INCOMPLETE_KEY_NAME).parse("{ \"k3\" : \"aaa\", \"k\" :[1,2,3], \"k2\" :[true, false, true] }");
+		Matryoshka matryoshka = new Matryoshka(result);
 
 		assertEquals(3, matryoshka.get("k").asList().size());
 		assertEquals(1, matryoshka.get("k").asList().get(0).value());
@@ -85,12 +91,12 @@ public class ListTest {
 		assertEquals("aaa", matryoshka.get("k3").value());
 	}
 
-
 	@Test
 	public void nestedList1() throws Exception {
 
 		String json = IOUtils.toString(this.getClass().getResourceAsStream("/json/nestedList1.json"), "UTF-8");
-		Matryoshka matryoshka = new JSONMatryoshkaParserImpl().parse(json);
+		Map result = new JSONMapParserImpl(DEFAULT_INCOMPLETE_KEY_NAME).parse(json);
+		Matryoshka matryoshka = new Matryoshka(result);
 
 		assertEquals(4, matryoshka.get("key").asList().size());
 		assertEquals("lolo", matryoshka.get("key").asList().get(0).get("n1").value());
@@ -101,5 +107,4 @@ public class ListTest {
 		assertEquals(false, matryoshka.get("key").asList().get(3).get("a").value());
 		assertFalse((Boolean) matryoshka.get("key2").value());
 	}
-
 }

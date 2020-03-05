@@ -323,7 +323,6 @@ public class WoodStoxObjParserImpl<T extends XMLElement> extends Parser<T> {
 	 *
 	 * @param tag
 	 * @param value
-	 *
 	 * @return
 	 */
 	private boolean notify(String tag, Object value) {

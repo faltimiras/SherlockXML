@@ -1,10 +1,13 @@
-package cat.altimiras.json.matryoshka;
+package cat.altimiras.json.map;
 
 import cat.altimiras.TagListener;
 import cat.altimiras.matryoshka.Matryoshka;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
+import java.util.Map;
+
+import static cat.altimiras.json.JSONFactory.DEFAULT_INCOMPLETE_KEY_NAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -15,7 +18,6 @@ import static org.mockito.Mockito.when;
 
 public class TagListenerTest {
 
-
 	@Test
 	public void stop() throws Exception {
 
@@ -23,10 +25,11 @@ public class TagListenerTest {
 		TagListener objListener = mock(TagListener.class);
 		when(objListener.notify(eq("key"), any())).thenReturn(true);
 
-		JSONMatryoshkaParserImpl matryoshkaParser = new JSONMatryoshkaParserImpl();
+		JSONMapParserImpl matryoshkaParser = new JSONMapParserImpl(DEFAULT_INCOMPLETE_KEY_NAME);
 		matryoshkaParser.register("key", objListener);
 
-		Matryoshka matryoshka = matryoshkaParser.parse(json);
+		Map result = matryoshkaParser.parse(json);
+		Matryoshka matryoshka = new Matryoshka(result);
 
 		assertEquals("value", matryoshka.get("key").value());
 		assertNull(matryoshka.get("key2").value());
@@ -39,10 +42,11 @@ public class TagListenerTest {
 		TagListener objListener = mock(TagListener.class);
 		when(objListener.notify(eq("key"), any())).thenReturn(false);
 
-		JSONMatryoshkaParserImpl matryoshkaParser = new JSONMatryoshkaParserImpl();
+		JSONMapParserImpl matryoshkaParser = new JSONMapParserImpl(DEFAULT_INCOMPLETE_KEY_NAME);
 		matryoshkaParser.register("key", objListener);
 
-		Matryoshka matryoshka = matryoshkaParser.parse(json);
+		Map result = matryoshkaParser.parse(json);
+		Matryoshka matryoshka = new Matryoshka(result);
 
 		assertEquals("123", matryoshka.get("key2").value());
 		assertEquals("value", matryoshka.get("key").value());
@@ -61,10 +65,11 @@ public class TagListenerTest {
 		TagListener objListener = mock(TagListener.class);
 		when(objListener.notify(eq("key"), any())).thenReturn(true);
 
-		JSONMatryoshkaParserImpl matryoshkaParser = new JSONMatryoshkaParserImpl();
+		JSONMapParserImpl matryoshkaParser = new JSONMapParserImpl(DEFAULT_INCOMPLETE_KEY_NAME);
 		matryoshkaParser.register("key", objListener);
 
-		Matryoshka matryoshka = matryoshkaParser.parse(json);
+		Map result = matryoshkaParser.parse(json);
+		Matryoshka matryoshka = new Matryoshka(result);
 
 		assertEquals(4, matryoshka.get("key").asList().size());
 		assertEquals("lolo", matryoshka.get("key").asList().get(0).get("n1").value());
@@ -84,10 +89,11 @@ public class TagListenerTest {
 		TagListener objListener = mock(TagListener.class);
 		when(objListener.notify(eq("n1"), any())).thenReturn(true);
 
-		JSONMatryoshkaParserImpl matryoshkaParser = new JSONMatryoshkaParserImpl();
+		JSONMapParserImpl matryoshkaParser = new JSONMapParserImpl(DEFAULT_INCOMPLETE_KEY_NAME);
 		matryoshkaParser.register("n1", objListener);
 
-		Matryoshka matryoshka = matryoshkaParser.parse(json);
+		Map result = matryoshkaParser.parse(json);
+		Matryoshka matryoshka = new Matryoshka(result);
 
 		assertEquals(1, matryoshka.get("key").asList().size());
 		assertEquals("lolo", matryoshka.get("key").asList().get(0).get("n1").value());
@@ -103,10 +109,11 @@ public class TagListenerTest {
 		TagListener objListener = mock(TagListener.class);
 		when(objListener.notify(eq("key"), any())).thenReturn(false);
 
-		JSONMatryoshkaParserImpl matryoshkaParser = new JSONMatryoshkaParserImpl();
+		JSONMapParserImpl matryoshkaParser = new JSONMapParserImpl(DEFAULT_INCOMPLETE_KEY_NAME);
 		matryoshkaParser.register("key", objListener);
 
-		Matryoshka matryoshka = matryoshkaParser.parse(json);
+		Map result = matryoshkaParser.parse(json);
+		Matryoshka matryoshka = new Matryoshka(result);
 
 		assertEquals(4, matryoshka.get("key").asList().size());
 		assertEquals("lolo", matryoshka.get("key").asList().get(0).get("n1").value());
@@ -125,10 +132,11 @@ public class TagListenerTest {
 		TagListener objListener = mock(TagListener.class);
 		when(objListener.notify(eq("nested2"), any())).thenReturn(true);
 
-		JSONMatryoshkaParserImpl matryoshkaParser = new JSONMatryoshkaParserImpl();
+		JSONMapParserImpl matryoshkaParser = new JSONMapParserImpl(DEFAULT_INCOMPLETE_KEY_NAME);
 		matryoshkaParser.register("nested2", objListener);
 
-		Matryoshka matryoshka = matryoshkaParser.parse(json);
+		Map result = matryoshkaParser.parse(json);
+		Matryoshka matryoshka = new Matryoshka(result);
 
 		assertEquals("123", matryoshka.get("key2").value());
 		assertEquals("value", matryoshka.get("key").value());

@@ -2,7 +2,7 @@ package cat.altimiras.xml.performance;
 
 
 import cat.altimiras.Parser;
-import cat.altimiras.xml.matryoshka.WoodStoxMatryoshkaParserImpl;
+import cat.altimiras.xml.map.WoodStoxMapParserImpl;
 import cat.altimiras.xml.obj.ClassIntrospector;
 import cat.altimiras.xml.obj.WoodStoxObjParserImpl;
 import cat.altimiras.xml.pojo.ListTestObj;
@@ -12,6 +12,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.xml.stream.XMLInputFactory;
+
+import static cat.altimiras.xml.XMLFactory.DEFAULT_INCOMPLETE_KEY_NAME;
 
 @Ignore
 public class PseudoPerformanceComparator {
@@ -114,7 +116,7 @@ public class PseudoPerformanceComparator {
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/performance/bigListTest.xml"), "UTF-8");
 
 		long ini = System.currentTimeMillis();
-		WoodStoxMatryoshkaParserImpl parser = new WoodStoxMatryoshkaParserImpl(xmlInputFactory);
+		WoodStoxMapParserImpl parser = new WoodStoxMapParserImpl(xmlInputFactory, DEFAULT_INCOMPLETE_KEY_NAME);
 		for (int i = 0; i < LOOPS; i++) {
 			parser.parse(xml);
 		}

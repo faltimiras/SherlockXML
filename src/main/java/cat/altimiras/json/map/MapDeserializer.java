@@ -1,7 +1,6 @@
-package cat.altimiras.json.matryoshka;
+package cat.altimiras.json.map;
 
 import cat.altimiras.TagListener;
-import cat.altimiras.matryoshka.Matryoshka;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonToken;
@@ -15,9 +14,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static cat.altimiras.Parser.INCOMPLETE;
+class MapDeserializer extends JsonDeserializer<Map> {
 
-class MatryoshkaDeserializer extends JsonDeserializer<Matryoshka> {
+	final private String incompleteKeyName;
 
 	final private ArrayDeque<Context> contexts = new ArrayDeque<>();
 	/**
@@ -32,11 +31,13 @@ class MatryoshkaDeserializer extends JsonDeserializer<Matryoshka> {
 
 	private boolean stop = false;
 
-	public MatryoshkaDeserializer(Map<String, TagListener> listeners) {
+
+	public MapDeserializer(Map<String, TagListener> listeners, String incompleteKeyName) {
 		this.listeners = listeners;
+		this.incompleteKeyName = incompleteKeyName;
 	}
 
-	public Matryoshka deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
+	public Map deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
 
 		if (jsonParser.currentTokenId() != 1) {
 			throw new IllegalArgumentException("Not a json");
@@ -113,9 +114,9 @@ class MatryoshkaDeserializer extends JsonDeserializer<Matryoshka> {
 
 				token = jsonParser.nextToken();
 			}
-			return createMatryoshka(false);
+			return createMap(false);
 		} catch (Exception e) {
-			return createMatryoshka(true);
+			return createMap(true);
 		}
 	}
 
@@ -143,18 +144,17 @@ class MatryoshkaDeserializer extends JsonDeserializer<Matryoshka> {
 		currentKey = null;
 	}
 
-	private Matryoshka createMatryoshka(boolean incomplete) {
+	private Map createMap(boolean incomplete) {
 
 		flush();
 
 		if (currentContext.data == null || currentContext.data.isEmpty()) {
 			return null;
 		} else {
-			Matryoshka matryoshka = new Matryoshka(currentContext.data);
 			if (incomplete) {
-				matryoshka.setMetadata(INCOMPLETE, true);
+				currentContext.data.put(incompleteKeyName, true);
 			}
-			return matryoshka;
+			return currentContext.data;
 		}
 	}
 
@@ -195,4 +195,3 @@ class MatryoshkaDeserializer extends JsonDeserializer<Matryoshka> {
 		}
 	}
 }
-

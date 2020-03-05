@@ -1,4 +1,4 @@
-package cat.altimiras.xml.matryoshka;
+package cat.altimiras.xml.map;
 
 import cat.altimiras.Parser;
 import cat.altimiras.matryoshka.Matryoshka;
@@ -7,7 +7,9 @@ import org.codehaus.stax2.XMLInputFactory2;
 import org.junit.Test;
 
 import javax.xml.stream.XMLInputFactory;
+import java.util.Map;
 
+import static cat.altimiras.xml.XMLFactory.DEFAULT_INCOMPLETE_KEY_NAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -26,12 +28,13 @@ public class ValidationsTest {
 		xmlInputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/withDTDNoExist.xml"), "UTF-8");
-		Parser<Matryoshka> parser = new WoodStoxMatryoshkaParserImpl(xmlInputFactory);
+		Parser<Map> parser = new WoodStoxMapParserImpl(xmlInputFactory, DEFAULT_INCOMPLETE_KEY_NAME);
 
-		Matryoshka o = parser.parse(xml);
+		Map result = parser.parse(xml);
+		Matryoshka matryoshka = new Matryoshka(result);
 
-		assertEquals("111", o.get("SimpleTestObj/element1").value());
-		assertEquals("222", o.get("SimpleTestObj/element2").value());
+		assertEquals("111", matryoshka.get("SimpleTestObj/element1").value());
+		assertEquals("222", matryoshka.get("SimpleTestObj/element2").value());
 	}
 
 	/**
@@ -48,11 +51,12 @@ public class ValidationsTest {
 
 
 		String xml = IOUtils.toString(this.getClass().getResourceAsStream("/xml/withDTDNoExist.xml"), "UTF-8");
-		Parser<Matryoshka> parser = new WoodStoxMatryoshkaParserImpl(xmlInputFactory);
+		Parser<Map> parser = new WoodStoxMapParserImpl(xmlInputFactory, DEFAULT_INCOMPLETE_KEY_NAME);
 
-		Matryoshka o = parser.parse(xml);
+		Map result = parser.parse(xml);
+		Matryoshka matryoshka = new Matryoshka(result);
 
-		assertNull(o.get("SimpleTestObj/element1").value());
-		assertNull(o.get("SimpleTestObj/element2").value());
+		assertNull(matryoshka.get("SimpleTestObj/element1").value());
+		assertNull(matryoshka.get("SimpleTestObj/element2").value());
 	}
 }
